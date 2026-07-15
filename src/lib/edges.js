@@ -113,7 +113,12 @@ export function yearsOf(memories) {
 // strongest remaining edges up to ~1.8 per node. Returns a Set of "source|target" keys,
 // or null when the graph is sparse enough to show everything (small graphs untouched).
 export function edgeBudget(edges, nodeCount) {
-  if (edges.length <= nodeCount * 3.2) return null;
+  // Per-node allowance DECAYS with scale: anchored at 3.0/node for a 40-memory graph
+  // (proven readable and fast), falling with sqrt(n) to a floor of 1.6/node so huge
+  // graphs stay light. 40→3.0, 100→1.9, 241→1.6.
+  const perNode = Math.min(3.0, Math.max(1.6, 3.0 * Math.sqrt(40 / nodeCount)));
+  const budget = Math.round(nodeCount * perNode);
+  if (edges.length <= budget * 1.1) return null; // sparse enough — draw everything
   const parent = new Map();
   const find = (x) => {
     while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); }
@@ -129,7 +134,6 @@ export function edgeBudget(edges, nodeCount) {
     if (rs !== rt) { parent.set(rs, rt); keep.add(e.source + '|' + e.target); }
   }
   // Fill with the strongest non-tree edges up to the budget.
-  const budget = Math.round(nodeCount * 3.0); // Simon-density (3/node) proved readable — the floor
   for (const e of sorted) {
     if (keep.size >= budget) break;
     keep.add(e.source + '|' + e.target);
