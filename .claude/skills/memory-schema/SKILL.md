@@ -63,7 +63,7 @@ For every pair of memories, collect shared attributes:
 
 ## Editing (prototype persistence)
 
-The memory card has a ✎ button: edit mode exposes what/where/why/summary/importance. Saving
+The memory card has a ✎ button: edit mode exposes what/where/why/summary/importance PLUS tag editors for who (people) and feelings — chips with ✕ to remove, type+Enter to add. FocusHud emits people as plain names (`__whoNames`); App resolves them to {id,name} (reusing the id of an existing same-named person, minting p-sequential ids for new ones). Saving
 updates App state (memories are useState seeded from the JSON — every derived structure
 recomputes) and POSTs the person's full array to `/__save-memories`, a dev-server middleware
 (vite.config.js) that writes the source JSON back to disk. The vite watcher ignores

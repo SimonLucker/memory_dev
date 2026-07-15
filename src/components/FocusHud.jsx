@@ -57,6 +57,36 @@ const inputStyle = {
   marginBottom: 6,
 };
 
+// Editable chip list: ✕ removes, typing + Enter (or comma) adds. Values are plain strings.
+function TagEditor({ values, onChange, accent, fill, border, placeholder }) {
+  const [text, setText] = useState('');
+  const add = () => {
+    const v = text.trim();
+    if (!v) return;
+    if (!values.some((x) => x.toLowerCase() === v.toLowerCase())) onChange([...values, v]);
+    setText('');
+  };
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+      {values.map((v) => (
+        <span key={v} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: PAPER, background: fill, border: `1px solid ${border}`, borderRadius: 999, padding: '3px 8px' }}>
+          <span style={{ width: 6, height: 6, borderRadius: 2, background: accent }} />
+          {v}
+          <span onClick={() => onChange(values.filter((x) => x !== v))} style={{ cursor: 'pointer', opacity: 0.6, fontSize: 9, marginLeft: 2 }}>✕</span>
+        </span>
+      ))}
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } }}
+        onBlur={add}
+        placeholder={placeholder}
+        style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, color: PAPER, font: '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', padding: '3px 10px', width: 90 }}
+      />
+    </div>
+  );
+}
+
 export default function FocusHud({ memory, onEdit, onClose }) {
   const accent = CLASS_COLORS[memory.class] || DAWN[0];
   const fill = CLASS_FILLS[memory.class] || 'rgba(255,255,255,0.06)';
@@ -69,11 +99,17 @@ export default function FocusHud({ memory, onEdit, onClose }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(null);
   const startEdit = () => {
-    setDraft({ what: memory.what, where: memory.where, why: memory.why, summary: memory.summary, importance: memory.importance || 3 });
+    setDraft({
+      what: memory.what, where: memory.where, why: memory.why, summary: memory.summary,
+      importance: memory.importance || 3,
+      who: (memory.who || []).map((p) => p.name),
+      feeling: [...(memory.feeling || [])],
+    });
     setEditing(true);
   };
   const saveEdit = () => {
-    onEdit?.({ ...memory, ...draft, importance: Number(draft.importance) });
+    const { who, ...rest } = draft;
+    onEdit?.({ ...memory, ...rest, importance: Number(draft.importance), feeling: draft.feeling, __whoNames: who });
     setEditing(false);
   };
   const set = (k) => (e) => setDraft((d) => ({ ...d, [k]: e.target.value })); // index of the photo shown large (reset per memory via key= in GraphView)
@@ -215,7 +251,11 @@ export default function FocusHud({ memory, onEdit, onClose }) {
                 {[1, 2, 3, 4, 5].map((i) => <option key={i} value={i}>{i}</option>)}
               </select>
             </label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <SectionLabel dot={accent}>Who was there</SectionLabel>
+            <TagEditor values={draft.who} onChange={(v) => setDraft((d) => ({ ...d, who: v }))} accent={accent} fill={fill} border={border} placeholder="add person…" />
+            <SectionLabel dot={DAWN[1]}>Feelings</SectionLabel>
+            <TagEditor values={draft.feeling} onChange={(v) => setDraft((d) => ({ ...d, feeling: v }))} accent={DAWN[1]} fill="rgba(236,176,132,0.16)" border="rgba(240,190,155,0.34)" placeholder="add feeling…" />
+            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
               <button onClick={saveEdit} style={{ flex: 1, padding: '7px 0', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 600, color: '#1F2937', background: `linear-gradient(165deg, ${DAWN[0]}, ${PEACH} 56%, ${DAWN[2]})` }}>Save</button>
               <button onClick={() => setEditing(false)} style={{ flex: 1, padding: '7px 0', borderRadius: 999, border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer', color: PAPER, background: 'transparent' }}>Cancel</button>
             </div>
@@ -227,7 +267,7 @@ export default function FocusHud({ memory, onEdit, onClose }) {
           </>
         )}
 
-        {who.length > 0 && (
+        {!editing && who.length > 0 && (
           <>
             <SectionLabel dot={accent}>Who was there</SectionLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -238,7 +278,7 @@ export default function FocusHud({ memory, onEdit, onClose }) {
           </>
         )}
 
-        {feelings.length > 0 && (
+        {!editing && feelings.length > 0 && (
           <>
             <SectionLabel dot={DAWN[1]}>Feeling</SectionLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>

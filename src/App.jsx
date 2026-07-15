@@ -23,6 +23,23 @@ export default function App() {
   const memories = memMap[personId]
 
   const saveMemory = updated => {
+    if (updated.__whoNames) {
+      // Resolve names to person objects: reuse the id of any existing person with the
+      // same name (case-insensitive); mint sequential ids for genuinely new people.
+      const dir = new Map()
+      let maxId = 0
+      for (const m of memories) for (const p of m.who) {
+        dir.set(p.name.toLowerCase(), p)
+        const n = Number(String(p.id).replace(/\D/g, '')) || 0
+        if (n > maxId) maxId = n
+      }
+      updated = {
+        ...updated,
+        who: updated.__whoNames.map(name =>
+          dir.get(name.toLowerCase()) || { id: 'p' + String(++maxId).padStart(2, '0'), name }),
+      }
+      delete updated.__whoNames
+    }
     const next = memories.map(m => (m.id === updated.id ? updated : m))
     setMemMap(prev => ({ ...prev, [personId]: next }))
     fetch('/__save-memories', {
