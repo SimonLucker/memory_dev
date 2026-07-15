@@ -19,7 +19,7 @@ Soft matte pastel sphere, radius `r = 4 + importance * 2`, colored by class acce
    - otherwise labels appear by PROXIMITY: label alpha ramps with the node's SCREEN radius (`screenR = r * globalScale`): threshold `screenR > 26 - importance * 3` (important memories earn labels earlier), ramp width ±6. At full-view zoom only the most important clear it — priority preserved; zooming toward a cluster makes its names bloom.
    - **Screen-edge fade**: labels fade to 0 within 140px of any viewport edge (linear), so names never cling to the borders.
    - **Post-entrance fade**: after the intro float lands, labels fade in globally over ~800ms (multiply a global labelFade 0→1 starting at intro end). Labels must never pop.
-   - 10px sans paper `#F2F0EC`, dark pill `rgba(0,0,0,0.45)` for the year. The greedy anti-overlap pass still runs last.
+   - Text is SCREEN-CONSTANT: world font size = `10 / globalScale` (year pill 9), and every layout constant around it (offsets, pill box, overlap-rect padding) scales by `1/globalScale` too. Orbs grow with zoom while names stay 10 screen px — names read as getting smaller as you zoom in, per user request. The greedy anti-overlap pass still runs last with matching geometry.
 
 States:
 - **Dimmed** (filtered out / non-matching query): `globalAlpha 0.10`, no glow, no label.

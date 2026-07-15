@@ -292,7 +292,8 @@ export default function GraphView({
   // in world units (measureText, radii, offsets all share that space), so world-space
   // non-overlap ⟺ screen-space non-overlap under the uniform canvas transform.
   const computeLabelSet = (ctx, globalScale) => {
-    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    // Same screen-constant font scale as the label draw — rects must match the pixels.
+    ctx.font = `${10 / Math.max(0.1, globalScale)}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
     const cand = [];
     for (const node of graphData.nodes) {
       if (node.x == null || isDimmed(node)) continue;
@@ -315,10 +316,11 @@ export default function GraphView({
     for (const c of cand) {
       const { node, focused, showYear, imp, px, py } = c;
       const r = Math.max(0.5, (4 + imp * 2) * (1 + 0.05 * Math.sin(t / 1400 + node.phase)) * (focused ? 1 : node.depth));
-      const lx = px + r + 6;
+      const invK = 1 / Math.max(0.1, globalScale);
+      const lx = px + r + 6 * invK;
       const ny = py;
       const wtxt = ctx.measureText(node.mem.what).width;
-      const rect = { l: lx - 4, r: lx + wtxt + 4, t: ny - 9, b: showYear ? ny + 19 : ny + 9 };
+      const rect = { l: lx - 4 * invK, r: lx + wtxt + 4 * invK, t: ny - 9 * invK, b: showYear ? ny + 19 * invK : ny + 9 * invK };
       let ok = true;
       for (const k of kept) {
         if (rect.l < k.r && rect.r > k.l && rect.t < k.b && rect.b > k.t) { ok = false; break; }
@@ -582,24 +584,27 @@ export default function GraphView({
     //    rect pass (onRenderFramePre) this frame.
     const linfo = labelInfo(node, nx, ny, globalScale);
     if (linfo.alpha > 0.01 && labelIdsRef.current.has(node.id)) {
-      const lx = nx + r + 6;
+      // Screen-constant text (world size = screen px / k): orbs grow with zoom, names
+      // don't — so relative to the content, names get smaller as you zoom in.
+      const invK = 1 / Math.max(0.1, globalScale);
+      const lx = nx + r + 6 * invK;
       ctx.globalAlpha = linfo.alpha;
       ctx.textBaseline = 'middle';
-      ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.font = `${10 * invK}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       ctx.fillStyle = PAPER;
       ctx.fillText(m.what, lx, ny);
 
       if (linfo.showYear) {
         const year = m.when.slice(6, 10);
-        ctx.font = '9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-        const pw = ctx.measureText(year).width + 8;
-        const py = ny + 9;
+        ctx.font = `${9 * invK}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+        const pw = ctx.measureText(year).width + 8 * invK;
+        const py = ny + 9 * invK;
         ctx.fillStyle = 'rgba(0,0,0,0.45)';
         ctx.beginPath();
-        ctx.roundRect(lx, py - 6, pw, 12, 4);
+        ctx.roundRect(lx, py - 6 * invK, pw, 12 * invK, 4 * invK);
         ctx.fill();
         ctx.fillStyle = PAPER;
-        ctx.fillText(year, lx + 4, py);
+        ctx.fillText(year, lx + 4 * invK, py);
       }
     }
 
