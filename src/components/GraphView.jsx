@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { forceCollide } from 'd3-force-3d'; // same module force-graph runs its sim on
 import FocusHud from './FocusHud.jsx';
+import { edgeBudget } from '../lib/edges.js';
 import DustField from './DustField.jsx';
 import { CLASS_COLORS, DAWN, DAWN_SAT, PAPER, PEACH } from '../lib/palette.js';
 
@@ -46,6 +47,7 @@ const TYPE_LABEL = { who: 'person', where: 'place', class: 'class', feeling: 'fe
 
 export default function GraphView({
   memories,
+  layout,
   edges,
   visibleIds,
   highlightIds,
@@ -80,10 +82,24 @@ export default function GraphView({
       // plus a whisper of stable jitter so planes don't lock. Bigger orb == nearer == moves most.
       const depth = Math.min(1, Math.max(0.55, 0.55 + 0.45 * ((imp - 1) / 4) + (hh - 0.5) * 0.06));
       // anchorA: per-node parallax anchor, eased toward 1 while focused (onRenderFramePre).
-      return { id: m.id, mem: m, depth, phase: hh * TAU, anchorA: 0 };
+      const node = { id: m.id, mem: m, depth, phase: hh * TAU, anchorA: 0 };
+      // Precomputed layout (scripts/compute-layout.mjs): seed the settled position so no
+      // runtime warmup is needed — switching persons is instant and jank-free.
+      const pos = layout && layout[m.id];
+      if (pos) { node.x = pos[0]; node.y = pos[1]; }
+      return node;
     }),
-    links: edges.map((e) => ({ source: e.source, target: e.target, weight: e.weight, shared: e.shared })),
-  }), [memories, edges]);
+    links: edges.map((e) => ({ source: e.source, target: e.target, weight: e.weight, shared: e.shared, bkey: e.source + '|' + e.target })),
+  }), [memories, layout, edges]);
+
+  // All nodes pre-positioned → zero warmup ticks (the synchronous warmup loop blocked the
+  // main thread ~0.5s at 241 nodes — the choppy person-switch). Fallback 200 for new data
+  // without a computed layout.
+  const allSeeded = useMemo(() => graphData.nodes.every((n) => n.x != null), [graphData]);
+
+  // Edge budget (edges.js → edgeBudget): at rest, dense graphs show only the maximum
+  // spanning tree + strongest extras. Ego/gather/hover still reveal everything relevant.
+  const budgetKeys = useMemo(() => edgeBudget(edges, memories.length), [edges, memories]);
 
   const nodeById = useMemo(() => {
     const map = new Map();
@@ -674,7 +690,7 @@ export default function GraphView({
   };
 
   // --- edge paint: fine dotted curved gradient thread ---
-  const paintLink = (link, ctx) => {
+  const paintLink = (link, ctx, globalScale) => {
     const s = link.source;
     const t = link.target;
     if (!s || !t || s.x == null || t.x == null) return;
@@ -692,7 +708,11 @@ export default function GraphView({
     const wl = (w - 6) / 8;
     let alpha = Math.min(0.55, 0.05 + 0.5 * wl * wl);
     if (egoId != null) alpha = s.id === egoId || t.id === egoId ? 0.65 : 0.03;
-    if (gatherIds && gatherIds.has(s.id) && gatherIds.has(t.id)) {
+    // Edge budget: outside ego/gather/hover, hide non-skeleton edges of dense graphs.
+    const gatherPair = gatherIds && gatherIds.has(s.id) && gatherIds.has(t.id);
+    const egoPair = egoId != null && (s.id === egoId || t.id === egoId);
+    if (budgetKeys && !budgetKeys.has(link.bkey) && !gatherPair && !egoPair && link !== hoverLink) return;
+    if (gatherPair) {
       // Brighten but PRESERVE the weight hierarchy — a flat boost made every internal
       // thread equally loud and 58 gathered memories read as spaghetti.
       alpha = Math.min(0.75, alpha * 1.6 + 0.05);
@@ -722,12 +742,15 @@ export default function GraphView({
     grad.addColorStop(0.5, stops[1]);
     grad.addColorStop(1, stops[2]);
 
+    // Zoom-constant thread texture: dashes and width shrink in world units as you zoom
+    // in, so threads stay fine dotted lines instead of blowing up into blobs.
+    const zs = Math.max(1, globalScale) ** 0.85;
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = grad;
-    ctx.lineWidth = width;
+    ctx.lineWidth = width / zs;
     ctx.lineCap = 'round';
-    ctx.setLineDash([0.5, 3]);
+    ctx.setLineDash([0.5 / zs, 3 / zs]);
     ctx.beginPath();
     ctx.moveTo(sx, sy);
     // Curve from the library's own control points (computed from linkCurvature=0.2 before
@@ -801,7 +824,7 @@ export default function GraphView({
         onZoom={onZoomActivity}
         onZoomEnd={onZoomActivity}
         d3VelocityDecay={0.75}
-        warmupTicks={200}
+        warmupTicks={allSeeded ? 0 : 200}
         cooldownTime={Infinity}
         autoPauseRedraw={false} /* with warmupTicks the engine can report stopped → autoPause
           freezes ALL painting until first interaction (blank first load). We animate every

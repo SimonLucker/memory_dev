@@ -107,3 +107,32 @@ export function yearsOf(memories) {
   const years = memories.map((m) => Number(m.when.slice(6, 10)));
   return [...new Set(years)].sort((a, b) => a - b);
 }
+
+// Edge budget for readability at scale (LGL-style): when a graph is edge-dense, show only
+// a skeleton = MAXIMUM spanning tree (guarantees every cluster stays connected) plus the
+// strongest remaining edges up to ~1.8 per node. Returns a Set of "source|target" keys,
+// or null when the graph is sparse enough to show everything (small graphs untouched).
+export function edgeBudget(edges, nodeCount) {
+  if (edges.length <= nodeCount * 3.2) return null;
+  const parent = new Map();
+  const find = (x) => {
+    while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); }
+    return x;
+  };
+  const sorted = [...edges].sort((a, b) => b.weight - a.weight);
+  for (const e of sorted) { parent.set(e.source, e.source); parent.set(e.target, e.target); }
+  const keep = new Set();
+  // Kruskal, maximizing weight: the strongest tree that spans every component.
+  for (const e of sorted) {
+    const rs = find(e.source);
+    const rt = find(e.target);
+    if (rs !== rt) { parent.set(rs, rt); keep.add(e.source + '|' + e.target); }
+  }
+  // Fill with the strongest non-tree edges up to the budget.
+  const budget = Math.round(nodeCount * 1.8);
+  for (const e of sorted) {
+    if (keep.size >= budget) break;
+    keep.add(e.source + '|' + e.target);
+  }
+  return keep;
+}

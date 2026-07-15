@@ -85,6 +85,14 @@ Labels must never overlap each other. Greedy priority culling, recomputed each f
 
 Deterministic, no state, one array per frame. The slow drift means labels appear/disappear rarely; the stable sort keeps winners winning.
 
+## Precomputed layout (build-time physics)
+
+`scripts/compute-layout.mjs [--person pX]` runs the exact runtime force config for 300 ticks in node and writes `src/data/layout-pX.json` (`{id:[x,y]}`). persons.js ships it; GraphView seeds node positions from it and sets `warmupTicks = allSeeded ? 0 : 200` — the synchronous warmup loop blocked the main thread ~0.5s at 241 nodes (the choppy person switch). Re-run the script whenever a person's memories change; unknown nodes fall back to runtime warmup.
+
+## Edge budget (readability at scale)
+
+`edgeBudget(edges, nodeCount)` in edges.js: null (draw everything) while `edges ≤ 3.2/node`; beyond that, a Set of "src|tgt" keys = MAXIMUM spanning tree (Kruskal — guarantees every cluster stays connected, the "outer cluster connectivity" ask) + strongest extras to `1.8/node`. paintLink skips non-budget edges at rest but ALWAYS shows ego/gathered/hovered edges — detail on demand, skeleton at rest (LGL-style, literature-backed). Threads also render zoom-constant: dash `[0.5,3]/zs` and `width/zs` with `zs = max(1, globalScale)^0.85`, so zoomed-in threads stay fine dotted lines instead of blobs.
+
 ## Entrance (first load)
 
 No physics flopping on load. Pre-settle the layout with `warmupTicks` ≈ 200 (engine runs before first paint) AND set `autoPauseRedraw={false}` — with warmup the engine can report stopped, and autoPause then freezes all painting until the first user interaction (symptom: blank page that springs to life on a wheel/drag). This scene animates every frame regardless, so auto-pausing is never wanted. `zoomToFit` right after mount (the tick-120 wait is obsolete once warmup pre-settles). Then float the memories in: for ~1.6s, each node paints at `settled + dir * 260 * (1 - easeOutCubic(p))` where `dir` = unit vector from the graph centroid (nodes drift inward from just outside), `p` = clamped progress with a per-node stagger (`hash01(id) * 0.5s`), alpha ramping 0→depth. Labels and interactions wait until the intro ends (skip hover/pointer paint while p < 1). Dust/nebula unaffected.

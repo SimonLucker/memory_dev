@@ -16,7 +16,8 @@ const monthOf = m => Number(m.when.slice(3, 5))
 
 export default function App() {
   const [personId, setPersonId] = useState(PERSONS[0].id)
-  const memories = PERSONS.find(p => p.id === personId).memories
+  const person = PERSONS.find(p => p.id === personId)
+  const memories = person.memories
   const edges = useMemo(() => deriveEdges(memories), [memories])
   const vocab = useMemo(() => buildVocab(memories), [memories])
   const years = useMemo(() => yearsOf(memories).map(String), [memories])
@@ -113,6 +114,7 @@ export default function App() {
         <GraphView
           key={personId}
           memories={memories}
+          layout={person.layout}
           edges={edges}
           visibleIds={visibleIds}
           highlightIds={queryResult ? queryResult.ids : null}
