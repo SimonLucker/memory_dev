@@ -33,6 +33,55 @@ const darken = (a, t) => mix(a, '#000000', t);
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // stable 0..1 hash from a node id (FNV-1a) → per-node depth + breathing phase, fixed across renders
+// --- Orb sprite atlas (perf): shadowBlur + radial gradients are the canvas hot-path
+// killers at 241 nodes/frame (dropped frames during the entrance). Each orb look is
+// baked ONCE to a small offscreen canvas (per class-accent x importance x depth-band,
+// plus a highlight variant) at 3x resolution; painting becomes a single drawImage with
+// breathing as a cheap destination scale. Past zoom 2.5 the vector path takes over so
+// close-ups stay crisp (few nodes are on screen that deep).
+const SPRITE_SCALE = 3;
+const GLOW_PAD = 16;
+const spriteCache = new Map();
+function orbSprite(accent, imp, band, highlighted) {
+  const key = accent + '|' + imp + '|' + band + (highlighted ? '|H' : '');
+  let sp = spriteCache.get(key);
+  if (sp) return sp;
+  const r = (4 + imp * 2) * band;
+  const half = Math.ceil((r + GLOW_PAD) * SPRITE_SCALE);
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = half * 2;
+  const c = cv.getContext('2d');
+  c.scale(SPRITE_SCALE, SPRITE_SCALE);
+  const cx = half / SPRITE_SCALE;
+  c.shadowColor = highlighted ? PEACH : accent;
+  c.shadowBlur = highlighted ? 22 : 12;
+  const far = mix(accent, '#8B85A0', (1 - band) * 0.5);
+  const grad = c.createRadialGradient(cx - r * 0.3, cx - r * 0.3, r * 0.1, cx, cx, r);
+  if (highlighted) {
+    grad.addColorStop(0, '#FFFFFF');
+    grad.addColorStop(0.5, mix(accent, '#ffffff', 0.4));
+    grad.addColorStop(1, accent);
+  } else {
+    grad.addColorStop(0, mix(far, '#ffffff', 0.55));
+    grad.addColorStop(0.55, far);
+    grad.addColorStop(1, darken(far, 0.25));
+  }
+  c.beginPath();
+  c.arc(cx, cx, r, 0, TAU);
+  c.fillStyle = grad;
+  c.fill();
+  c.shadowBlur = 0;
+  c.beginPath();
+  c.arc(cx, cx, r + 1.5, 0, TAU);
+  c.lineWidth = 1;
+  c.strokeStyle = 'rgba(242,240,236,0.35)';
+  c.stroke();
+  sp = { cv, worldHalf: r + GLOW_PAD, r };
+  spriteCache.set(key, sp);
+  return sp;
+}
+const bandOf = (depth) => (depth > 0.9 ? 1 : depth > 0.7 ? 0.8 : 0.6);
+
 function hash01(id) {
   let h = 2166136261;
   const s = String(id);
@@ -70,6 +119,7 @@ export default function GraphView({
   const mouseSmoothRef = useRef({ x: 0, y: 0 }); // lerp-smoothed, shared with DustField
   const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 12/k, world units
   const labelIdsRef = useRef(new Set());         // ids whose label survived the anti-overlap pass
+  const lastLabelPassRef = useRef(0);            // greedy label pass throttle (~6Hz)
   const [hoverId, setHoverId] = useState(null);
   const [hoverLink, setHoverLink] = useState(null);
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -381,8 +431,14 @@ export default function GraphView({
       const prio = active ? 3 : selected ? 2 : isHighlighted(node) ? 1 : 0;
       cand.push({ node, focused: active || selected || isHighlighted(node), showYear: info.showYear, imp, prio, id: String(node.id), px, py });
     }
-    // hovered > selected > importance desc > id (stable tiebreak kills flicker)
-    cand.sort((a, b) => b.prio - a.prio || b.imp - a.imp || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    // hovered > selected > CURRENT HOLDERS (hysteresis — dense clusters flickered as
+    // wobbling orbs flipped greedy winners every frame) > importance desc > stable id
+    const prev = labelIdsRef.current;
+    cand.sort((a, b) =>
+      b.prio - a.prio ||
+      (prev.has(b.id) ? 1 : 0) - (prev.has(a.id) ? 1 : 0) ||
+      b.imp - a.imp ||
+      (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
     const t = performance.now();
     const kept = [];
     const survivors = new Set();
@@ -481,9 +537,15 @@ export default function GraphView({
         n.y += (ty - n.y) * ease;
       }
     }
-    // Labels wait until the entrance float finishes.
-    if (introActiveRef.current) labelIdsRef.current = new Set();
-    else computeLabelSet(ctx, globalScale);
+    // Labels wait until the entrance float finishes. The greedy pass runs at ~6Hz —
+    // label sets don't need frame-rate updates and throttling removes per-frame churn.
+    if (introActiveRef.current) {
+      labelIdsRef.current = new Set();
+      lastLabelPassRef.current = 0;
+    } else if (performance.now() - lastLabelPassRef.current > 150) {
+      lastLabelPassRef.current = performance.now();
+      computeLabelSet(ctx, globalScale);
+    }
   };
 
   // Selected-node crosshair (graph-view/SKILL.md → Selected-node crosshair). Drawn in canvas at
@@ -615,40 +677,45 @@ export default function GraphView({
 
     ctx.globalAlpha = alphaZ * intro.a; // depth fade × entrance float-in
 
-    // 1. faint glow, pulsing gently in time with the breath
-    const glowPulse = 1 + 0.3 * osc;
-    ctx.shadowColor = focused ? PEACH : accent;
-    ctx.shadowBlur = (focused ? 22 : 12) * glowPulse;
-
-    // 2. matte sphere — radial gradient, light from top-left, no specular dot.
-    //    Recede toward dusk with depth (cheap desaturation of far orbs).
-    const far = mix(accent, '#8B85A0', (1 - node.depth) * 0.5);
-    const grad = ctx.createRadialGradient(
-      nx - r * 0.3, ny - r * 0.3, r * 0.1,
-      nx, ny, r,
-    );
-    if (highlighted) {
-      grad.addColorStop(0, '#FFFFFF'); // near-white core (site's white node dots)
-      grad.addColorStop(0.5, mix(accent, '#ffffff', 0.4));
-      grad.addColorStop(1, accent);
+    if (globalScale <= 2.5) {
+      // Sprite fast path: glow + gradient + hairline ring baked in; breathing rides the
+      // destination size. One drawImage replaces the per-frame shadowBlur hot path.
+      const sp = orbSprite(accent, m.importance || 1, highlighted ? 1 : bandOf(node.depth), highlighted);
+      const scale = r / ((4 + (m.importance || 1) * 2) * (highlighted ? 1 : bandOf(node.depth)));
+      const half = sp.worldHalf * scale;
+      ctx.drawImage(sp.cv, nx - half, ny - half, half * 2, half * 2);
     } else {
-      grad.addColorStop(0, mix(far, '#ffffff', 0.55));
-      grad.addColorStop(0.55, far);
-      grad.addColorStop(1, darken(far, 0.25));
+      // Vector path (deep zoom): full-resolution glow, gradient and ring.
+      const glowPulse = 1 + 0.3 * osc;
+      ctx.shadowColor = focused ? PEACH : accent;
+      ctx.shadowBlur = (focused ? 22 : 12) * glowPulse;
+      const far = mix(accent, '#8B85A0', (1 - node.depth) * 0.5);
+      const grad = ctx.createRadialGradient(
+        nx - r * 0.3, ny - r * 0.3, r * 0.1,
+        nx, ny, r,
+      );
+      if (highlighted) {
+        grad.addColorStop(0, '#FFFFFF'); // near-white core (site's white node dots)
+        grad.addColorStop(0.5, mix(accent, '#ffffff', 0.4));
+        grad.addColorStop(1, accent);
+      } else {
+        grad.addColorStop(0, mix(far, '#ffffff', 0.55));
+        grad.addColorStop(0.55, far);
+        grad.addColorStop(1, darken(far, 0.25));
+      }
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, TAU);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.shadowBlur = 0; // crisp rings/labels below
+
+      ctx.beginPath();
+      ctx.arc(nx, ny, r + 1.5, 0, TAU);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(242,240,236,0.35)';
+      ctx.stroke();
     }
-    ctx.beginPath();
-    ctx.arc(nx, ny, r, 0, TAU);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.shadowBlur = 0; // crisp rings/labels below
-
-    // 3. hairline ring
-    ctx.beginPath();
-    ctx.arc(nx, ny, r + 1.5, 0, TAU);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(242,240,236,0.35)';
-    ctx.stroke();
 
     // selected: dotted peach ring
     if (selected) {
@@ -759,17 +826,26 @@ export default function GraphView({
     const mox = (sx - s.x + tx - t.x) / 2; // shift control points by the mean endpoint offset
     const moy = (sy - s.y + ty - t.y) / 2;
 
-    const grad = ctx.createLinearGradient(sx, sy, tx, ty);
-    grad.addColorStop(0, stops[0]);
-    grad.addColorStop(0.5, stops[1]);
-    grad.addColorStop(1, stops[2]);
+    // Gradient strokes only where the eye lingers (strong bonds, hover, gather); weak
+    // whisper threads use the solid mid-stop — indistinguishable at 1px/low alpha and it
+    // avoids hundreds of createLinearGradient allocations per frame.
+    let stroke;
+    if (w >= 10 || link === hoverLink || gatherPair || connector) {
+      const grad = ctx.createLinearGradient(sx, sy, tx, ty);
+      grad.addColorStop(0, stops[0]);
+      grad.addColorStop(0.5, stops[1]);
+      grad.addColorStop(1, stops[2]);
+      stroke = grad;
+    } else {
+      stroke = stops[1];
+    }
 
     // Zoom-constant thread texture: dashes and width shrink in world units as you zoom
     // in, so threads stay fine dotted lines instead of blowing up into blobs.
     const zs = Math.max(1, globalScale) ** 0.85;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.strokeStyle = grad;
+    ctx.strokeStyle = stroke;
     ctx.lineWidth = width / zs;
     ctx.lineCap = 'round';
     ctx.setLineDash([0.5 / zs, 3 / zs]);

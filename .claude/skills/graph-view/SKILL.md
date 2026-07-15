@@ -142,3 +142,15 @@ renders NOTHING on the graph canvas (blank screenshots) even though the app is p
 healthy — the loop starts the moment the tab becomes visible. Before diagnosing "blank
 canvas" bugs from automated screenshots, check `document.visibilityState === 'visible'`.
 A whole afternoon went to this once.
+
+## Render performance at scale (sprite atlas)
+
+Canvas `shadowBlur` is a per-draw Gaussian blur — at 241 nodes/frame it was the dropped-
+frames culprit during the entrance. Orb looks are baked ONCE into offscreen-canvas sprites
+(keyed class-accent x importance x depth-band {1, 0.8, 0.6} x highlight, 3x resolution,
+glow + gradient + hairline ring included); painting is a single drawImage with breathing as
+destination scale. Past `globalScale 2.5` the vector path takes over for crispness. Weak
+threads (< weight 10, not hovered/gathered/connector) stroke with the solid mid dawn stop
+instead of a per-frame createLinearGradient. The greedy label pass runs throttled (~6Hz)
+with hysteresis — current label holders outrank same-priority challengers — because dense
+clusters flickered as wobbling orbs flipped greedy winners every frame.
