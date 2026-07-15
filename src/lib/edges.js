@@ -129,7 +129,7 @@ export function edgeBudget(edges, nodeCount) {
     if (rs !== rt) { parent.set(rs, rt); keep.add(e.source + '|' + e.target); }
   }
   // Fill with the strongest non-tree edges up to the budget.
-  const budget = Math.round(nodeCount * 1.8);
+  const budget = Math.round(nodeCount * 3.0); // Simon-density (3/node) proved readable — the floor
   for (const e of sorted) {
     if (keep.size >= budget) break;
     keep.add(e.source + '|' + e.target);

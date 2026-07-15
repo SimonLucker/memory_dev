@@ -53,9 +53,11 @@ export default function GraphView({
   highlightIds,
   selectedId,
   onSelect,
+  onEdit,
 }) {
   const fgRef = useRef(null);
   const containerRef = useRef(null);
+  const firstDataRef = useRef(true);   // person-switch remounts (key) replay the intro; edits must not
   const didFitRef = useRef(false);      // one-shot: after warmup settles, frame the graph + start the float
   const introStartRef = useRef(0);      // performance.now() when the entrance float began (0 = not yet)
   const introActiveRef = useRef(true);  // true until the float finishes — gates labels + pointer/hover
@@ -160,10 +162,21 @@ export default function GraphView({
     // warmupTicks pre-settles the layout with THESE forces: the graphData flush is debounced
     // ~1ms, so it runs after this effect configures them — no visible flop. Re-arm the
     // one-shot fit + entrance float for the (re)built data.
-    didFitRef.current = false;
-    introStartRef.current = 0;
-    introActiveRef.current = true;
-    introFadeRef.current = 0;
+    if (firstDataRef.current) {
+      firstDataRef.current = false;
+      didFitRef.current = false;
+      introStartRef.current = 0;
+      introActiveRef.current = true;
+      introFadeRef.current = 0;
+    } else {
+      // Subsequent graphData (an in-place memory edit, not a person switch — the person
+      // switch remounts via key): keep the camera and skip the entrance float, but the
+      // rebuilt nodes need homes for the liveliness pass.
+      for (const n of graphData.nodes) {
+        if (n.x != null) { n.hx = n.x; n.hy = n.y; }
+      }
+      didFitRef.current = true;
+    }
     fg.d3ReheatSimulation();
   }, [graphData]);
 
@@ -842,7 +855,7 @@ export default function GraphView({
         maxZoom={8}
       />
       {selectedNode && (
-        <FocusHud key={selectedNode.id} memory={selectedNode.mem} onClose={() => onSelect(null)} />
+        <FocusHud key={selectedNode.id} memory={selectedNode.mem} onEdit={onEdit} onClose={() => onSelect(null)} />
       )}
     </div>
   );

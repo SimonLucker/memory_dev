@@ -45,7 +45,19 @@ function Chip({ label, accent, fill, border }) {
   );
 }
 
-export default function FocusHud({ memory, onClose }) {
+const inputStyle = {
+  width: '100%',
+  boxSizing: 'border-box',
+  background: 'rgba(0,0,0,0.3)',
+  border: '1px solid rgba(255,255,255,0.18)',
+  borderRadius: 8,
+  color: PAPER,
+  font: '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  padding: '6px 8px',
+  marginBottom: 6,
+};
+
+export default function FocusHud({ memory, onEdit, onClose }) {
   const accent = CLASS_COLORS[memory.class] || DAWN[0];
   const fill = CLASS_FILLS[memory.class] || 'rgba(255,255,255,0.06)';
   const border = CLASS_BORDERS[memory.class] || 'rgba(255,255,255,0.14)';
@@ -53,7 +65,18 @@ export default function FocusHud({ memory, onClose }) {
   const feelings = memory.feeling || [];
   const who = memory.who || [];
   const photos = memory.photos || [];
-  const [hero, setHero] = useState(0); // index of the photo shown large (reset per memory via key= in GraphView)
+  const [hero, setHero] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(null);
+  const startEdit = () => {
+    setDraft({ what: memory.what, where: memory.where, why: memory.why, summary: memory.summary, importance: memory.importance || 3 });
+    setEditing(true);
+  };
+  const saveEdit = () => {
+    onEdit?.({ ...memory, ...draft, importance: Number(draft.importance) });
+    setEditing(false);
+  };
+  const set = (k) => (e) => setDraft((d) => ({ ...d, [k]: e.target.value })); // index of the photo shown large (reset per memory via key= in GraphView)
   const heroSrc = photos[hero];
 
   return (
@@ -79,6 +102,30 @@ export default function FocusHud({ memory, onClose }) {
           boxShadow: 'rgba(17,24,39,0.35) 0 12px 40px',
         }}
       >
+        {onEdit && !editing && (
+          <button
+            onClick={startEdit}
+            aria-label="Edit"
+            style={{
+              pointerEvents: 'auto',
+              position: 'absolute',
+              zIndex: 1,
+              top: 12,
+              right: 44,
+              width: 26,
+              height: 26,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.14)',
+              background: 'rgba(255,255,255,0.06)',
+              color: PAPER,
+              cursor: 'pointer',
+              fontSize: 12,
+              lineHeight: 1,
+            }}
+          >
+            ✎
+          </button>
+        )}
         <button
           onClick={onClose}
           style={{
@@ -156,8 +203,29 @@ export default function FocusHud({ memory, onClose }) {
         <div style={{ fontSize: 9.5, letterSpacing: 2, textTransform: 'uppercase', color: accent }}>
           {memory.class} · {year}
         </div>
-        <div style={{ fontSize: 19, fontWeight: 600, margin: '4px 0 2px', lineHeight: 1.2 }}>{memory.what}</div>
-        <div style={{ fontSize: 12.5, color: 'rgba(242,240,236,0.55)' }}>{memory.where}</div>
+        {editing ? (
+          <div style={{ marginTop: 8 }}>
+            <input style={{ ...inputStyle, fontSize: 15, fontWeight: 600 }} value={draft.what} onChange={set('what')} placeholder="What" />
+            <input style={inputStyle} value={draft.where} onChange={set('where')} placeholder="Where" />
+            <input style={inputStyle} value={draft.why} onChange={set('why')} placeholder="Why" />
+            <textarea style={{ ...inputStyle, minHeight: 56, resize: 'vertical' }} value={draft.summary} onChange={set('summary')} placeholder="Summary" />
+            <label style={{ fontSize: 11, color: 'rgba(242,240,236,0.55)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              Importance
+              <select style={{ ...inputStyle, width: 'auto', marginBottom: 0 }} value={draft.importance} onChange={set('importance')}>
+                {[1, 2, 3, 4, 5].map((i) => <option key={i} value={i}>{i}</option>)}
+              </select>
+            </label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={saveEdit} style={{ flex: 1, padding: '7px 0', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 600, color: '#1F2937', background: `linear-gradient(165deg, ${DAWN[0]}, ${PEACH} 56%, ${DAWN[2]})` }}>Save</button>
+              <button onClick={() => setEditing(false)} style={{ flex: 1, padding: '7px 0', borderRadius: 999, border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer', color: PAPER, background: 'transparent' }}>Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize: 19, fontWeight: 600, margin: '4px 0 2px', lineHeight: 1.2 }}>{memory.what}</div>
+            <div style={{ fontSize: 12.5, color: 'rgba(242,240,236,0.55)' }}>{memory.where}</div>
+          </>
+        )}
 
         {who.length > 0 && (
           <>

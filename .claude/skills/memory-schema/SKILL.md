@@ -60,3 +60,14 @@ For every pair of memories, collect shared attributes:
 - Person 2 ("Maya", world traveler): 241 memories, ids `p2m001`–`p2m241`, years 2016–2026, class mix Travel 95 / Friends 65 / Work 35 / Family 30 / Milestones 16. Own people pool (~28), places (~35, global cities), same 8-feeling set + "Free". Photos start empty; the photo CLIs accept `--person p2` (targets memories-p2.json, photo files keep the memory-id prefix so both persons share public/photos/).
 - Switching persons swaps the whole memories array — every derived structure (edges, vocab, years, counts) recomputes; selection/filters/query reset. All App memos must depend on the active memories.
 - The switcher is a top-right dusk-glass pill (both names, dawn-gradient highlight on the active one). The focus card starts below it (top offset ~68px).
+
+## Editing (prototype persistence)
+
+The memory card has a ✎ button: edit mode exposes what/where/why/summary/importance. Saving
+updates App state (memories are useState seeded from the JSON — every derived structure
+recomputes) and POSTs the person's full array to `/__save-memories`, a dev-server middleware
+(vite.config.js) that writes the source JSON back to disk. The vite watcher ignores
+`src/data/memories*.json` so saves don't trigger a full reload. Production builds have no
+endpoint — the fetch fails gracefully and edits stay in-memory. Layout is NOT recomputed on
+edit (positions stay stable); re-run scripts/compute-layout.mjs if edits change edges enough
+to matter. In-place edits must NOT replay the entrance float (GraphView firstDataRef guard).

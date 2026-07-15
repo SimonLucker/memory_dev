@@ -17,7 +17,20 @@ const monthOf = m => Number(m.when.slice(3, 5))
 export default function App() {
   const [personId, setPersonId] = useState(PERSONS[0].id)
   const person = PERSONS.find(p => p.id === personId)
-  const memories = person.memories
+  // Memories are editable state (seeded from the JSON); edits persist via the dev-server
+  // /__save-memories endpoint (vite.config.js) straight back into the data files.
+  const [memMap, setMemMap] = useState(() => Object.fromEntries(PERSONS.map(p => [p.id, p.memories])))
+  const memories = memMap[personId]
+
+  const saveMemory = updated => {
+    const next = memories.map(m => (m.id === updated.id ? updated : m))
+    setMemMap(prev => ({ ...prev, [personId]: next }))
+    fetch('/__save-memories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ person: personId, memories: next }),
+    }).catch(() => console.warn('save endpoint unavailable — edit kept in memory only'))
+  }
   const edges = useMemo(() => deriveEdges(memories), [memories])
   const vocab = useMemo(() => buildVocab(memories), [memories])
   const years = useMemo(() => yearsOf(memories).map(String), [memories])
@@ -120,6 +133,7 @@ export default function App() {
           highlightIds={queryResult ? queryResult.ids : null}
           selectedId={selectedId}
           onSelect={setSelectedId}
+          onEdit={saveMemory}
         />
       </div>
       <Timeline
