@@ -103,6 +103,7 @@ export default function GraphView({
   selectedId,
   onSelect,
   onEdit,
+  gatherActive,
 }) {
   const fgRef = useRef(null);
   const containerRef = useRef(null);
@@ -284,9 +285,11 @@ export default function GraphView({
   // internal threads glow. Query matches win; otherwise any strict-subset filter state.
   const gatherIds = useMemo(() => {
     if (highlightIds) return highlightIds;
-    if (visibleIds.size < memories.length) return visibleIds;
+    // Only POSITIVE narrowing gathers (query/chips/year/month). Hiding a legend class is
+    // an exclusion — the rest of the graph should stay put, not fly to the center.
+    if (gatherActive && visibleIds.size < memories.length) return visibleIds;
     return null;
-  }, [highlightIds, visibleIds, memories]);
+  }, [highlightIds, visibleIds, memories, gatherActive]);
   // Gathered constellation targets: the matched subset keeps its NATURAL force-layout
   // shape (connected memories stay adjacent, threads stay short — a phyllotaxis spiral
   // scrambled neighbors and read as chaos), compacted by 0.55 around its own centroid
@@ -308,15 +311,47 @@ export default function GraphView({
     const targetR = 34 * Math.sqrt(list.length);
     const shrink = Math.min(0.8, targetR / spreadR);
     const c = centroidRef.current;
-    const map = new Map();
-    for (const n of list) {
-      map.set(n.id, {
-        gx: c.x + (n.hx - subC.x) * shrink,
-        gy: c.y + (n.hy - subC.y) * shrink,
-      });
+    // Collision relaxation ON THE TARGETS: memories fly to the center unobstructed, but
+    // the composition they arrive at is already collision-free among the actives (dimmed
+    // "off" orbs are ignored). One-time cost per filter change — nothing on the paint path.
+    const items = list.map((n) => ({
+      n,
+      x: c.x + (n.hx - subC.x) * shrink,
+      y: c.y + (n.hy - subC.y) * shrink,
+      r: (4 + (n.mem.importance || 1) * 2) * n.depth + 7,
+    }));
+    for (let iter = 0; iter < 40; iter++) {
+      let moved = false;
+      for (let i = 0; i < items.length; i++) {
+        for (let j = i + 1; j < items.length; j++) {
+          const a = items[i];
+          const b = items[j];
+          let dx = b.x - a.x;
+          let dy = b.y - a.y;
+          let d = Math.hypot(dx, dy);
+          const min = a.r + b.r;
+          if (d >= min) continue;
+          if (d < 0.01) { dx = Math.cos(a.n.phase); dy = Math.sin(a.n.phase); d = 1; }
+          const push = (min - d) / 2 / d;
+          a.x -= dx * push; a.y -= dy * push;
+          b.x += dx * push; b.y += dy * push;
+          moved = true;
+        }
+      }
+      if (!moved) break;
     }
+    const map = new Map();
+    for (const it of items) map.set(it.n.id, { gx: it.x, gy: it.y });
     return map;
   }, [gatherIds, graphData]);
+  // Inside a LARGE gather the internal threads need the same discipline as the rest view:
+  // the scale-decaying budget applied to the gathered subgraph (null for small gathers —
+  // they keep showing everything).
+  const gatherBudget = useMemo(() => {
+    if (!gatherIds) return null;
+    const sub = edges.filter((e) => gatherIds.has(e.source) && gatherIds.has(e.target));
+    return edgeBudget(sub, gatherIds.size);
+  }, [gatherIds, edges]);
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
   // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
@@ -800,6 +835,7 @@ export default function GraphView({
     const egoPair = egoId != null && (s.id === egoId || t.id === egoId);
     const connector = connectorSet.has(link.bkey);
     if (budgetKeys && !budgetKeys.has(link.bkey) && !connector && !gatherPair && !egoPair && link !== hoverLink) return;
+    if (gatherPair && gatherBudget && !gatherBudget.has(link.bkey) && !connector && !egoPair && link !== hoverLink) return;
     if (connector) alpha = Math.max(alpha, 0.32); // bridges stay visible at rest
     if (gatherPair) {
       // Brighten but PRESERVE the weight hierarchy — a flat boost made every internal

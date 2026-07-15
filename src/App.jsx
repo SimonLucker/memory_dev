@@ -151,6 +151,7 @@ export default function App() {
           selectedId={selectedId}
           onSelect={setSelectedId}
           onEdit={saveMemory}
+          gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
         />
       </div>
       <Timeline
