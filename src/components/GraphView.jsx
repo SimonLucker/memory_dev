@@ -258,10 +258,11 @@ export default function GraphView({
     s.y += (tg.y - s.y) * 0.06;
     const k = globalScale || 1;
     mouseWorldRef.current = { x: (s.x * 12) / k, y: (s.y * 12) / k }; // ~12 screen px at any zoom
-    // Ease each node's parallax anchor toward 1 while it's the focus (hover/select/highlight),
-    // else toward 0 — so focused orbs glide to true position instead of snapping (hover-jump bug).
+    // Ease each node's parallax anchor toward 1 ONLY while selected — centerAt/FocusHud
+    // need the true position. Hover must NOT anchor: hitboxes follow the painted offset,
+    // and anchoring made hovered orbs visibly slide home after any pan/zoom.
     for (const n of graphData.nodes) {
-      const anchored = n.id === hoverId || n.id === selectedId || (highlightIds && highlightIds.has(n.id));
+      const anchored = n.id === selectedId;
       n.anchorA += ((anchored ? 1 : 0) - n.anchorA) * 0.15;
     }
     computeLabelSet(ctx, globalScale);
