@@ -37,7 +37,7 @@ The eye should read structure at rest and detail on demand:
 - **At rest**: alpha scales with weight — `alpha = 0.05 + 0.5 * ((weight - 6) / 8)^2`, capped 0.55. Weak intra-cluster edges become a whisper of texture; only strong bonds draw lines the eye follows.
 - **Node hovered or selected**: that node's edges all rise to alpha 0.65; every other edge falls to 0.03. Neighbor endpoints keep their orbs at full alpha so the ego-network pops.
 - **Link hovered**: that single link at alpha 0.85 and +0.4px width.
-- Either endpoint dimmed (filters/query) → alpha 0.04 regardless.
+- Either endpoint dimmed (filters/query) → alpha 0.015 — connections into the turned-off world are almost invisible.
 
 ### Link hover = "what is this connection?"
 
@@ -97,7 +97,7 @@ While a memory is selected, its neighbors ease away to give it air. CRITICAL ENG
 
 When ANY filter narrows the set (legend class toggle, attribute chips, year/month, or a query with matches), the matching memories drift toward the layout centroid and their mutual connections light up; removing filters lets them float home (the liveliness easing handles both directions for free):
 - `gatherIds` = query highlightIds if non-null, else visibleIds when it's a strict subset of all memories, else null.
-- Gathered targets PRESERVE the natural force-layout shape: subset compacted by 0.55 around its own centroid, recentered on the layout centroid. (A phyllotaxis spiral was tried and scrapped: it scrambles neighbors, so every internal thread crosses the ball — chaos at 58 matches.) Overlap with dimmed "off" orbs is deliberately ignored. Gather easing 0.09/frame; wobble halves while gathered. Focus-repel distances are measured against BASE TARGETS (gathered or home) with R 120 while gathered, 170 otherwise — home-based distances are meaningless mid-gather.
+- Gathered targets PRESERVE the natural force-layout shape: subset compacted around its own centroid toward a COUNT-BASED target radius (`targetR = 34*sqrt(n)`, `shrink = min(0.8, targetR/spreadRMS)`) and recentered on the layout centroid — few matches huddle tight, many keep comfortable spread, independent of how scattered the matches originally were. (A phyllotaxis spiral was tried and scrapped: it scrambles neighbors, so every internal thread crosses the ball — chaos at 58 matches.) Overlap with dimmed "off" orbs is deliberately ignored. Gather easing 0.09/frame; wobble halves while gathered. Focus-repel distances are measured against BASE TARGETS (gathered or home) with R 120 while gathered, 170 otherwise — home-based distances are meaningless mid-gather.
 - Edge boost: when both endpoints are gathered, `alpha = min(0.75, alpha*1.6 + 0.05)` (+0.2px) — brighter but the WEIGHT HIERARCHY stays intact (heavy pronounced, light faded, same as the unfiltered default; a flat boost flattened everything into spaghetti).
 
 ## Selected-node crosshair (canvas, not DOM)

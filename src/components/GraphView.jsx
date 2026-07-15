@@ -213,13 +213,20 @@ export default function GraphView({
     let sx = 0, sy = 0;
     for (const n of list) { sx += n.hx; sy += n.hy; }
     const subC = { x: sx / list.length, y: sy / list.length };
+    // Count-based tightness: aim the constellation at a radius ~ 34*sqrt(n) world units
+    // (uniform spacing regardless of how scattered the matches originally were), so a
+    // handful of memories huddle intimately while large sets keep a comfortable spread.
+    let rr = 0;
+    for (const n of list) rr += (n.hx - subC.x) ** 2 + (n.hy - subC.y) ** 2;
+    const spreadR = Math.sqrt(rr / list.length) || 1;
+    const targetR = 34 * Math.sqrt(list.length);
+    const shrink = Math.min(0.8, targetR / spreadR);
     const c = centroidRef.current;
-    const SHRINK = 0.55;
     const map = new Map();
     for (const n of list) {
       map.set(n.id, {
-        gx: c.x + (n.hx - subC.x) * SHRINK,
-        gy: c.y + (n.hy - subC.y) * SHRINK,
+        gx: c.x + (n.hx - subC.x) * shrink,
+        gy: c.y + (n.hy - subC.y) * shrink,
       });
     }
     return map;
@@ -691,7 +698,7 @@ export default function GraphView({
       alpha = Math.min(0.75, alpha * 1.6 + 0.05);
       width += 0.2;
     }
-    if (isDimmed(s) || isDimmed(t)) alpha = 0.04; // filtered/query-dimmed endpoint wins
+    if (isDimmed(s) || isDimmed(t)) alpha = 0.015; // turned-off endpoint: almost invisible
     if (link === hoverLink) { alpha = 0.85; width += 0.4; } // hovered link loudest
     alpha *= introFadeRef.current; // threads fade in as the memories float into place
     width = Math.max(0.1, width); // guard: stroke width never non-positive
