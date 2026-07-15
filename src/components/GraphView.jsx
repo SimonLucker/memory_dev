@@ -2,7 +2,7 @@ import { useRef, useMemo, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { forceCollide, forceX, forceY } from 'd3-force-3d'; // same module force-graph runs its sim on
 import FocusHud from './FocusHud.jsx';
-import { edgeBudget } from '../lib/edges.js';
+import { edgeBudget, connectorKeys } from '../lib/edges.js';
 import DustField from './DustField.jsx';
 import { CLASS_COLORS, DAWN, DAWN_SAT, PAPER, PEACH } from '../lib/palette.js';
 
@@ -100,6 +100,9 @@ export default function GraphView({
   // Edge budget (edges.js → edgeBudget): at rest, dense graphs show only the maximum
   // spanning tree + strongest extras. Ego/gather/hover still reveal everything relevant.
   const budgetKeys = useMemo(() => edgeBudget(edges, memories.length), [edges, memories]);
+  // Cluster bridges (edges.js → connectorKeys): never allowed to fade below visibility, so
+  // the graph can't read as disconnected islands when connections genuinely exist.
+  const connectorSet = useMemo(() => connectorKeys(edges), [edges]);
 
   const nodeById = useMemo(() => {
     const map = new Map();
@@ -715,7 +718,9 @@ export default function GraphView({
     // Edge budget: outside ego/gather/hover, hide non-skeleton edges of dense graphs.
     const gatherPair = gatherIds && gatherIds.has(s.id) && gatherIds.has(t.id);
     const egoPair = egoId != null && (s.id === egoId || t.id === egoId);
-    if (budgetKeys && !budgetKeys.has(link.bkey) && !gatherPair && !egoPair && link !== hoverLink) return;
+    const connector = connectorSet.has(link.bkey);
+    if (budgetKeys && !budgetKeys.has(link.bkey) && !connector && !gatherPair && !egoPair && link !== hoverLink) return;
+    if (connector) alpha = Math.max(alpha, 0.32); // bridges stay visible at rest
     if (gatherPair) {
       // Brighten but PRESERVE the weight hierarchy — a flat boost made every internal
       // thread equally loud and 58 gathered memories read as spaghetti.

@@ -136,3 +136,42 @@ export function edgeBudget(edges, nodeCount) {
   }
   return keep;
 }
+
+// Connector edges: the bridges between clusters. Clusters = connected components of the
+// "strong graph" (edges with weight >= strongMin). Any edge joining two different strong
+// components is a connector; keep the top 2 by weight per component pair. These must
+// never fade to invisibility — without them the graph reads as disconnected islands
+// even though the connections exist.
+export function connectorKeys(edges, strongMin = 6) {
+  const parent = new Map();
+  const find = (x) => {
+    while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); }
+    return x;
+  };
+  for (const e of edges) {
+    if (!parent.has(e.source)) parent.set(e.source, e.source);
+    if (!parent.has(e.target)) parent.set(e.target, e.target);
+  }
+  for (const e of edges) {
+    if (e.weight >= strongMin) {
+      const a = find(e.source);
+      const b = find(e.target);
+      if (a !== b) parent.set(a, b);
+    }
+  }
+  const pairs = new Map(); // "compA~compB" -> edges sorted by weight
+  for (const e of edges) {
+    const a = find(e.source);
+    const b = find(e.target);
+    if (a === b) continue;
+    const key = a < b ? a + '~' + b : b + '~' + a;
+    if (!pairs.has(key)) pairs.set(key, []);
+    pairs.get(key).push(e);
+  }
+  const keep = new Set();
+  for (const list of pairs.values()) {
+    list.sort((x, y) => y.weight - x.weight);
+    for (const e of list.slice(0, 2)) keep.add(e.source + '|' + e.target);
+  }
+  return keep;
+}
