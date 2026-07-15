@@ -41,9 +41,6 @@ function hash01(id) {
   }
   return ((h >>> 0) % 100000) / 100000;
 }
-// linear label-alpha ramp: 0 at (thr-0.15), 1 at (thr+0.15)
-const ramp = (s, thr) => Math.max(0, Math.min(1, (s - (thr - 0.15)) / 0.3));
-
 // display labels for edge `shared` type codes (edges.js emits who/where/class/feeling/artist)
 const TYPE_LABEL = { who: 'person', where: 'place', class: 'class', feeling: 'feeling', artist: 'music' };
 
@@ -61,6 +58,7 @@ export default function GraphView({
   const introStartRef = useRef(0);      // performance.now() when the entrance float began (0 = not yet)
   const introActiveRef = useRef(true);  // true until the float finishes — gates labels + pointer/hover
   const introFadeRef = useRef(0);       // 0→1 global fade so edge threads appear with the float
+  const labelFadeRef = useRef(0);       // 0→1 global fade ~800ms after the float lands — names fade in, never pop
   const centroidRef = useRef({ x: 0, y: 0 }); // settled-layout center; the float radiates outward from it
   // Parallax per-frame scratch (see Parallax Phase 2 in graph-view/SKILL.md).
   const camRef = useRef({ x: 0, y: 0 });        // world coords of viewport center
@@ -68,6 +66,7 @@ export default function GraphView({
   const mouseSmoothRef = useRef({ x: 0, y: 0 }); // lerp-smoothed, shared with DustField
   const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 12/k, world units
   const labelIdsRef = useRef(new Set());         // ids whose label survived the anti-overlap pass
+  const selectedIdRef = useRef(null);            // live selection, read inside the alpha-independent focus-repel force
   const [hoverId, setHoverId] = useState(null);
   const [hoverLink, setHoverLink] = useState(null);
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -146,6 +145,27 @@ export default function GraphView({
         n.vy += (n.hy - n.y) * 0.002 + 0.015 * Math.cos(t / 3100 + n.phase * 5);
       }
     });
+    // Focus repel (graph-view/SKILL.md → Focus repel): while a memory is selected its neighbors
+    // ease outward for breathing room. Alpha-independent like drift; reads the live selection from
+    // a ref so it never re-registers. On deselect it no-ops and the drift home-pull glides everyone
+    // back — no reheat, no snapping. Ceiling ≈ 30 world units (0.06 push vs 0.002 drift pull).
+    fg.d3Force('focusRepel', () => {
+      const sel = selectedIdRef.current;
+      if (sel == null) return;
+      const s = nodeById.get(sel);
+      if (!s || s.x == null) return;
+      const R = 140;
+      for (const n of nodes) {
+        if (n === s || n.x == null) continue;
+        const dx = n.x - s.x;
+        const dy = n.y - s.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist >= R || dist < 0.001) continue;
+        const f = 0.06 * (1 - dist / R); // radial falloff, 0 at R
+        n.vx += (dx / dist) * f;
+        n.vy += (dy / dist) * f;
+      }
+    });
     // warmupTicks pre-settles the layout with THESE forces: the graphData flush is debounced
     // ~1ms, so it runs after this effect configures them — no visible flop. Re-arm the
     // one-shot fit + entrance float for the (re)built data.
@@ -155,6 +175,9 @@ export default function GraphView({
     introFadeRef.current = 0;
     fg.d3ReheatSimulation();
   }, [graphData]);
+
+  // Keep the focus-repel force's closure looking at the current selection without re-registering.
+  useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
   // Center + zoom on selection; zoom back out when cleared.
   useEffect(() => {
@@ -269,6 +292,35 @@ export default function GraphView({
     clampTimerRef.current = setTimeout(clampNow, 250);
   };
 
+  // Shared label policy (graph-view/SKILL.md step 4, v3). Given a node's PAINTED world centre
+  // (px,py) and the current zoom, returns { alpha, showYear }. Used by BOTH computeLabelSet
+  // (anti-overlap) and paintNode so the two can never disagree.
+  //  - hovered/selected: full, with year pill.
+  //  - a memory is selected → every OTHER label is silenced (hovered excepted): the graph goes quiet.
+  //  - else PROXIMITY: alpha ramps with screen radius screenR = (4+imp*2)*k across a ±6 band around
+  //    threshold (26 - imp*3) — important orbs earn labels while zoomed out; zooming in blooms names.
+  //  - then × 140px screen-edge fade (names never cling to the borders) × post-intro labelFade.
+  const labelInfo = (node, px, py, globalScale) => {
+    const imp = node.mem.importance || 1;
+    const selected = node.id === selectedId;
+    const active = node.id === hoverId;
+    let base;
+    let showYear = false;
+    if (active || selected) { base = 1; showYear = true; }
+    else if (selectedId != null) return { alpha: 0, showYear: false }; // selection quiets all others
+    else {
+      const screenR = (4 + imp * 2) * globalScale;
+      base = Math.max(0, Math.min(1, (screenR - (26 - imp * 3 - 6)) / 12)); // ±6 ramp around 26-imp*3
+    }
+    if (base <= 0) return { alpha: 0, showYear };
+    // world→screen: screenX = (worldX - camCenterX) * k + w/2 (camRef = viewport centre in world coords)
+    const cam = camRef.current;
+    const sx = (px - cam.x) * globalScale + size.w / 2;
+    const sy = (py - cam.y) * globalScale + size.h / 2;
+    const edge = Math.max(0, Math.min(1, Math.min(sx, size.w - sx, sy, size.h - sy) / 140));
+    return { alpha: base * edge * labelFadeRef.current, showYear };
+  };
+
   // Greedy priority label culling — recomputed each frame in onRenderFramePre. Rects live
   // in world units (measureText, radii, offsets all share that space), so world-space
   // non-overlap ⟺ screen-space non-overlap under the uniform canvas transform.
@@ -277,18 +329,16 @@ export default function GraphView({
     const cand = [];
     for (const node of graphData.nodes) {
       if (node.x == null || isDimmed(node)) continue;
-      const selected = node.id === selectedId;
+      const off = offsetOf(node);
+      const px = node.x + off.x;
+      const py = node.y + off.y;
+      const info = labelInfo(node, px, py, globalScale);
+      if (info.alpha <= 0.01) continue;
       const active = node.id === hoverId;
+      const selected = node.id === selectedId;
       const imp = node.mem.importance || 1;
-      let showYear = false;
-      let prio;
-      if (active) { prio = 3; showYear = true; }
-      else if (selected) { prio = 2; showYear = true; }
-      else {
-        if (ramp(globalScale, imp >= 4 ? 0.8 : 2.2) <= 0.01) continue;
-        prio = isHighlighted(node) ? 1 : 0;
-      }
-      cand.push({ node, focused: active || selected || isHighlighted(node), showYear, imp, prio, id: String(node.id) });
+      const prio = active ? 3 : selected ? 2 : isHighlighted(node) ? 1 : 0;
+      cand.push({ node, focused: active || selected || isHighlighted(node), showYear: info.showYear, imp, prio, id: String(node.id), px, py });
     }
     // hovered > selected > importance desc > id (stable tiebreak kills flicker)
     cand.sort((a, b) => b.prio - a.prio || b.imp - a.imp || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
@@ -296,11 +346,10 @@ export default function GraphView({
     const kept = [];
     const survivors = new Set();
     for (const c of cand) {
-      const { node, focused, showYear, imp } = c;
+      const { node, focused, showYear, imp, px, py } = c;
       const r = Math.max(0.5, (4 + imp * 2) * (1 + 0.05 * Math.sin(t / 1400 + node.phase)) * (focused ? 1 : node.depth));
-      const off = offsetOf(node);
-      const lx = node.x + off.x + r + 6;
-      const ny = node.y + off.y;
+      const lx = px + r + 6;
+      const ny = py;
       const wtxt = ctx.measureText(node.mem.what).width;
       const rect = { l: lx - 4, r: lx + wtxt + 4, t: ny - 9, b: showYear ? ny + 19 : ny + 9 };
       let ok = true;
@@ -334,6 +383,8 @@ export default function GraphView({
     const introEl = introStartRef.current ? performance.now() - introStartRef.current : -1;
     introActiveRef.current = introEl < 0 || introEl < INTRO_TOTAL;
     introFadeRef.current = introEl < 0 ? 0 : Math.min(1, introEl / INTRO_TOTAL);
+    // Post-intro label fade: 0 until the float lands, then 0→1 over 800ms so names fade in, never pop.
+    labelFadeRef.current = introEl < 0 ? 0 : Math.max(0, Math.min(1, (introEl - INTRO_TOTAL) / 800));
     const c = fg.screen2GraphCoords(size.w / 2, size.h / 2);
     if (c && Number.isFinite(c.x) && Number.isFinite(c.y)) camRef.current = c;
     const s = mouseSmoothRef.current;
@@ -529,26 +580,20 @@ export default function GraphView({
       ctx.setLineDash([]);
     }
 
-    // 4. DECLUTTERED label (graph-view/SKILL.md step 4) + anti-overlap: hovered/selected →
-    //    what + year pill; else importance>=4 past 1.1, others past 2.2, alpha-fading across
-    //    ±0.15. Draw only if this id survived the greedy rect pass (onRenderFramePre) this frame.
-    let labelAlpha;
-    let showYear = false;
-    if (active || selected) {
-      labelAlpha = 1;
-      showYear = true;
-    } else {
-      labelAlpha = ramp(globalScale, (m.importance || 1) >= 4 ? 0.8 : 2.2);
-    }
-    if (labelAlpha > 0.01 && labelIdsRef.current.has(node.id)) {
+    // 4. DECLUTTERED label (graph-view/SKILL.md step 4, v3) — proximity ramp by screen radius,
+    //    selection silences all but hovered, screen-edge + post-intro fades — all via the shared
+    //    labelInfo helper (same one computeLabelSet uses). Draw only if this id survived the greedy
+    //    rect pass (onRenderFramePre) this frame.
+    const linfo = labelInfo(node, nx, ny, globalScale);
+    if (linfo.alpha > 0.01 && labelIdsRef.current.has(node.id)) {
       const lx = nx + r + 6;
-      ctx.globalAlpha = labelAlpha;
+      ctx.globalAlpha = linfo.alpha;
       ctx.textBaseline = 'middle';
       ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
       ctx.fillStyle = PAPER;
       ctx.fillText(m.what, lx, ny);
 
-      if (showYear) {
+      if (linfo.showYear) {
         const year = m.when.slice(6, 10);
         ctx.font = '9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         const pw = ctx.measureText(year).width + 8;
@@ -711,7 +756,7 @@ export default function GraphView({
         maxZoom={8}
       />
       {selectedNode && (
-        <FocusHud memory={selectedNode.mem} onClose={() => onSelect(null)} />
+        <FocusHud key={selectedNode.id} memory={selectedNode.mem} onClose={() => onSelect(null)} />
       )}
     </div>
   );

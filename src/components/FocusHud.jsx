@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CLASS_COLORS, CLASS_FILLS, CLASS_BORDERS, DAWN, PAPER, PEACH } from '../lib/palette.js';
 
 // The rotating crosshair, gauges, brackets and caption now live in GraphView's canvas paint
@@ -51,6 +52,9 @@ export default function FocusHud({ memory, onClose }) {
   const year = memory.when.slice(6, 10);
   const feelings = memory.feeling || [];
   const who = memory.who || [];
+  const photos = memory.photos || [];
+  const [hero, setHero] = useState(0); // index of the photo shown large (reset per memory via key= in GraphView)
+  const heroSrc = photos[hero];
 
   return (
     // full-screen wrapper stays click-through so graph gestures pass; the card re-enables events
@@ -98,9 +102,9 @@ export default function FocusHud({ memory, onClose }) {
           ✕
         </button>
 
-        {/* photo — real image when present (photos/<id>.jpg from public/), else the dusk-tinted
-            dawn gradient. onError falls back to the same gradient, so both states look right
-            before the fetch script has run. */}
+        {/* hero photo — photos[0] (or the clicked thumb) as a real image; else the dusk-tinted
+            dawn gradient placeholder. onError falls back to the same gradient. key=heroSrc remounts
+            the <img> on swap so a prior onError-hide never sticks to the reused DOM node. */}
         <div
           style={{
             height: 150,
@@ -111,18 +115,43 @@ export default function FocusHud({ memory, onClose }) {
             // sits on top of both, so a loaded photo shows crisp and full-strength.
             background: `linear-gradient(rgba(30,24,44,0.4), rgba(30,24,44,0.4)), linear-gradient(165deg, ${DAWN[0]}, ${PEACH} 56%, ${DAWN[2]})`,
             border: '1px solid rgba(255,255,255,0.18)',
-            marginBottom: 18,
+            marginBottom: photos.length > 1 ? 10 : 18,
           }}
         >
-          {memory.photo && (
+          {heroSrc && (
             <img
-              src={memory.photo}
+              key={heroSrc}
+              src={heroSrc}
               alt=""
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
               style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
             />
           )}
         </div>
+
+        {/* thumbnail strip — only when there is more than one photo; click swaps into the hero */}
+        {photos.length > 1 && (
+          <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
+            {photos.slice(0, 4).map((p, i) => (
+              <img
+                key={p}
+                src={p}
+                alt=""
+                onClick={() => setHero(i)}
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 8,
+                  objectFit: 'cover',
+                  cursor: 'pointer',
+                  opacity: i === hero ? 1 : 0.6,
+                  border: `1px solid ${i === hero ? 'rgba(245,214,188,0.8)' : 'rgba(255,255,255,0.14)'}`,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         <div style={{ fontSize: 9.5, letterSpacing: 2, textTransform: 'uppercase', color: accent }}>
           {memory.class} · {year}

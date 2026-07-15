@@ -10,6 +10,7 @@ import { CLASS_COLORS } from './lib/palette.js'
 
 const CLASSES = Object.keys(CLASS_COLORS)
 const yearOf = m => m.when.slice(6, 10)
+const monthOf = m => Number(m.when.slice(3, 5))
 
 export default function App() {
   const edges = useMemo(() => deriveEdges(memories), [])
@@ -19,6 +20,7 @@ export default function App() {
   const [hiddenClasses, setHiddenClasses] = useState(new Set())
   const [activeFilters, setActiveFilters] = useState([])
   const [selectedYear, setSelectedYear] = useState(null)
+  const [selectedMonth, setSelectedMonth] = useState(null) // { year, month } | null — mutually exclusive with year
   const [queryResult, setQueryResult] = useState(null) // { ids: Set|null, count: number }
   const [selectedId, setSelectedId] = useState(null)
 
@@ -26,8 +28,9 @@ export default function App() {
     memories.filter(m =>
       !hiddenClasses.has(m.class) &&
       (!selectedYear || yearOf(m) === selectedYear) &&
+      (!selectedMonth || (yearOf(m) === selectedMonth.year && monthOf(m) === selectedMonth.month)) &&
       activeFilters.every(f => memoryMatches(m, f))
-    ), [hiddenClasses, selectedYear, activeFilters])
+    ), [hiddenClasses, selectedYear, selectedMonth, activeFilters])
 
   const visibleIds = useMemo(() => new Set(visibleMemories.map(m => m.id)), [visibleMemories])
 
@@ -91,7 +94,9 @@ export default function App() {
         years={years}
         memories={memories}
         selectedYear={selectedYear}
-        onSelectYear={setSelectedYear}
+        onSelectYear={(y) => { setSelectedYear(y); setSelectedMonth(null) }}
+        selectedMonth={selectedMonth}
+        onSelectMonth={(m) => { setSelectedMonth(m); setSelectedYear(null) }}
       />
       <Legend
         classCounts={classCounts}

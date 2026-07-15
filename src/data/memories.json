@@ -27,9 +27,11 @@
       "name": "Lovely Day",
       "artist": "Bill Withers"
     },
-    "photo": "photos/m001.jpg",
     "summary": "A slow Easter afternoon in the backyard, everyone home for once.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m001.jpg"
+    ]
   },
   {
     "id": "m002",
@@ -55,9 +57,11 @@
       "name": "Landslide",
       "artist": "Fleetwood Mac"
     },
-    "photo": "photos/m002.jpg",
     "summary": "Nick's last cookout before the move to Chicago, the whole crew crammed onto one picnic blanket.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m002.jpg"
+    ]
   },
   {
     "id": "m003",
@@ -79,9 +83,11 @@
       "name": "One More Time",
       "artist": "Daft Punk"
     },
-    "photo": "photos/m003.jpg",
     "summary": "A ridiculous game night that ended with Maya flipping the Monopoly board.",
-    "importance": 2
+    "importance": 2,
+    "photos": [
+      "photos/m003.jpg"
+    ]
   },
   {
     "id": "m004",
@@ -111,9 +117,11 @@
       "name": "Here Comes the Sun",
       "artist": "The Beatles"
     },
-    "photo": "photos/m004.jpg",
     "summary": "A whole week unplugged at Grandma's cabin, cards on the porch every night.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m004.jpg"
+    ]
   },
   {
     "id": "m005",
@@ -139,9 +147,11 @@
       "name": "Dreams",
       "artist": "Fleetwood Mac"
     },
-    "photo": "photos/m005.jpg",
     "summary": "Three days of hiking and lake swimming with the old college crew.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m005.jpg"
+    ]
   },
   {
     "id": "m006",
@@ -167,9 +177,11 @@
       "name": "Rolling in the Deep",
       "artist": "Adele"
     },
-    "photo": "photos/m006.jpg",
     "summary": "Lisa's birthday dinner turned into a dance party that spilled into the kitchen.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m006.jpg"
+    ]
   },
   {
     "id": "m007",
@@ -199,9 +211,11 @@
       "name": "Get Lucky",
       "artist": "Daft Punk"
     },
-    "photo": "photos/m007.jpg",
     "summary": "The team watched the launch numbers climb from the office rooftop at midnight.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m007.jpg"
+    ]
   },
   {
     "id": "m008",
@@ -231,9 +245,11 @@
       "name": "Lovely Day",
       "artist": "Bill Withers"
     },
-    "photo": "photos/m008.jpg",
     "summary": "Dad's coworkers packed the backyard to send him off after thirty years.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m008.jpg"
+    ]
   },
   {
     "id": "m009",
@@ -259,9 +275,11 @@
       "name": "Awake",
       "artist": "Tycho"
     },
-    "photo": "photos/m009.jpg",
     "summary": "A spontaneous long weekend in Portland, mostly spent in bookshops and rain.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m009.jpg"
+    ]
   },
   {
     "id": "m010",
@@ -287,9 +305,11 @@
       "name": "Chicago",
       "artist": "Sufjan Stevens"
     },
-    "photo": "photos/m010.jpg",
     "summary": "Two weeks in Tokyo that Emma still brings up at every dinner.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m010.jpg"
+    ]
   },
   {
     "id": "m011",
@@ -319,9 +339,11 @@
       "name": "In My Life",
       "artist": "The Beatles"
     },
-    "photo": "photos/m011.jpg",
     "summary": "The whole family drove up for Grandpa Joe's 80th, cake on the dock at sunset.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m011.jpg"
+    ]
   },
   {
     "id": "m012",
@@ -347,9 +369,11 @@
       "name": "Motion Sickness",
       "artist": "Phoebe Bridgers"
     },
-    "photo": "photos/m012.jpg",
     "summary": "Keys in hand, the first place that was truly mine.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m012.jpg"
+    ]
   },
   {
     "id": "m013",
@@ -371,9 +395,11 @@
       "name": "Holocene",
       "artist": "Bon Iver"
     },
-    "photo": "photos/m013.jpg",
     "summary": "A rare, careful hangout in the park during the strange spring of lockdown, six feet apart on picnic blankets.",
-    "importance": 2
+    "importance": 2,
+    "photos": [
+      "photos/m013.jpg"
+    ]
   },
   {
     "id": "m014",
@@ -399,9 +425,11 @@
       "name": "Lean on Me",
       "artist": "Bill Withers"
     },
-    "photo": "photos/m014.jpg",
     "summary": "Sunday dinners on the porch became the anchor of a strange year.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m014.jpg"
+    ]
   },
   {
     "id": "m015",
@@ -435,9 +463,11 @@
       "name": "Dreams",
       "artist": "Fleetwood Mac"
     },
-    "photo": "photos/m015.jpg",
     "summary": "The first time the whole group was back together, crammed into a rental house in Portland, and nobody wanted to leave.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m015.jpg"
+    ]
   },
   {
     "id": "m016",
@@ -467,9 +497,11 @@
       "name": "Everything In Its Right Place",
       "artist": "Radiohead"
     },
-    "photo": "photos/m016.jpg",
     "summary": "Awkward but glad to see actual faces again at the rooftop welcome-back lunch.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m016.jpg"
+    ]
   },
   {
     "id": "m017",
@@ -491,9 +523,11 @@
       "name": "Instant Crush",
       "artist": "Daft Punk"
     },
-    "photo": "photos/m017.jpg",
     "summary": "Late nights on Barcelona rooftops after two years of not going anywhere.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m017.jpg"
+    ]
   },
   {
     "id": "m018",
@@ -519,9 +553,11 @@
       "name": "Here Comes the Sun",
       "artist": "The Beatles"
     },
-    "photo": "photos/m018.jpg",
     "summary": "Thanksgiving pushed back to November at the cabin, snow on the porch rail.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m018.jpg"
+    ]
   },
   {
     "id": "m019",
@@ -551,9 +587,11 @@
       "name": "Someone Like You",
       "artist": "Adele"
     },
-    "photo": "photos/m019.jpg",
     "summary": "Lisa announced the engagement over dessert and the whole table lost it.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m019.jpg"
+    ]
   },
   {
     "id": "m020",
@@ -575,9 +613,11 @@
       "name": "Kyoto",
       "artist": "Phoebe Bridgers"
     },
-    "photo": "photos/m020.jpg",
     "summary": "Printed the last page at 2am and called Nick before anyone else.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m020.jpg"
+    ]
   },
   {
     "id": "m021",
@@ -603,9 +643,11 @@
       "name": "A Walk",
       "artist": "Tycho"
     },
-    "photo": "photos/m021.jpg",
     "summary": "A lazy Sunday picnic that stretched three hours past when anyone planned to leave.",
-    "importance": 2
+    "importance": 2,
+    "photos": [
+      "photos/m021.jpg"
+    ]
   },
   {
     "id": "m022",
@@ -631,9 +673,11 @@
       "name": "Skinny Love",
       "artist": "Bon Iver"
     },
-    "photo": "photos/m022.jpg",
     "summary": "First ski trip of the season, most of it spent falling more than skiing.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m022.jpg"
+    ]
   },
   {
     "id": "m023",
@@ -663,9 +707,11 @@
       "name": "Lovely Day",
       "artist": "Bill Withers"
     },
-    "photo": "photos/m023.jpg",
     "summary": "A quiet afternoon helping Grandpa Joe settle into the guest room.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m023.jpg"
+    ]
   },
   {
     "id": "m024",
@@ -695,9 +741,11 @@
       "name": "Harder, Better, Faster, Stronger",
       "artist": "Daft Punk"
     },
-    "photo": "photos/m024.jpg",
     "summary": "The offsite ended with everyone still arguing about the roadmap on the rooftop.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m024.jpg"
+    ]
   },
   {
     "id": "m025",
@@ -727,9 +775,11 @@
       "name": "Don't Stop",
       "artist": "Fleetwood Mac"
     },
-    "photo": "photos/m025.jpg",
     "summary": "Champagne on the roof at midnight, the same crew as always.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m025.jpg"
+    ]
   },
   {
     "id": "m026",
@@ -755,9 +805,11 @@
       "name": "Mystery of Love",
       "artist": "Sufjan Stevens"
     },
-    "photo": "photos/m026.jpg",
     "summary": "Lisa and I chased cherry blossoms across three parks in one afternoon.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m026.jpg"
+    ]
   },
   {
     "id": "m027",
@@ -787,9 +839,11 @@
       "name": "Blackbird",
       "artist": "The Beatles"
     },
-    "photo": "photos/m027.jpg",
     "summary": "The cabin never changes, and this year that felt like the whole point.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m027.jpg"
+    ]
   },
   {
     "id": "m028",
@@ -815,9 +869,11 @@
       "name": "Let Down",
       "artist": "Radiohead"
     },
-    "photo": "photos/m028.jpg",
     "summary": "Priya handed me the promotion letter over coffee on the rooftop, no ceremony needed.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m028.jpg"
+    ]
   },
   {
     "id": "m029",
@@ -847,9 +903,11 @@
       "name": "Golden Hour",
       "artist": "Kacey Musgraves"
     },
-    "photo": "photos/m029.jpg",
     "summary": "Everyone made it for once, blankets spread out until the fog rolled in.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m029.jpg"
+    ]
   },
   {
     "id": "m030",
@@ -875,9 +933,11 @@
       "name": "One More Time",
       "artist": "Daft Punk"
     },
-    "photo": "photos/m030.jpg",
     "summary": "We watched the new dashboard go live from the rooftop with warm beers.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m030.jpg"
+    ]
   },
   {
     "id": "m031",
@@ -903,9 +963,11 @@
       "name": "Landslide",
       "artist": "Fleetwood Mac"
     },
-    "photo": "photos/m031.jpg",
     "summary": "Sarah's new place got its first proper party, boxes still stacked in the hallway.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m031.jpg"
+    ]
   },
   {
     "id": "m032",
@@ -931,9 +993,11 @@
       "name": "Rolling in the Deep",
       "artist": "Adele"
     },
-    "photo": "photos/m032.jpg",
     "summary": "A wild, sun-drunk long weekend before Lisa's wedding.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m032.jpg"
+    ]
   },
   {
     "id": "m033",
@@ -959,9 +1023,11 @@
       "name": "Lovely Day",
       "artist": "Bill Withers"
     },
-    "photo": "photos/m033.jpg",
     "summary": "Thirty-five years, and Dad still can't make a toast without crying.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m033.jpg"
+    ]
   },
   {
     "id": "m034",
@@ -995,9 +1061,11 @@
       "name": "Someone Like You",
       "artist": "Adele"
     },
-    "photo": "photos/m034.jpg",
     "summary": "Lisa's wedding after-party spilled onto Sarah's porch until sunrise.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m034.jpg"
+    ]
   },
   {
     "id": "m035",
@@ -1023,9 +1091,11 @@
       "name": "Awake",
       "artist": "Tycho"
     },
-    "photo": "photos/m035.jpg",
     "summary": "Showing the new hires the rooftop view felt like an unofficial rite of passage.",
-    "importance": 2
+    "importance": 2,
+    "photos": [
+      "photos/m035.jpg"
+    ]
   },
   {
     "id": "m036",
@@ -1051,9 +1121,11 @@
       "name": "Holocene",
       "artist": "Bon Iver"
     },
-    "photo": "photos/m036.jpg",
     "summary": "Same lake, ten years later, somehow still the same jokes.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m036.jpg"
+    ]
   },
   {
     "id": "m037",
@@ -1083,9 +1155,11 @@
       "name": "In My Life",
       "artist": "The Beatles"
     },
-    "photo": "photos/m037.jpg",
     "summary": "Grandpa Joe asked to see the lake one more time before the season ended.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m037.jpg"
+    ]
   },
   {
     "id": "m038",
@@ -1115,9 +1189,11 @@
       "name": "Golden Hour",
       "artist": "Kacey Musgraves"
     },
-    "photo": "photos/m038.jpg",
     "summary": "Closed on the house today, then spent one last night in the old apartment with pizza and half-packed boxes.",
-    "importance": 5
+    "importance": 5,
+    "photos": [
+      "photos/m038.jpg"
+    ]
   },
   {
     "id": "m039",
@@ -1139,9 +1215,11 @@
       "name": "Chicago",
       "artist": "Sufjan Stevens"
     },
-    "photo": "photos/m039.jpg",
     "summary": "Turned a work trip into five extra days of ramen and quiet temples.",
-    "importance": 3
+    "importance": 3,
+    "photos": [
+      "photos/m039.jpg"
+    ]
   },
   {
     "id": "m040",
@@ -1171,8 +1249,10 @@
       "name": "Everything In Its Right Place",
       "artist": "Radiohead"
     },
-    "photo": "photos/m040.jpg",
     "summary": "Ten years at the same company, marked with cake on the same rooftop.",
-    "importance": 4
+    "importance": 4,
+    "photos": [
+      "photos/m040.jpg"
+    ]
   }
 ]

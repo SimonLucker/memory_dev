@@ -18,7 +18,7 @@ description: The memory JSON schema, sample data generation rules, and the edge 
   "who": [{"id": "p01", "name": "Sarah"}, {"id": "p02", "name": "Nick"}],
   "feeling": ["Happy", "Nostalgic"],
   "music": {"name": "Song Name", "artist": "Artist"},
-  "photo": "photos/m001.jpg",
+  "photos": ["photos/m001.jpg", "photos/m001_2.jpg"],
   "summary": "One-sentence auto summary.",
   "importance": 4
 }
@@ -28,7 +28,7 @@ description: The memory JSON schema, sample data generation rules, and the edge 
 - `feeling` is an array (video schema shows "Happy - Nostalgic").
 - `summary` and `importance` are marked auto-generated in the source schema — fill them in sample data anyway.
 - `importance` 1–5 → node radius.
-- `photo` may be a placeholder path; UI shows a colored placeholder block if missing.
+- `photos` is an ARRAY (0..n paths under public/photos/). UI: first photo is the hero; extras render as a thumbnail strip; gradient placeholder when empty. scripts/fetch-photos.mjs seeds one per memory; scripts/add-photos.mjs adds more (`node scripts/add-photos.mjs m001:4 m007:3` or `--spread N`).
 
 ## Sample data rules (memories.json)
 

@@ -27,10 +27,10 @@ for (const m of memories) {
   if (!photo) { console.error(m.id, 'no result for', q(m)); continue; }
   const img = await fetch(photo.src.medium);
   writeFileSync(join(outDir, `${m.id}.jpg`), Buffer.from(await img.arrayBuffer()));
-  m.photo = `photos/${m.id}.jpg`;
+  m.photos = [`photos/${m.id}.jpg`];
   console.log(m.id, '←', q(m));
   await new Promise((r) => setTimeout(r, 250)); // stay friendly to the rate limit
 }
 
 writeFileSync(memPath, JSON.stringify(memories, null, 2) + '\n');
-console.log('done —', memories.filter((m) => m.photo?.startsWith('photos/')).length, 'photos');
+console.log('done —', memories.filter((m) => m.photos?.length).length, 'memories with photos');

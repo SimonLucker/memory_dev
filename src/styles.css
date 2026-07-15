@@ -131,20 +131,23 @@ html, body, #root {
   stroke-width: 1.5;
   stroke-linecap: round;
 }
-.ridge-dots {
-  position: absolute;
-  inset: 40px 0;
-  width: 100%;
-  height: calc(100% - 80px);
-  pointer-events: none;
-}
+/* Dots are zero-length <line> points (round linecap) inside the ridge svg —
+   see the comment in Timeline.jsx for why, vs. an HTML overlay or <circle>. */
 .ridge-dot {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--paper);
-  opacity: 0.7;
-  pointer-events: auto;
+  stroke: var(--paper);
+  stroke-linecap: round;
+  stroke-opacity: 0.7;
+}
+.ridge-dot-halo {
+  stroke: url(#timeline-ridge-gradient);
+  stroke-linecap: round;
+  stroke-opacity: 0.9;
+}
+.ridge-dot-hit {
+  stroke: transparent;
+  stroke-linecap: round;
+  pointer-events: all;
+  cursor: pointer;
 }
 .timeline-years {
   position: relative;

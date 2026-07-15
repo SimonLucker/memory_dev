@@ -13,10 +13,13 @@ Soft matte pastel sphere, radius `r = 4 + importance * 2`, colored by class acce
 1. Faint glow: `ctx.shadowColor = accent; ctx.shadowBlur = 12` (22 when highlighted, 0 when dimmed).
 2. Sphere: radial gradient centered `(x - r*0.3, y - r*0.3)` — accent mixed ~55% toward white → accent → accent darkened ~25%. No specular dot, no gloss.
 3. Ring: 1px circle at `r + 1.5`, `rgba(242,240,236,0.35)`.
-4. Label — DECLUTTERED policy (the v1 all-labels-on screen was unreadable):
+4. Label — v3 policy (proximity + edges + selection):
    - hovered or selected: always show `what` + year pill.
-   - otherwise: only nodes with `importance >= 4` AND `globalScale > 0.8` show `what` (no year pill); everything else unlabeled until zoomed to `globalScale > 2.2`.
-   - Fade labels in/out with zoom (alpha ramp over ±0.15 around each threshold), 10px sans paper `#F2F0EC`, dark pill `rgba(0,0,0,0.45)` for the year.
+   - **A memory is selected → every other label is hidden** (hovered one excepted). The graph goes quiet around the chosen memory.
+   - otherwise labels appear by PROXIMITY: label alpha ramps with the node's SCREEN radius (`screenR = r * globalScale`): threshold `screenR > 26 - importance * 3` (important memories earn labels earlier), ramp width ±6. At full-view zoom only the most important clear it — priority preserved; zooming toward a cluster makes its names bloom.
+   - **Screen-edge fade**: labels fade to 0 within 140px of any viewport edge (linear), so names never cling to the borders.
+   - **Post-entrance fade**: after the intro float lands, labels fade in globally over ~800ms (multiply a global labelFade 0→1 starting at intro end). Labels must never pop.
+   - 10px sans paper `#F2F0EC`, dark pill `rgba(0,0,0,0.45)` for the year. The greedy anti-overlap pass still runs last.
 
 States:
 - **Dimmed** (filtered out / non-matching query): `globalAlpha 0.10`, no glow, no label.
@@ -86,6 +89,10 @@ Deterministic, no state, one array per frame. The slow drift means labels appear
 
 No physics flopping on load. Pre-settle the layout with `warmupTicks` ≈ 200 (engine runs before first paint) AND set `autoPauseRedraw={false}` — with warmup the engine can report stopped, and autoPause then freezes all painting until the first user interaction (symptom: blank page that springs to life on a wheel/drag). This scene animates every frame regardless, so auto-pausing is never wanted. `zoomToFit` right after mount (the tick-120 wait is obsolete once warmup pre-settles). Then float the memories in: for ~1.6s, each node paints at `settled + dir * 260 * (1 - easeOutCubic(p))` where `dir` = unit vector from the graph centroid (nodes drift inward from just outside), `p` = clamped progress with a per-node stagger (`hash01(id) * 0.5s`), alpha ramping 0→depth. Labels and interactions wait until the intro ends (skip hover/pointer paint while p < 1). Dust/nebula unaffected.
 
+## Focus repel (selection breathing room)
+
+While a memory is selected, its neighbors ease away to give it air: a custom d3 force (registered alongside drift) pushes every OTHER node radially away from the selected node — `strength ~ 0.06 * (1 - dist/R)` for `dist < R ≈ 140` world units, applied to vx/vy each tick, alpha-independent like drift. On deselect the force does nothing and the existing home-pull drift glides everyone back. No reheat needed (sim ticks perpetually), no position snapping.
+
 ## Selected-node crosshair (canvas, not DOM)
 
 The rotating dashed crosshair + gauges must track the NODE, not the viewport center — pans and zooms leave it glued to the memory until deselect. Ponytail answer: draw it in `nodeCanvasObject` for the selected node (world coords = free tracking):
@@ -101,7 +108,7 @@ The cluster must never leave the screen: `minZoom 0.5`, `maxZoom 8` props, plus 
 
 ## Detail card photo
 
-`memory.photo` may point to a real image (`photos/<id>.jpg`, served from public/). Render an `<img src={memory.photo}>` (radius 14, slight tilt, object-fit cover, height 150) and fall back to the existing gradient placeholder `onError` or when the path is missing.
+`memory.photos` is an array. Hero = photos[0] as `<img>` (radius 14, slight tilt, object-fit cover, height 150), gradient placeholder when empty or onError. If photos.length > 1, a thumbnail strip below the hero (up to 4 thumbs, 48px, radius 8, 6px gap); clicking a thumb swaps it into the hero (local useState fine).
 
 ## Focus HUD (FocusHud.jsx)
 

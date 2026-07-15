@@ -5,22 +5,27 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const monthOf = (m) => Number(m.when.slice(3, 5));
 const yearOf = (m) => m.when.slice(6, 10);
 
-// Smooth a point list with quadratic joins through segment midpoints.
+// Catmull-Rom -> cubic bezier, passing exactly THROUGH every point (unlike the
+// old quadratic-through-midpoints join, which cuts corners and skips the peak).
 function smoothPath(pts) {
   if (pts.length === 0) return '';
   if (pts.length === 1) return `M ${pts[0].x},${pts[0].y}`;
   let d = `M ${pts[0].x},${pts[0].y}`;
   for (let i = 0; i < pts.length - 1; i++) {
-    const cur = pts[i];
-    const next = pts[i + 1];
-    d += ` Q ${cur.x},${cur.y} ${(cur.x + next.x) / 2},${(cur.y + next.y) / 2}`;
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C ${c1x},${c1y} ${c2x},${c2y} ${p2.x},${p2.y}`;
   }
-  const end = pts[pts.length - 1];
-  d += ` L ${end.x},${end.y}`;
   return d;
 }
 
-export default function Timeline({ years, memories, selectedYear, onSelectYear }) {
+export default function Timeline({ years, memories, selectedYear, onSelectYear, selectedMonth, onSelectMonth }) {
   const points = useMemo(() => {
     if (!years || years.length === 0) return [];
     const counts = {};
@@ -40,6 +45,8 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear }
   if (!years || years.length === 0) return null;
 
   const pathD = smoothPath(points);
+  const dots = points.filter((p) => p.count > 0);
+  const isActive = (p) => selectedMonth && selectedMonth.year === p.year && selectedMonth.month === p.month;
 
   function handleWheel(e) {
     const idx = selectedYear ? years.indexOf(selectedYear) : -1;
@@ -48,6 +55,19 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear }
     onSelectYear(years[next]);
   }
 
+  function handleDotClick(p) {
+    onSelectMonth?.(isActive(p) ? null : { year: p.year, month: p.month });
+  }
+
+  // The rail's svg uses preserveAspectRatio="none" so the ridge line can fill
+  // the full rail height from a fixed 0-100 viewBox (x stays 1:1 with px,
+  // y stretches non-uniformly). A plain <circle r> in that space renders as
+  // an ellipse. Dots are drawn instead as zero-length <line> points with a
+  // round linecap and vector-effect="non-scaling-stroke" — that vector
+  // effect renders the stroke (including the round cap) in screen space,
+  // immune to the surrounding non-uniform scale, so the cap stays a true
+  // circle. Same x/y as the path data, so they land exactly on the curve —
+  // no separate HTML overlay, no ResizeObserver needed.
   return (
     <div className="timeline-rail" onWheel={handleWheel}>
       <svg className="timeline-ridge" viewBox="0 0 96 100" preserveAspectRatio="none">
@@ -59,20 +79,40 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear }
           </linearGradient>
         </defs>
         <path className="ridge-line" d={pathD} vectorEffect="non-scaling-stroke" />
-      </svg>
-      <div className="ridge-dots">
-        {points.filter((p) => p.count > 0).map((p) => {
-          const size = Math.min(6, 2 + p.count) * 2;
+        {dots.map((p) => {
+          const r = Math.min(6, 2 + p.count);
+          const diameter = r * 2;
+          const active = isActive(p);
+          const label = `${MONTHS[p.month - 1]} ${p.year} · ${p.count} memor${p.count === 1 ? 'y' : 'ies'}`;
           return (
-            <span
-              key={`${p.year}-${p.month}`}
-              className="ridge-dot"
-              style={{ left: p.x, top: `${p.y}%`, width: size, height: size }}
-              title={`${MONTHS[p.month - 1]} ${p.year} · ${p.count} memor${p.count === 1 ? 'y' : 'ies'}`}
-            />
+            <g key={`${p.year}-${p.month}`}>
+              {active && (
+                <line
+                  x1={p.x} y1={p.y} x2={p.x} y2={p.y}
+                  className="ridge-dot-halo"
+                  strokeWidth={diameter + 6}
+                  vectorEffect="non-scaling-stroke"
+                />
+              )}
+              <line
+                x1={p.x} y1={p.y} x2={p.x} y2={p.y}
+                className="ridge-dot"
+                strokeWidth={diameter}
+                vectorEffect="non-scaling-stroke"
+              />
+              <line
+                x1={p.x} y1={p.y} x2={p.x} y2={p.y}
+                className="ridge-dot-hit"
+                strokeWidth={16}
+                vectorEffect="non-scaling-stroke"
+                onClick={() => handleDotClick(p)}
+              >
+                <title>{label}</title>
+              </line>
+            </g>
           );
         })}
-      </div>
+      </svg>
       <ul className="timeline-years">
         {years.map((y) => {
           const selected = selectedYear === y;
