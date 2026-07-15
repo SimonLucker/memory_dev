@@ -36,10 +36,12 @@ for (const [id, total] of targets) {
   m.photos = m.photos || [];
   const need = total - m.photos.length;
   if (need <= 0) { console.log(id, 'already has', m.photos.length); continue; }
-  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(q(m))}&per_page=${total + 2}&orientation=landscape`;
+  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(q(m))}&per_page=${total + m.photos.length + 2}&orientation=landscape`;
   const res = await fetch(url, { headers: { Authorization: KEY } });
   if (!res.ok) { console.error(id, 'search failed', res.status); continue; }
-  const photos = (await res.json()).photos || [];
+  // Skip the results the memory already owns (fetch-photos used result #0 as the hero —
+  // starting at 0 again re-downloaded it as a duplicate under a new filename).
+  const photos = ((await res.json()).photos || []).slice(m.photos.length);
   let added = 0;
   for (const photo of photos) {
     if (added >= need) break;
