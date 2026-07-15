@@ -93,6 +93,13 @@ No physics flopping on load. Pre-settle the layout with `warmupTicks` ≈ 200 (e
 
 While a memory is selected, its neighbors ease away to give it air. CRITICAL ENGINE GOTCHA: with `warmupTicks` set, force-graph's layout engine permanently stops after the synchronous warmup (`update()` pauses it; nothing restarts live ticking), so custom d3 forces for ambient motion NEVER run. All liveliness (home wobble ±6 world units, focus repel, restore-on-deselect) is instead driven from `onRenderFramePre`: each node eases (`0.035/frame`) toward a moving target = `home + wobble(t) [+ radial push]`, where push = `34 * (1 - dist/R)`, `R = 170`, computed from HOME positions (stable). Direct position easing, no velocities, skipped while a node is user-dragged (`fx != null` → rehome) and during the entrance float. Never register d3 forces expecting live ticks.
 
+## Filter gather (constellation focus)
+
+When ANY filter narrows the set (legend class toggle, attribute chips, year/month, or a query with matches), the matching memories drift toward the layout centroid and their mutual connections light up; removing filters lets them float home (the liveliness easing handles both directions for free):
+- `gatherIds` = query highlightIds if non-null, else visibleIds when it's a strict subset of all memories, else null.
+- In the liveliness pass, gathered nodes' target = `home + (centroid - home) * 0.5` + half-amplitude wobble (centroid = the settled-layout centroidRef). Non-matching nodes keep their normal home target.
+- Edge boost: when gatherIds is active and BOTH endpoints are gathered, the thread paints at alpha ≥ 0.55 (+0.3px width) — the constellation's internal connections glow while everything else recedes (non-gathered edges already dim via their dimmed endpoints).
+
 ## Selected-node crosshair (canvas, not DOM)
 
 The rotating dashed crosshair + gauges must track the NODE, not the viewport center — pans and zooms leave it glued to the memory until deselect. Ponytail answer: draw it in `nodeCanvasObject` for the selected node (world coords = free tracking):

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Bottom-right query bar: stats row + local search input. Skill: query-search.
-export default function QueryBar({ stats, matchCount, onSubmit, onClear }) {
+export default function QueryBar({ stats, matchCount, filters, onSubmit, onClear }) {
   const [value, setValue] = useState('');
 
   function submit() {
@@ -65,6 +65,11 @@ export default function QueryBar({ stats, matchCount, onSubmit, onClear }) {
         {matchCount !== null && (
           <span className="chip chip-static">{matchCount} match{matchCount === 1 ? '' : 'es'}</span>
         )}
+        {(filters || []).map((f) => (
+          <button key={f.key} type="button" className="chip is-active" onClick={f.onRemove} title="Remove filter">
+            {f.label} <span className="chip-x">✕</span>
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -194,6 +194,13 @@ export default function GraphView({
   // Ego-network: the one node in focus (hover wins over selection). Its edges pop and
   // everything else recedes; its neighbor orbs stay full alpha so the network reads.
   const egoId = hoverId ?? selectedId ?? null;
+  // Filter gather (graph-view/SKILL.md): the narrowed set drifts toward the centroid and its
+  // internal threads glow. Query matches win; otherwise any strict-subset filter state.
+  const gatherIds = useMemo(() => {
+    if (highlightIds) return highlightIds;
+    if (visibleIds.size < memories.length) return visibleIds;
+    return null;
+  }, [highlightIds, visibleIds, memories]);
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
   // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
@@ -381,8 +388,12 @@ export default function GraphView({
       for (const n of graphData.nodes) {
         if (n.hx == null || n.x == null) continue;
         if (n.fx != null) { n.hx = n.fx; n.hy = n.fy ?? n.hy; continue; } // being dragged — rehome
-        let tx = n.hx + 6 * Math.sin(tNow / 2600 + n.phase * 7);
-        let ty = n.hy + 6 * Math.cos(tNow / 3100 + n.phase * 5);
+        const gathered = gatherIds && gatherIds.has(n.id);
+        const wob = gathered ? 3 : 6; // gathered constellation breathes more quietly
+        const bx = gathered ? n.hx + (centroidRef.current.x - n.hx) * 0.5 : n.hx;
+        const by = gathered ? n.hy + (centroidRef.current.y - n.hy) * 0.5 : n.hy;
+        let tx = bx + wob * Math.sin(tNow / 2600 + n.phase * 7);
+        let ty = by + wob * Math.cos(tNow / 3100 + n.phase * 5);
         if (selNode && n !== selNode && selNode.hx != null) {
           const dx = n.hx - selNode.hx;
           const dy = n.hy - selNode.hy;
@@ -645,6 +656,10 @@ export default function GraphView({
     const wl = (w - 6) / 8;
     let alpha = Math.min(0.55, 0.05 + 0.5 * wl * wl);
     if (egoId != null) alpha = s.id === egoId || t.id === egoId ? 0.65 : 0.03;
+    if (gatherIds && gatherIds.has(s.id) && gatherIds.has(t.id)) {
+      alpha = Math.max(alpha, 0.55); // the gathered constellation's own threads glow
+      width += 0.3;
+    }
     if (isDimmed(s) || isDimmed(t)) alpha = 0.04; // filtered/query-dimmed endpoint wins
     if (link === hoverLink) { alpha = 0.85; width += 0.4; } // hovered link loudest
     alpha *= introFadeRef.current; // threads fade in as the memories float into place

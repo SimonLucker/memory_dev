@@ -11,6 +11,7 @@ import { CLASS_COLORS } from './lib/palette.js'
 
 const CLASSES = Object.keys(CLASS_COLORS)
 const yearOf = m => m.when.slice(6, 10)
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const monthOf = m => Number(m.when.slice(3, 5))
 
 export default function App() {
@@ -88,6 +89,14 @@ export default function App() {
     }
   }, [visibleMemories])
 
+  // Active-filter chips shown under the question bar (query-search/SKILL.md). Click removes.
+  const filterChips = [
+    ...(selectedYear ? [{ key: 'year', label: selectedYear, onRemove: () => setSelectedYear(null) }] : []),
+    ...(selectedMonth ? [{ key: 'month', label: `${MONTHS[selectedMonth.month - 1]} ${selectedMonth.year}`, onRemove: () => setSelectedMonth(null) }] : []),
+    ...activeFilters.map(f => ({ key: `f-${f.type}-${f.value}`, label: f.value, onRemove: () => toggleFilter(f) })),
+    ...[...hiddenClasses].map(c => ({ key: `h-${c}`, label: `no ${c}`, onRemove: () => toggleClass(c) })),
+  ]
+
   const classCounts = useMemo(() =>
     CLASSES.map(name => ({ name, count: memories.filter(m => m.class === name).length })), [memories])
 
@@ -124,6 +133,7 @@ export default function App() {
       <QueryBar
         stats={stats}
         matchCount={queryResult ? queryResult.count : null}
+        filters={filterChips}
         onSubmit={submitQuery}
         onClear={() => setQueryResult(null)}
       />
