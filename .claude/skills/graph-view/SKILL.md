@@ -65,7 +65,7 @@ The scene should feel like drifting through a memory space, not a frozen chart:
 Both-trigger parallax, asymmetric by design: mouse drift whisper-subtle (~12px), pan/zoom camera parallax really pronounced (0.6 factor). layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
 
 - **Per-node world offset**, applied identically in `nodeCanvasObject`, label placement, AND `nodePointerAreaPaint` (hitboxes must follow the pixels):
-  `off = (1 - effDepth) * (camCenter * 0.6 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
+  `off = (1 - node.depth) * (camCenter * 0.6 + mouseWorld) * (1 - anchor)` where `anchor` ∈ [0,1] is a per-node value EASED each frame (lerp ~0.15/frame in `onRenderFramePre`) toward 1 while the node is hovered/selected/highlighted, else toward 0. Anchored nodes glide to their true position (aligning FocusHud and interactions) instead of snapping — an instant snap makes nodes leap out from under the cursor, un-hovering themselves in a flicker loop. Store it in a custom field like `node.anchorA` (never engine-owned fields: x/y/z/vx/vy/vz/fx/fy/fz/index).
   - `camCenter` = world coords of the viewport center, computed once per frame in `onRenderFramePre` via `fg.screen2GraphCoords(w/2, h/2)` — panning makes far orbs lag behind near ones.
   - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `12 / k` (constant ~12 screen px — mouse term is deliberately whisper-subtle; camera term carries the drama). Track via one `mousemove` listener.
 - Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (small for mouse (~5px); during pans the offset is large but hover during a drag isn't a real interaction — link hover is fuzziest at screen edges, exact at center).
@@ -87,5 +87,7 @@ Deterministic, no state, one array per frame. The slow drift means labels appear
 On node click: `centerAt(node.x, node.y, 600)` + `zoom(3, 600)`, then an absolutely-positioned overlay:
 - Two thin SVG arc gauges around the node: importance (n/5) and connection count (n/max). Stroke = dawn gradient, tick marks paper @ 0.35.
 - Four dotted corner brackets around the node (same dash as edges).
+- The close ✕ and the card must be clickable: if any HUD wrapper uses `pointer-events: none` (to let graph gestures pass through), interactive children must restore `pointer-events: auto`. ✕ calls the same deselect path as background click.
+- Detail card: `max-height` capped so it NEVER overlaps the query bar (bottom-right panel) — e.g. `top: 24px; right: 24px; max-height: calc(100vh - 300px); overflow-y: auto` with a thin styled scrollbar. Long summaries scroll inside the card.
 - Detail card to the side, dusk glass panel: photo (radius 14px, slight rotation), then sections in the site's card style — tiny UPPERCASE letter-spaced labels with a pastel square dot ("WHO WAS THERE", "FEELING", "MUSIC", "WHY"), people/feeling chips as themed translucent pills, summary in paper text.
 - Click empty canvas: `zoom(1.2, 600)`, HUD unmounts.

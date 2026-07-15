@@ -103,8 +103,9 @@ export default function FocusHud({ memory, connections, maxConnections, cx, cy, 
 
   return (
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-      {/* gauges + brackets around the (centered) node */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+      {/* gauges + brackets around the (centered) node — full-screen overlay, must stay
+          click-through so it never swallows the ✕ / card clicks (graph gestures pass too) */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
         <defs>
           <linearGradient id="hud-dawn" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor={DAWN[0]} />
@@ -126,12 +127,15 @@ export default function FocusHud({ memory, connections, maxConnections, cx, cy, 
           ...panel,
           pointerEvents: 'auto',
           position: 'absolute',
-          top: '50%',
-          right: 32,
-          transform: 'translateY(-50%)',
+          top: 24,
+          right: 24,
           width: 320,
-          maxHeight: '80vh',
+          // capped so a long summary scrolls INSIDE the card and never reaches the
+          // bottom-right query bar (~300px reserved for it)
+          maxHeight: 'calc(100vh - 300px)',
           overflowY: 'auto',
+          scrollbarWidth: 'thin', // Firefox + Chrome 121+: thin subtle rail
+          scrollbarColor: 'rgba(242,240,236,0.25) transparent',
           padding: 20,
           color: PAPER,
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -141,7 +145,9 @@ export default function FocusHud({ memory, connections, maxConnections, cx, cy, 
         <button
           onClick={onClose}
           style={{
+            pointerEvents: 'auto', // ensure the ✕ stays clickable under the none-wrapper
             position: 'absolute',
+            zIndex: 1, // the rotated photo creates a stacking context that otherwise paints over the ✕
             top: 12,
             right: 12,
             width: 26,

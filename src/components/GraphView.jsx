@@ -6,7 +6,6 @@ import DustField from './DustField.jsx';
 import { CLASS_COLORS, DAWN, DAWN_SAT, PAPER, PEACH } from '../lib/palette.js';
 
 const TAU = Math.PI * 2;
-const ZERO = { x: 0, y: 0 }; // shared frozen zero-offset for focused/anchored nodes
 
 // --- tiny color helpers (pure) — accept #hex or rgb() so mix() results can be re-mixed ---
 function hexToRgb(h) {
@@ -71,7 +70,8 @@ export default function GraphView({
       // depth follows size: importance 5 = foreground (1), importance 1 = background (0.55),
       // plus a whisper of stable jitter so planes don't lock. Bigger orb == nearer == moves most.
       const depth = Math.min(1, Math.max(0.55, 0.55 + 0.45 * ((imp - 1) / 4) + (hh - 0.5) * 0.06));
-      return { id: m.id, mem: m, depth, phase: hh * TAU };
+      // anchorA: per-node parallax anchor, eased toward 1 while focused (onRenderFramePre).
+      return { id: m.id, mem: m, depth, phase: hh * TAU, anchorA: 0 };
     }),
     links: edges.map((e) => ({ source: e.source, target: e.target, weight: e.weight, shared: e.shared })),
   }), [memories, edges]);
@@ -191,11 +191,12 @@ export default function GraphView({
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
   // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
-  // off = (1 - effDepth) * (camCenter*0.6 + mouseWorld); effDepth = 1 for focused
-  // nodes (zero offset — anchors interactions + FocusHud), else node.depth.
-  const offsetOf = (node, focused) => {
-    if (focused) return ZERO;
-    const f = 1 - node.depth;
+  // off = (1 - depth) * (camCenter*0.6 + mouseWorld) * (1 - anchorA). anchorA is eased
+  // per-node toward 1 while hovered/selected/highlighted (else 0) in onRenderFramePre, so a
+  // focused orb GLIDES to its true position instead of snapping — an instant snap leaps the
+  // orb out from under the cursor and un-hovers it in a flicker loop (the hover-jump bug).
+  const offsetOf = (node) => {
+    const f = (1 - node.depth) * (1 - node.anchorA);
     const cam = camRef.current;
     const mw = mouseWorldRef.current;
     return { x: f * (cam.x * 0.6 + mw.x), y: f * (cam.y * 0.6 + mw.y) };
@@ -230,7 +231,7 @@ export default function GraphView({
     for (const c of cand) {
       const { node, focused, showYear, imp } = c;
       const r = Math.max(0.5, (4 + imp * 2) * (1 + 0.05 * Math.sin(t / 1400 + node.phase)) * (focused ? 1 : node.depth));
-      const off = offsetOf(node, focused);
+      const off = offsetOf(node);
       const lx = node.x + off.x + r + 6;
       const ny = node.y + off.y;
       const wtxt = ctx.measureText(node.mem.what).width;
@@ -257,6 +258,12 @@ export default function GraphView({
     s.y += (tg.y - s.y) * 0.06;
     const k = globalScale || 1;
     mouseWorldRef.current = { x: (s.x * 12) / k, y: (s.y * 12) / k }; // ~12 screen px at any zoom
+    // Ease each node's parallax anchor toward 1 while it's the focus (hover/select/highlight),
+    // else toward 0 — so focused orbs glide to true position instead of snapping (hover-jump bug).
+    for (const n of graphData.nodes) {
+      const anchored = n.id === hoverId || n.id === selectedId || (highlightIds && highlightIds.has(n.id));
+      n.anchorA += ((anchored ? 1 : 0) - n.anchorA) * 0.15;
+    }
     computeLabelSet(ctx, globalScale);
   };
 
@@ -273,9 +280,10 @@ export default function GraphView({
     // neighbor of the currently focused node → part of its ego-network
     const inEgo = egoId != null && egoNeighbors != null && egoNeighbors.has(node.id);
 
-    // Parallax: far orbs lag pan/zoom + drift with the idle mouse; focused orbs anchor
-    // (zero offset) so the FocusHud and hitbox stay pinned. Same offset feeds label + hitbox.
-    const off = offsetOf(node, focused);
+    // Parallax: far orbs lag pan/zoom + drift with the idle mouse; a focused orb eases its
+    // anchor toward 1 (offset → 0) so it glides to true position — FocusHud + hitbox pin
+    // without the leap-out-from-cursor snap. Same offset feeds label + hitbox.
+    const off = offsetOf(node);
     const nx = node.x + off.x;
     const ny = node.y + off.y;
 
@@ -389,8 +397,7 @@ export default function GraphView({
   // must follow the pixels; focused nodes get zero offset so they stay pinned).
   const paintNodePointer = (node, color, ctx) => {
     if (node.x == null) return;
-    const focused = isHighlighted(node) || node.id === selectedId || node.id === hoverId;
-    const off = offsetOf(node, focused);
+    const off = offsetOf(node);
     const r = 4 + (node.mem.importance || 1) * 2;
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -424,8 +431,8 @@ export default function GraphView({
     // Parallax: paint each endpoint from its own offset position (hover hit-test stays on
     // true coords — fine at this ≤~10px amplitude). Shift the control point by the mean
     // endpoint offset so the curve keeps its shape.
-    const so = offsetOf(s, isHighlighted(s) || s.id === selectedId || s.id === hoverId);
-    const to = offsetOf(t, isHighlighted(t) || t.id === selectedId || t.id === hoverId);
+    const so = offsetOf(s);
+    const to = offsetOf(t);
     const sx = s.x + so.x;
     const sy = s.y + so.y;
     const tx = t.x + to.x;
