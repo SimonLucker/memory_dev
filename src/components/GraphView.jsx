@@ -201,6 +201,24 @@ export default function GraphView({
     if (visibleIds.size < memories.length) return visibleIds;
     return null;
   }, [highlightIds, visibleIds, memories]);
+  // Gathered constellation targets: a phyllotaxis (sunflower) spiral around the layout
+  // centroid — most important memories in the middle, golden-angle spacing keeps every
+  // "on" orb clear of its neighbors with zero collision math. "Off" orbs are ignored
+  // entirely (they're dim ghosts; overlap with them is fine, per user).
+  const gatherLayout = useMemo(() => {
+    if (!gatherIds) return null;
+    const list = graphData.nodes.filter((n) => gatherIds.has(n.id));
+    list.sort((a, b) => (b.mem.importance || 1) - (a.mem.importance || 1) || (a.id < b.id ? -1 : 1));
+    const GA = Math.PI * (3 - Math.sqrt(5)); // golden angle
+    const c = centroidRef.current;
+    const map = new Map();
+    list.forEach((n, i) => {
+      const rad = 32 * Math.sqrt(i + 0.35);
+      const ang = i * GA;
+      map.set(n.id, { gx: c.x + rad * Math.cos(ang), gy: c.y + rad * Math.sin(ang) });
+    });
+    return map;
+  }, [gatherIds, graphData]);
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
   // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
@@ -388,10 +406,10 @@ export default function GraphView({
       for (const n of graphData.nodes) {
         if (n.hx == null || n.x == null) continue;
         if (n.fx != null) { n.hx = n.fx; n.hy = n.fy ?? n.hy; continue; } // being dragged — rehome
-        const gathered = gatherIds && gatherIds.has(n.id);
-        const wob = gathered ? 3 : 6; // gathered constellation breathes more quietly
-        const bx = gathered ? n.hx + (centroidRef.current.x - n.hx) * 0.5 : n.hx;
-        const by = gathered ? n.hy + (centroidRef.current.y - n.hy) * 0.5 : n.hy;
+        const g = gatherLayout ? gatherLayout.get(n.id) : null;
+        const wob = g ? 2.5 : 6; // gathered constellation breathes more quietly
+        const bx = g ? g.gx : n.hx;
+        const by = g ? g.gy : n.hy;
         let tx = bx + wob * Math.sin(tNow / 2600 + n.phase * 7);
         let ty = by + wob * Math.cos(tNow / 3100 + n.phase * 5);
         if (selNode && n !== selNode && selNode.hx != null) {
@@ -405,8 +423,9 @@ export default function GraphView({
             ty += (dy / dist) * push;
           }
         }
-        n.x += (tx - n.x) * 0.035; // slow, zen easing toward the moving target
-        n.y += (ty - n.y) * 0.035;
+        const ease = g ? 0.09 : 0.035; // gathering is snappier; ambient drift stays zen
+        n.x += (tx - n.x) * ease;
+        n.y += (ty - n.y) * ease;
       }
     }
     // Labels wait until the entrance float finishes.

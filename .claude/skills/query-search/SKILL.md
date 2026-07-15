@@ -13,7 +13,7 @@ Four small stats derived from the *currently visible* memories: Memories (count)
 
 ## Input
 
-Pill input, placeholder "Ask a question...", circular dawn-gradient send button. Enter or click = run query. An "x" clears it. Bottom chip row: the match-count chip (while a query is active) PLUS one active chip per live filter — year, month ("Mar 2022"), each attribute filter value, and hidden classes as "no <Class>". Clicking a chip removes that filter. App builds the chip list ({key,label,onRemove}) and passes it as `filters`.
+Pill input, placeholder "Ask a question...", circular dawn-gradient send button. Enter or click = run query. An "x" clears it. Bottom chip row: the match-count chip (while a query is active) PLUS one active chip per live filter — year, month ("Mar 2022"), each attribute filter value, and hidden classes as "no <Class>". Clicking a chip removes that filter. Query terms appear as chips too (queryResult carries its parsed filters; removing one re-runs the remaining terms, removing the last clears the query). App builds the chip list ({key,label,onRemove}) and passes it as `filters`.
 
 ## Parser — parseQuery(text, vocab) in lib/search.js
 

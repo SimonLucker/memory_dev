@@ -97,7 +97,7 @@ While a memory is selected, its neighbors ease away to give it air. CRITICAL ENG
 
 When ANY filter narrows the set (legend class toggle, attribute chips, year/month, or a query with matches), the matching memories drift toward the layout centroid and their mutual connections light up; removing filters lets them float home (the liveliness easing handles both directions for free):
 - `gatherIds` = query highlightIds if non-null, else visibleIds when it's a strict subset of all memories, else null.
-- In the liveliness pass, gathered nodes' target = `home + (centroid - home) * 0.5` + half-amplitude wobble (centroid = the settled-layout centroidRef). Non-matching nodes keep their normal home target.
+- Gathered targets form a PHYLLOTAXIS spiral around the layout centroid (`rad = 32*sqrt(i+0.35)`, golden angle, sorted importance-first so big memories sit centermost) — a tidy composition whose spacing keeps "on" orbs clear of each other with no collision math; overlap with dimmed "off" orbs is deliberately ignored. Gather easing 0.09/frame (snappier than the 0.035 ambient drift); wobble halves while gathered.
 - Edge boost: when gatherIds is active and BOTH endpoints are gathered, the thread paints at alpha ≥ 0.55 (+0.3px width) — the constellation's internal connections glow while everything else recedes (non-gathered edges already dim via their dimmed endpoints).
 
 ## Selected-node crosshair (canvas, not DOM)
@@ -126,3 +126,11 @@ On node click: `centerAt(node.x, node.y, 600)` + `zoom(3, 600)`, then an absolut
 - Detail card: `max-height` capped so it NEVER overlaps the query bar (bottom-right panel) — e.g. `top: 24px; right: 24px; max-height: calc(100vh - 300px); overflow-y: auto` with a thin styled scrollbar. Long summaries scroll inside the card.
 - Detail card to the side, dusk glass panel: photo (radius 14px, slight rotation), then sections in the site's card style — tiny UPPERCASE letter-spaced labels with a pastel square dot ("WHO WAS THERE", "FEELING", "MUSIC", "WHY"), people/feeling chips as themed translucent pills, summary in paper text.
 - Click empty canvas: `zoom(1.2, 600)`, HUD unmounts.
+
+## Verification gotcha (browser automation)
+
+Chrome suspends requestAnimationFrame for HIDDEN tabs. An automation-driven background tab
+renders NOTHING on the graph canvas (blank screenshots) even though the app is perfectly
+healthy — the loop starts the moment the tab becomes visible. Before diagnosing "blank
+canvas" bugs from automated screenshots, check `document.visibilityState === 'visible'`.
+A whole afternoon went to this once.

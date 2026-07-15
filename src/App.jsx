@@ -60,14 +60,16 @@ export default function App() {
     setQueryResult(null)
   }
 
-  const submitQuery = text => {
-    const { filters } = parseQuery(text, vocab)
-    const matched = filters.length ? filterMemories(memories, filters) : []
+  const runQueryFilters = filters => {
+    if (!filters.length) { setQueryResult(null); return }
+    const matched = filterMemories(memories, filters)
     // Zero matches: report 0 but leave the graph untouched (ids: null)
     setQueryResult(matched.length
-      ? { ids: new Set(matched.map(m => m.id)), count: matched.length }
-      : { ids: null, count: 0 })
+      ? { ids: new Set(matched.map(m => m.id)), count: matched.length, filters }
+      : { ids: null, count: 0, filters })
   }
+
+  const submitQuery = text => runQueryFilters(parseQuery(text, vocab).filters)
 
   const stats = useMemo(() => {
     const people = new Set()
@@ -94,6 +96,11 @@ export default function App() {
     ...(selectedYear ? [{ key: 'year', label: selectedYear, onRemove: () => setSelectedYear(null) }] : []),
     ...(selectedMonth ? [{ key: 'month', label: `${MONTHS[selectedMonth.month - 1]} ${selectedMonth.year}`, onRemove: () => setSelectedMonth(null) }] : []),
     ...activeFilters.map(f => ({ key: `f-${f.type}-${f.value}`, label: f.value, onRemove: () => toggleFilter(f) })),
+    ...(queryResult?.filters || []).map(f => ({
+      key: `q-${f.type}-${f.value}`,
+      label: f.value,
+      onRemove: () => runQueryFilters(queryResult.filters.filter(x => !(x.type === f.type && x.value === f.value))),
+    })),
     ...[...hiddenClasses].map(c => ({ key: `h-${c}`, label: `no ${c}`, onRemove: () => toggleClass(c) })),
   ]
 
