@@ -64,7 +64,7 @@ export default function FocusHud({ memory, onClose }) {
           ...panel,
           pointerEvents: 'auto',
           position: 'absolute',
-          top: 24,
+          top: 64, /* clears the person-switch pill */
           right: 24,
           width: 320,
           // capped so a long summary scrolls INSIDE the card and never reaches the

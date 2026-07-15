@@ -3,7 +3,8 @@ import GraphView from './components/GraphView.jsx'
 import Timeline from './components/Timeline.jsx'
 import Legend from './components/Legend.jsx'
 import QueryBar from './components/QueryBar.jsx'
-import memories from './data/memories.json'
+import PersonSwitch from './components/PersonSwitch.jsx'
+import { PERSONS } from './data/persons.js'
 import { deriveEdges, buildVocab, yearsOf } from './lib/edges.js'
 import { parseQuery, filterMemories, memoryMatches } from './lib/search.js'
 import { CLASS_COLORS } from './lib/palette.js'
@@ -13,9 +14,11 @@ const yearOf = m => m.when.slice(6, 10)
 const monthOf = m => Number(m.when.slice(3, 5))
 
 export default function App() {
-  const edges = useMemo(() => deriveEdges(memories), [])
-  const vocab = useMemo(() => buildVocab(memories), [])
-  const years = useMemo(() => yearsOf(memories).map(String), [])
+  const [personId, setPersonId] = useState(PERSONS[0].id)
+  const memories = PERSONS.find(p => p.id === personId).memories
+  const edges = useMemo(() => deriveEdges(memories), [memories])
+  const vocab = useMemo(() => buildVocab(memories), [memories])
+  const years = useMemo(() => yearsOf(memories).map(String), [memories])
 
   const [hiddenClasses, setHiddenClasses] = useState(new Set())
   const [activeFilters, setActiveFilters] = useState([])
@@ -30,7 +33,7 @@ export default function App() {
       (!selectedYear || yearOf(m) === selectedYear) &&
       (!selectedMonth || (yearOf(m) === selectedMonth.year && monthOf(m) === selectedMonth.month)) &&
       activeFilters.every(f => memoryMatches(m, f))
-    ), [hiddenClasses, selectedYear, selectedMonth, activeFilters])
+    ), [memories, hiddenClasses, selectedYear, selectedMonth, activeFilters])
 
   const visibleIds = useMemo(() => new Set(visibleMemories.map(m => m.id)), [visibleMemories])
 
@@ -45,6 +48,16 @@ export default function App() {
       ? prev.filter(x => !(x.type === f.type && x.value === f.value))
       : [...prev, f]
   )
+
+  const switchPerson = id => {
+    setPersonId(id)
+    setSelectedId(null)
+    setSelectedYear(null)
+    setSelectedMonth(null)
+    setHiddenClasses(new Set())
+    setActiveFilters([])
+    setQueryResult(null)
+  }
 
   const submitQuery = text => {
     const { filters } = parseQuery(text, vocab)
@@ -76,12 +89,13 @@ export default function App() {
   }, [visibleMemories])
 
   const classCounts = useMemo(() =>
-    CLASSES.map(name => ({ name, count: memories.filter(m => m.class === name).length })), [])
+    CLASSES.map(name => ({ name, count: memories.filter(m => m.class === name).length })), [memories])
 
   return (
     <div className="scene">
       <div className="graph-layer">
         <GraphView
+          key={personId}
           memories={memories}
           edges={edges}
           visibleIds={visibleIds}
@@ -106,6 +120,7 @@ export default function App() {
         activeFilters={activeFilters}
         onToggleFilter={toggleFilter}
       />
+      <PersonSwitch persons={PERSONS} activeId={personId} onSwitch={switchPerson} />
       <QueryBar
         stats={stats}
         matchCount={queryResult ? queryResult.count : null}

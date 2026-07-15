@@ -52,3 +52,11 @@ For every pair of memories, collect shared attributes:
 - Sum weights. v2 pruning (v1's ≥2 threshold produced 243 edges for 40 nodes — an unreadable near-clique): keep an edge iff `weight >= 6` OR it is one of either endpoint's top-2 edges by weight (keeps every node connected). Measured on the v1 dataset this floor yields ~120 edges. Target 80–130 for ~40 nodes.
 - Edge object: `{ source, target, weight, shared: [{type, value}, ...] }`. The `shared` list is user-facing ("what these memories have in common").
 - Also export `buildVocab(memories)` → `{ people:[], classes:[], places:[], feelings:[], artists:[] }` (lowercased) for the query parser and filter chips.
+
+
+## Multi-person (Phase: scale test)
+
+- `src/data/persons.js` is the manifest: `[{ id: 'p1', name: 'Simon', memories: <import memories.json> }, { id: 'p2', name: 'Maya', memories: <import memories-p2.json> }]`.
+- Person 2 ("Maya", world traveler): 241 memories, ids `p2m001`–`p2m241`, years 2016–2026, class mix Travel 95 / Friends 65 / Work 35 / Family 30 / Milestones 16. Own people pool (~28), places (~35, global cities), same 8-feeling set + "Free". Photos start empty; the photo CLIs accept `--person p2` (targets memories-p2.json, photo files keep the memory-id prefix so both persons share public/photos/).
+- Switching persons swaps the whole memories array — every derived structure (edges, vocab, years, counts) recomputes; selection/filters/query reset. All App memos must depend on the active memories.
+- The switcher is a top-right dusk-glass pill (both names, dawn-gradient highlight on the active one). The focus card starts below it (top offset ~68px).

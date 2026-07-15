@@ -1,0 +1,6962 @@
+[
+  {
+    "id": "p2m001",
+    "class": "Travel",
+    "when": "13-03-2017 12:09",
+    "what": "Swimming in street corners",
+    "where": "Lisbon",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Holocene",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 2
+  },
+  {
+    "id": "p2m002",
+    "class": "Work",
+    "when": "04-05-2016 19:32",
+    "what": "Finished the redesign",
+    "where": "Montevideo",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Free"
+    ],
+    "music": {
+      "name": "Untitled",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 2
+  },
+  {
+    "id": "p2m003",
+    "class": "Work",
+    "when": "12-03-2016 09:51",
+    "what": "Finished the feature",
+    "where": "Essaouira",
+    "why": "Project launch",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Cazibalar",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 2
+  },
+  {
+    "id": "p2m004",
+    "class": "Travel",
+    "when": "22-12-2017 20:31",
+    "what": "Dancing in mountain peaks",
+    "where": "Reykjavik",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "DIANA",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 2
+  },
+  {
+    "id": "p2m005",
+    "class": "Work",
+    "when": "07-03-2016 20:41",
+    "what": "Finished the feature",
+    "where": "Naples",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Nightmares",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 2
+  },
+  {
+    "id": "p2m006",
+    "class": "Family",
+    "when": "03-04-2016 14:56",
+    "what": "Busan moment",
+    "where": "Busan",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Felt",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Felt the weight of their love in the smallest gestures.",
+    "importance": 3
+  },
+  {
+    "id": "p2m007",
+    "class": "Work",
+    "when": "14-11-2017 21:46",
+    "what": "Finished the redesign",
+    "where": "Chefchaouen",
+    "why": "Team win",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 3
+  },
+  {
+    "id": "p2m008",
+    "class": "Travel",
+    "when": "03-03-2017 19:55",
+    "what": "Hiking to local markets",
+    "where": "Lisbon",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Happy"
+    ],
+    "music": {
+      "name": "Might Bang",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m009",
+    "class": "Friends",
+    "when": "14-03-2016 08:48",
+    "what": "Long walk",
+    "where": "the Berlin flat",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p07",
+        "name": "Nora"
+      },
+      {
+        "id": "p10",
+        "name": "Tom"
+      },
+      {
+        "id": "p24",
+        "name": "Jonas"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Chigarum",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m010",
+    "class": "Milestones",
+    "when": "24-06-2016 13:02",
+    "what": "The decision",
+    "where": "Porto",
+    "why": "Turning point",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p26",
+        "name": "Mateo"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Calm"
+    ],
+    "music": {
+      "name": "Different",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Knew I wouldn't be the same person on the other side.",
+    "importance": 3
+  },
+  {
+    "id": "p2m011",
+    "class": "Friends",
+    "when": "14-11-2016 22:49",
+    "what": "Cooking together",
+    "where": "Hoi An",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p27",
+        "name": "Freya"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "ye",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m012",
+    "class": "Travel",
+    "when": "12-02-2017 13:50",
+    "what": "Sunset over street corners",
+    "where": "Marrakech",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Calm"
+    ],
+    "music": {
+      "name": "Death",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 3
+  },
+  {
+    "id": "p2m013",
+    "class": "Family",
+    "when": "11-10-2016 15:10",
+    "what": "Naples moment",
+    "where": "Naples",
+    "why": "Just because",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Untitled",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 4
+  },
+  {
+    "id": "p2m014",
+    "class": "Friends",
+    "when": "08-09-2016 16:02",
+    "what": "Dance party",
+    "where": "Tempelhofer Feld",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      },
+      {
+        "id": "p23",
+        "name": "Anna"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Untitled",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 3
+  },
+  {
+    "id": "p2m015",
+    "class": "Travel",
+    "when": "19-03-2017 11:41",
+    "what": "Bargaining in the bazaar",
+    "where": "Valparaiso",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Happy"
+    ],
+    "music": {
+      "name": "Nightmares",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 4
+  },
+  {
+    "id": "p2m016",
+    "class": "Family",
+    "when": "07-01-2016 23:25",
+    "what": "Porto moment",
+    "where": "Porto",
+    "why": "Oma called",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Pressure",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 3
+  },
+  {
+    "id": "p2m017",
+    "class": "Travel",
+    "when": "14-10-2016 18:17",
+    "what": "Dancing in rooftop bars",
+    "where": "Taipei",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m018",
+    "class": "Travel",
+    "when": "02-03-2016 10:39",
+    "what": "Sunset over coastal caves",
+    "where": "Marrakech",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Skinny Love",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 3
+  },
+  {
+    "id": "p2m019",
+    "class": "Travel",
+    "when": "09-08-2016 12:39",
+    "what": "Feast at the medina",
+    "where": "Marrakech",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Perth",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 5
+  },
+  {
+    "id": "p2m020",
+    "class": "Travel",
+    "when": "22-04-2016 23:33",
+    "what": "Hiking to the medina",
+    "where": "Tbilisi",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Troupel",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m021",
+    "class": "Family",
+    "when": "02-07-2017 23:58",
+    "what": "Naples moment",
+    "where": "Naples",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Lighterthanair",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Papa told the story again, and we laughed like children.",
+    "importance": 3
+  },
+  {
+    "id": "p2m022",
+    "class": "Travel",
+    "when": "20-08-2017 15:22",
+    "what": "Dancing in mountain peaks",
+    "where": "Taipei",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Kool Ibiza",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 2
+  },
+  {
+    "id": "p2m023",
+    "class": "Friends",
+    "when": "28-12-2016 11:30",
+    "what": "Long walk",
+    "where": "Sevilla",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p23",
+        "name": "Anna"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Lighterthanair",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 3
+  },
+  {
+    "id": "p2m024",
+    "class": "Travel",
+    "when": "14-03-2016 11:41",
+    "what": "Hiking to mountain peaks",
+    "where": "Tbilisi",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Émanenhot",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 3
+  },
+  {
+    "id": "p2m025",
+    "class": "Friends",
+    "when": "23-12-2017 19:08",
+    "what": "Coffee session",
+    "where": "Essaouira",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p10",
+        "name": "Tom"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Lighterthanair",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 4
+  },
+  {
+    "id": "p2m026",
+    "class": "Family",
+    "when": "22-09-2017 11:21",
+    "what": "Tempelhofer Feld moment",
+    "where": "Tempelhofer Feld",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Cascade",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 2
+  },
+  {
+    "id": "p2m027",
+    "class": "Milestones",
+    "when": "10-09-2016 15:27",
+    "what": "New beginning",
+    "where": "Sevilla",
+    "why": "Finally",
+    "who": [
+      {
+        "id": "p26",
+        "name": "Mateo"
+      },
+      {
+        "id": "p28",
+        "name": "Nikhil"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Excited"
+    ],
+    "music": {
+      "name": "Woman",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 4
+  },
+  {
+    "id": "p2m028",
+    "class": "Travel",
+    "when": "28-10-2016 14:00",
+    "what": "Feast at street corners",
+    "where": "Zanzibar",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Chigarum",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m029",
+    "class": "Friends",
+    "when": "26-03-2016 21:49",
+    "what": "Long walk",
+    "where": "Essaouira",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p09",
+        "name": "Leila"
+      },
+      {
+        "id": "p07",
+        "name": "Nora"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Calm"
+    ],
+    "music": {
+      "name": "Chicago",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m030",
+    "class": "Friends",
+    "when": "22-05-2017 19:06",
+    "what": "Dance party",
+    "where": "Naples",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p07",
+        "name": "Nora"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 3
+  },
+  {
+    "id": "p2m031",
+    "class": "Family",
+    "when": "01-02-2017 09:18",
+    "what": "the Berlin flat moment",
+    "where": "the Berlin flat",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Excited"
+    ],
+    "music": {
+      "name": "Radiation",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 2
+  },
+  {
+    "id": "p2m032",
+    "class": "Work",
+    "when": "05-06-2016 08:50",
+    "what": "Finished the sprint",
+    "where": "Montevideo",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Free"
+    ],
+    "music": {
+      "name": "Glitch",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 3
+  },
+  {
+    "id": "p2m033",
+    "class": "Travel",
+    "when": "23-07-2017 17:06",
+    "what": "Hiking to street corners",
+    "where": "Kyoto",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Gün Doğdu",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 3
+  },
+  {
+    "id": "p2m034",
+    "class": "Friends",
+    "when": "26-09-2016 12:11",
+    "what": "Dance party",
+    "where": "Tempelhofer Feld",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p25",
+        "name": "Chiara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Free"
+    ],
+    "music": {
+      "name": "Mediate",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 3
+  },
+  {
+    "id": "p2m035",
+    "class": "Friends",
+    "when": "02-08-2016 18:13",
+    "what": "Dance party",
+    "where": "Montevideo",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Lighterthanair",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m036",
+    "class": "Travel",
+    "when": "24-11-2017 21:01",
+    "what": "Dancing in street corners",
+    "where": "Salta",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Pressure",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m037",
+    "class": "Work",
+    "when": "02-10-2017 15:42",
+    "what": "Finished the project",
+    "where": "Sevilla",
+    "why": "Project launch",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Proud"
+    ],
+    "music": {
+      "name": "Wanderer",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 4
+  },
+  {
+    "id": "p2m038",
+    "class": "Friends",
+    "when": "08-10-2017 21:13",
+    "what": "Cooking together",
+    "where": "the Berlin flat",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p27",
+        "name": "Freya"
+      },
+      {
+        "id": "p10",
+        "name": "Tom"
+      },
+      {
+        "id": "p07",
+        "name": "Nora"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Malamente",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 5
+  },
+  {
+    "id": "p2m039",
+    "class": "Travel",
+    "when": "25-11-2017 11:54",
+    "what": "Dancing in coastal caves",
+    "where": "Valparaiso",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Kerala",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 3
+  },
+  {
+    "id": "p2m040",
+    "class": "Friends",
+    "when": "16-11-2016 08:56",
+    "what": "Dance party",
+    "where": "the office rooftop",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p27",
+        "name": "Freya"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Proud"
+    ],
+    "music": {
+      "name": "Chatma",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m041",
+    "class": "Travel",
+    "when": "26-08-2016 19:53",
+    "what": "Sunset over the bazaar",
+    "where": "Marrakech",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Holiday",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m042",
+    "class": "Travel",
+    "when": "03-08-2017 21:41",
+    "what": "Swimming in rooftop bars",
+    "where": "Bangkok",
+    "why": "Chasing sunsets",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Calm"
+    ],
+    "music": {
+      "name": "White Glove",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 2
+  },
+  {
+    "id": "p2m043",
+    "class": "Work",
+    "when": "20-03-2016 20:18",
+    "what": "Finished the redesign",
+    "where": "Porto",
+    "why": "Proud presentation",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Felt",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 4
+  },
+  {
+    "id": "p2m044",
+    "class": "Friends",
+    "when": "15-01-2017 10:17",
+    "what": "Coffee session",
+    "where": "Mama's kitchen",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p27",
+        "name": "Freya"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Happy"
+    ],
+    "music": {
+      "name": "Might Bang",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 4
+  },
+  {
+    "id": "p2m045",
+    "class": "Friends",
+    "when": "14-01-2019 12:57",
+    "what": "Late night conversation",
+    "where": "the office rooftop",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p11",
+        "name": "Yuki"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Free"
+    ],
+    "music": {
+      "name": "Kerala",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m046",
+    "class": "Family",
+    "when": "06-07-2018 23:28",
+    "what": "Busan moment",
+    "where": "Busan",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Ascend",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 2
+  },
+  {
+    "id": "p2m047",
+    "class": "Travel",
+    "when": "21-12-2019 12:10",
+    "what": "Feast at the bazaar",
+    "where": "Lisbon",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Hidden Wisdom",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 3
+  },
+  {
+    "id": "p2m048",
+    "class": "Travel",
+    "when": "01-11-2019 14:52",
+    "what": "Hiking to the medina",
+    "where": "Zanzibar",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Proud"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m049",
+    "class": "Travel",
+    "when": "24-03-2018 20:52",
+    "what": "Sunset over street corners",
+    "where": "Cartagena",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Skinny Love",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 2
+  },
+  {
+    "id": "p2m050",
+    "class": "Milestones",
+    "when": "22-06-2019 16:44",
+    "what": "Returning",
+    "where": "Café Luna",
+    "why": "Turning point",
+    "who": [
+      {
+        "id": "p26",
+        "name": "Mateo"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Aşk Nedir",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 2
+  },
+  {
+    "id": "p2m051",
+    "class": "Family",
+    "when": "10-08-2019 21:15",
+    "what": "the office rooftop moment",
+    "where": "the office rooftop",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Proud"
+    ],
+    "music": {
+      "name": "Glitch",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 3
+  },
+  {
+    "id": "p2m052",
+    "class": "Travel",
+    "when": "26-07-2018 08:38",
+    "what": "Dancing in mountain peaks",
+    "where": "Bangkok",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Proud"
+    ],
+    "music": {
+      "name": "Show Me",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 2
+  },
+  {
+    "id": "p2m053",
+    "class": "Travel",
+    "when": "28-05-2018 13:59",
+    "what": "Getting lost in palace gardens",
+    "where": "Lisbon",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Proud"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m054",
+    "class": "Work",
+    "when": "16-02-2019 17:34",
+    "what": "Finished the feature",
+    "where": "Mama's kitchen",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Happy"
+    ],
+    "music": {
+      "name": "Says",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Watched the data tell the story we hoped for.",
+    "importance": 2
+  },
+  {
+    "id": "p2m055",
+    "class": "Family",
+    "when": "15-12-2019 09:03",
+    "what": "the office rooftop moment",
+    "where": "the office rooftop",
+    "why": "Oma called",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Lighterthanair",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 2
+  },
+  {
+    "id": "p2m056",
+    "class": "Friends",
+    "when": "28-08-2019 10:55",
+    "what": "Coffee session",
+    "where": "Lake Bled",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Proud"
+    ],
+    "music": {
+      "name": "Share",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 5
+  },
+  {
+    "id": "p2m057",
+    "class": "Friends",
+    "when": "08-01-2019 17:43",
+    "what": "Cooking together",
+    "where": "the Berlin flat",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Tears",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 3
+  },
+  {
+    "id": "p2m058",
+    "class": "Friends",
+    "when": "19-11-2019 19:05",
+    "what": "Dance party",
+    "where": "Lake Bled",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p21",
+        "name": "Lucia"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Holocene",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m059",
+    "class": "Work",
+    "when": "25-09-2019 10:04",
+    "what": "Finished the sprint",
+    "where": "Naples",
+    "why": "Team win",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 2
+  },
+  {
+    "id": "p2m060",
+    "class": "Work",
+    "when": "02-02-2019 11:56",
+    "what": "Finished the proposal",
+    "where": "Porto",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Mediate",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 2
+  },
+  {
+    "id": "p2m061",
+    "class": "Friends",
+    "when": "27-08-2018 08:41",
+    "what": "Coffee session",
+    "where": "Busan",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p23",
+        "name": "Anna"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p26",
+        "name": "Mateo"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Show Me",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 5
+  },
+  {
+    "id": "p2m062",
+    "class": "Travel",
+    "when": "27-03-2019 08:18",
+    "what": "Swimming in rooftop bars",
+    "where": "Sarajevo",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Death",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 2
+  },
+  {
+    "id": "p2m063",
+    "class": "Friends",
+    "when": "21-07-2018 15:41",
+    "what": "Dance party",
+    "where": "the Berlin flat",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p23",
+        "name": "Anna"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Last Last",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 4
+  },
+  {
+    "id": "p2m064",
+    "class": "Family",
+    "when": "18-01-2019 08:49",
+    "what": "Lake Bled moment",
+    "where": "Lake Bled",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 5
+  },
+  {
+    "id": "p2m065",
+    "class": "Travel",
+    "when": "19-03-2019 17:19",
+    "what": "Getting lost in street corners",
+    "where": "Bangkok",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Hoppípolla",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 4
+  },
+  {
+    "id": "p2m066",
+    "class": "Travel",
+    "when": "18-08-2019 15:41",
+    "what": "Bargaining in street corners",
+    "where": "Cusco",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Free"
+    ],
+    "music": {
+      "name": "The Only Thing",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 4
+  },
+  {
+    "id": "p2m067",
+    "class": "Work",
+    "when": "12-08-2019 23:00",
+    "what": "Finished the proposal",
+    "where": "Tempelhofer Feld",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Troupel",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 2
+  },
+  {
+    "id": "p2m068",
+    "class": "Travel",
+    "when": "24-08-2019 17:34",
+    "what": "Getting lost in a night market",
+    "where": "Amman",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Dive",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 4
+  },
+  {
+    "id": "p2m069",
+    "class": "Work",
+    "when": "18-01-2018 12:58",
+    "what": "Finished the proposal",
+    "where": "Montevideo",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Happy"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 3
+  },
+  {
+    "id": "p2m070",
+    "class": "Family",
+    "when": "27-05-2019 20:26",
+    "what": "the office rooftop moment",
+    "where": "the office rooftop",
+    "why": "Papa made it special",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Ye Final Final",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 2
+  },
+  {
+    "id": "p2m071",
+    "class": "Travel",
+    "when": "01-11-2018 20:23",
+    "what": "Dancing in coastal caves",
+    "where": "Marrakech",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Warmer",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m072",
+    "class": "Travel",
+    "when": "18-08-2018 11:24",
+    "what": "Swimming in coastal caves",
+    "where": "Ubud",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Happy"
+    ],
+    "music": {
+      "name": "DIANA",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 3
+  },
+  {
+    "id": "p2m073",
+    "class": "Friends",
+    "when": "20-04-2019 21:36",
+    "what": "Dance party",
+    "where": "the Berlin flat",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Tabu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m074",
+    "class": "Work",
+    "when": "21-08-2018 16:36",
+    "what": "Finished the sprint",
+    "where": "Hoi An",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Free"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 2
+  },
+  {
+    "id": "p2m075",
+    "class": "Travel",
+    "when": "14-05-2019 17:30",
+    "what": "Hiking to local markets",
+    "where": "Cusco",
+    "why": "Chasing sunsets",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Tabu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m076",
+    "class": "Travel",
+    "when": "21-10-2019 08:08",
+    "what": "Swimming in a night market",
+    "where": "Cusco",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Happy"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 5
+  },
+  {
+    "id": "p2m077",
+    "class": "Friends",
+    "when": "25-03-2019 21:49",
+    "what": "Long walk",
+    "where": "Café Luna",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p21",
+        "name": "Lucia"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Free"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 4
+  },
+  {
+    "id": "p2m078",
+    "class": "Travel",
+    "when": "05-05-2018 21:04",
+    "what": "Laughing at mountain peaks",
+    "where": "Salta",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Excited"
+    ],
+    "music": {
+      "name": "SAOKO",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 2
+  },
+  {
+    "id": "p2m079",
+    "class": "Travel",
+    "when": "25-08-2019 23:53",
+    "what": "Feast at street corners",
+    "where": "Cusco",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Might Bang",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 2
+  },
+  {
+    "id": "p2m080",
+    "class": "Travel",
+    "when": "06-06-2018 15:30",
+    "what": "Dancing in palace gardens",
+    "where": "Fez",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Venom",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 2
+  },
+  {
+    "id": "p2m081",
+    "class": "Family",
+    "when": "01-12-2019 13:18",
+    "what": "Chefchaouen moment",
+    "where": "Chefchaouen",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Rediscovery",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 3
+  },
+  {
+    "id": "p2m082",
+    "class": "Travel",
+    "when": "11-02-2019 23:35",
+    "what": "Feast at a night market",
+    "where": "Luang Prabang",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Free"
+    ],
+    "music": {
+      "name": "Felt",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 4
+  },
+  {
+    "id": "p2m083",
+    "class": "Friends",
+    "when": "04-09-2018 16:53",
+    "what": "Film night",
+    "where": "Montevideo",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p07",
+        "name": "Nora"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Ascend",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 3
+  },
+  {
+    "id": "p2m084",
+    "class": "Work",
+    "when": "28-05-2018 13:21",
+    "what": "Finished the redesign",
+    "where": "Chefchaouen",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Chigarum",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 4
+  },
+  {
+    "id": "p2m085",
+    "class": "Milestones",
+    "when": "26-04-2019 23:56",
+    "what": "New beginning",
+    "where": "Hoi An",
+    "why": "Turning point",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Woman",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Everything before and after divides at this moment.",
+    "importance": 4
+  },
+  {
+    "id": "p2m086",
+    "class": "Friends",
+    "when": "20-09-2019 17:04",
+    "what": "Long walk",
+    "where": "Istanbul",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Alive",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m087",
+    "class": "Friends",
+    "when": "09-01-2018 10:10",
+    "what": "Long walk",
+    "where": "the Berlin flat",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p08",
+        "name": "Sam"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p11",
+        "name": "Yuki"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 3
+  },
+  {
+    "id": "p2m088",
+    "class": "Friends",
+    "when": "15-10-2018 11:08",
+    "what": "Cooking together",
+    "where": "Chefchaouen",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Show Me",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m089",
+    "class": "Family",
+    "when": "17-04-2020 15:29",
+    "what": "the Berlin flat moment",
+    "where": "the Berlin flat",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Different",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Papa told the story again, and we laughed like children.",
+    "importance": 2
+  },
+  {
+    "id": "p2m090",
+    "class": "Friends",
+    "when": "27-03-2021 13:43",
+    "what": "Late night conversation",
+    "where": "Hoi An",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Excited"
+    ],
+    "music": {
+      "name": "ye",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 3
+  },
+  {
+    "id": "p2m091",
+    "class": "Friends",
+    "when": "16-06-2020 22:25",
+    "what": "Film night",
+    "where": "the office rooftop",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p22",
+        "name": "Omar"
+      },
+      {
+        "id": "p27",
+        "name": "Freya"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Sahara Blues",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m092",
+    "class": "Travel",
+    "when": "12-03-2020 10:37",
+    "what": "Feast at mountain peaks",
+    "where": "Marrakech",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Radhin Foghlam",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 4
+  },
+  {
+    "id": "p2m093",
+    "class": "Friends",
+    "when": "08-05-2021 23:35",
+    "what": "Dance party",
+    "where": "Montevideo",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Says",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m094",
+    "class": "Friends",
+    "when": "12-03-2020 21:49",
+    "what": "Long walk",
+    "where": "the Berlin flat",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Selfish",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 3
+  },
+  {
+    "id": "p2m095",
+    "class": "Milestones",
+    "when": "13-01-2020 23:54",
+    "what": "The decision",
+    "where": "Busan",
+    "why": "Turning point",
+    "who": [
+      {
+        "id": "p07",
+        "name": "Nora"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Warmer",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 4
+  },
+  {
+    "id": "p2m096",
+    "class": "Friends",
+    "when": "08-10-2020 09:25",
+    "what": "Late night conversation",
+    "where": "Tempelhofer Feld",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p27",
+        "name": "Freya"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Focus",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 2
+  },
+  {
+    "id": "p2m097",
+    "class": "Work",
+    "when": "26-12-2020 12:09",
+    "what": "Finished the redesign",
+    "where": "Sevilla",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Blue Souls",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 3
+  },
+  {
+    "id": "p2m098",
+    "class": "Family",
+    "when": "21-12-2021 14:26",
+    "what": "Café Luna moment",
+    "where": "Café Luna",
+    "why": "Papa made it special",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Glitch",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 3
+  },
+  {
+    "id": "p2m099",
+    "class": "Work",
+    "when": "13-10-2021 18:27",
+    "what": "Finished the redesign",
+    "where": "the office rooftop",
+    "why": "Proud presentation",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Calm"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 3
+  },
+  {
+    "id": "p2m100",
+    "class": "Family",
+    "when": "23-08-2021 08:28",
+    "what": "the office rooftop moment",
+    "where": "the office rooftop",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Free"
+    ],
+    "music": {
+      "name": "Tieduprightnow",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 4
+  },
+  {
+    "id": "p2m101",
+    "class": "Work",
+    "when": "06-06-2021 12:53",
+    "what": "Finished the proposal",
+    "where": "Lake Bled",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Hidden Wisdom",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 2
+  },
+  {
+    "id": "p2m102",
+    "class": "Friends",
+    "when": "24-06-2020 15:55",
+    "what": "Film night",
+    "where": "Lake Bled",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Cascade",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m103",
+    "class": "Friends",
+    "when": "01-11-2020 14:40",
+    "what": "Film night",
+    "where": "Essaouira",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p24",
+        "name": "Jonas"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Happy"
+    ],
+    "music": {
+      "name": "Tears",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m104",
+    "class": "Travel",
+    "when": "25-04-2020 21:48",
+    "what": "Laughing at the bazaar",
+    "where": "Tbilisi",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Free",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 3
+  },
+  {
+    "id": "p2m105",
+    "class": "Family",
+    "when": "15-03-2021 16:48",
+    "what": "Porto moment",
+    "where": "Porto",
+    "why": "Mama's birthday",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Kool Ibiza",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 2
+  },
+  {
+    "id": "p2m106",
+    "class": "Family",
+    "when": "12-02-2020 11:20",
+    "what": "Café Luna moment",
+    "where": "Café Luna",
+    "why": "Oma called",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Youuu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 3
+  },
+  {
+    "id": "p2m107",
+    "class": "Friends",
+    "when": "02-02-2020 17:41",
+    "what": "Long walk",
+    "where": "Mama's kitchen",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Rediscovery",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m108",
+    "class": "Work",
+    "when": "26-03-2020 20:06",
+    "what": "Finished the redesign",
+    "where": "Sevilla",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Calm"
+    ],
+    "music": {
+      "name": "Pressure",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 4
+  },
+  {
+    "id": "p2m109",
+    "class": "Friends",
+    "when": "12-06-2021 09:09",
+    "what": "Late night conversation",
+    "where": "Busan",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p23",
+        "name": "Anna"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Free"
+    ],
+    "music": {
+      "name": "ye",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m110",
+    "class": "Friends",
+    "when": "10-11-2021 17:12",
+    "what": "Long walk",
+    "where": "Busan",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p11",
+        "name": "Yuki"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Tieduprightnow",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 5
+  },
+  {
+    "id": "p2m111",
+    "class": "Friends",
+    "when": "13-06-2020 23:06",
+    "what": "Film night",
+    "where": "Tempelhofer Feld",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p11",
+        "name": "Yuki"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Horizon",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 2
+  },
+  {
+    "id": "p2m112",
+    "class": "Travel",
+    "when": "25-01-2021 12:09",
+    "what": "Feast at rooftop bars",
+    "where": "Hanoi",
+    "why": "Chasing sunsets",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 4
+  },
+  {
+    "id": "p2m113",
+    "class": "Travel",
+    "when": "21-02-2020 18:32",
+    "what": "Dancing in the medina",
+    "where": "Marrakech",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Sorta",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 2
+  },
+  {
+    "id": "p2m114",
+    "class": "Family",
+    "when": "28-11-2020 17:54",
+    "what": "Montevideo moment",
+    "where": "Montevideo",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Kütür",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 2
+  },
+  {
+    "id": "p2m115",
+    "class": "Travel",
+    "when": "07-06-2021 15:23",
+    "what": "Swimming in local markets",
+    "where": "Taipei",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Radiation",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 3
+  },
+  {
+    "id": "p2m116",
+    "class": "Family",
+    "when": "21-12-2021 17:31",
+    "what": "Lake Bled moment",
+    "where": "Lake Bled",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Selfish",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 5
+  },
+  {
+    "id": "p2m117",
+    "class": "Travel",
+    "when": "14-10-2020 11:04",
+    "what": "Feast at the medina",
+    "where": "Tbilisi",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Free"
+    ],
+    "music": {
+      "name": "Aute Cuture",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m118",
+    "class": "Friends",
+    "when": "15-01-2020 15:23",
+    "what": "Coffee session",
+    "where": "Busan",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p28",
+        "name": "Nikhil"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Common Ground",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 5
+  },
+  {
+    "id": "p2m119",
+    "class": "Family",
+    "when": "27-11-2021 16:47",
+    "what": "Lake Bled moment",
+    "where": "Lake Bled",
+    "why": "Mama's birthday",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Felt the weight of their love in the smallest gestures.",
+    "importance": 3
+  },
+  {
+    "id": "p2m120",
+    "class": "Friends",
+    "when": "28-03-2020 15:42",
+    "what": "Long walk",
+    "where": "Porto",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p25",
+        "name": "Chiara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Chatma",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 4
+  },
+  {
+    "id": "p2m121",
+    "class": "Work",
+    "when": "23-07-2020 19:42",
+    "what": "Finished the proposal",
+    "where": "the Berlin flat",
+    "why": "Project launch",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Calm"
+    ],
+    "music": {
+      "name": "Hidden Wisdom",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 3
+  },
+  {
+    "id": "p2m122",
+    "class": "Family",
+    "when": "14-12-2020 10:37",
+    "what": "Tempelhofer Feld moment",
+    "where": "Tempelhofer Feld",
+    "why": "Oma called",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Free"
+    ],
+    "music": {
+      "name": "Gün Doğdu",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Papa told the story again, and we laughed like children.",
+    "importance": 2
+  },
+  {
+    "id": "p2m123",
+    "class": "Friends",
+    "when": "28-05-2021 12:08",
+    "what": "Long walk",
+    "where": "Essaouira",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      },
+      {
+        "id": "p08",
+        "name": "Sam"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Chicago",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m124",
+    "class": "Work",
+    "when": "02-04-2020 20:38",
+    "what": "Finished the feature",
+    "where": "Tempelhofer Feld",
+    "why": "Proud presentation",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Common Ground",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 2
+  },
+  {
+    "id": "p2m125",
+    "class": "Friends",
+    "when": "15-10-2020 23:33",
+    "what": "Film night",
+    "where": "Hoi An",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p07",
+        "name": "Nora"
+      },
+      {
+        "id": "p09",
+        "name": "Leila"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Focus",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 4
+  },
+  {
+    "id": "p2m126",
+    "class": "Friends",
+    "when": "23-04-2021 22:21",
+    "what": "Film night",
+    "where": "Tempelhofer Feld",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Alive",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 3
+  },
+  {
+    "id": "p2m127",
+    "class": "Travel",
+    "when": "03-10-2021 17:52",
+    "what": "Dancing in mountain peaks",
+    "where": "Fez",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Free"
+    ],
+    "music": {
+      "name": "Thursday",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m128",
+    "class": "Friends",
+    "when": "22-11-2020 20:05",
+    "what": "Film night",
+    "where": "Café Luna",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Proud"
+    ],
+    "music": {
+      "name": "Glow",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 3
+  },
+  {
+    "id": "p2m129",
+    "class": "Work",
+    "when": "01-04-2020 12:29",
+    "what": "Finished the proposal",
+    "where": "Essaouira",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Excited"
+    ],
+    "music": {
+      "name": "Warmer",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 5
+  },
+  {
+    "id": "p2m130",
+    "class": "Milestones",
+    "when": "22-07-2020 17:49",
+    "what": "Leaving",
+    "where": "the Berlin flat",
+    "why": "Changed everything",
+    "who": [
+      {
+        "id": "p28",
+        "name": "Nikhil"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Free"
+    ],
+    "music": {
+      "name": "Plenitude",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 4
+  },
+  {
+    "id": "p2m131",
+    "class": "Family",
+    "when": "16-07-2020 17:56",
+    "what": "Tempelhofer Feld moment",
+    "where": "Tempelhofer Feld",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Excited"
+    ],
+    "music": {
+      "name": "Tabu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 3
+  },
+  {
+    "id": "p2m132",
+    "class": "Family",
+    "when": "01-01-2021 23:02",
+    "what": "Chefchaouen moment",
+    "where": "Chefchaouen",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Holocene",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 3
+  },
+  {
+    "id": "p2m133",
+    "class": "Travel",
+    "when": "21-01-2023 17:56",
+    "what": "Getting lost in local markets",
+    "where": "Lisbon",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Proud"
+    ],
+    "music": {
+      "name": "Aute Cuture",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 3
+  },
+  {
+    "id": "p2m134",
+    "class": "Family",
+    "when": "04-08-2023 11:36",
+    "what": "Essaouira moment",
+    "where": "Essaouira",
+    "why": "Just because",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Woman",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Felt the weight of their love in the smallest gestures.",
+    "importance": 3
+  },
+  {
+    "id": "p2m135",
+    "class": "Travel",
+    "when": "18-07-2023 17:45",
+    "what": "Swimming in coastal caves",
+    "where": "Ubud",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Organ",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m136",
+    "class": "Work",
+    "when": "07-08-2022 12:56",
+    "what": "Finished the project",
+    "where": "Mama's kitchen",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Death",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 2
+  },
+  {
+    "id": "p2m137",
+    "class": "Milestones",
+    "when": "05-08-2022 13:22",
+    "what": "Leaving",
+    "where": "the office rooftop",
+    "why": "Finally",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Excited"
+    ],
+    "music": {
+      "name": "Warmer",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Knew I wouldn't be the same person on the other side.",
+    "importance": 2
+  },
+  {
+    "id": "p2m138",
+    "class": "Travel",
+    "when": "05-03-2022 13:22",
+    "what": "Laughing at local markets",
+    "where": "Salta",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Holocene",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m139",
+    "class": "Work",
+    "when": "27-03-2022 13:08",
+    "what": "Finished the feature",
+    "where": "Essaouira",
+    "why": "Project launch",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 5
+  },
+  {
+    "id": "p2m140",
+    "class": "Friends",
+    "when": "27-05-2023 13:59",
+    "what": "Long walk",
+    "where": "Sevilla",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p21",
+        "name": "Lucia"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Surface",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m141",
+    "class": "Travel",
+    "when": "20-05-2023 23:23",
+    "what": "Dancing in rooftop bars",
+    "where": "Ubud",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Says",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m142",
+    "class": "Travel",
+    "when": "22-01-2023 22:52",
+    "what": "Hiking to a night market",
+    "where": "Ubud",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Calm"
+    ],
+    "music": {
+      "name": "Saman",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 2
+  },
+  {
+    "id": "p2m143",
+    "class": "Friends",
+    "when": "07-02-2023 14:42",
+    "what": "Cooking together",
+    "where": "Tempelhofer Feld",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Proud"
+    ],
+    "music": {
+      "name": "Mordechai",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m144",
+    "class": "Friends",
+    "when": "15-06-2023 15:48",
+    "what": "Coffee session",
+    "where": "the office rooftop",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p09",
+        "name": "Leila"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "The Only Thing",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 5
+  },
+  {
+    "id": "p2m145",
+    "class": "Travel",
+    "when": "01-12-2022 08:03",
+    "what": "Dancing in mountain peaks",
+    "where": "Tbilisi",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Pressure",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 2
+  },
+  {
+    "id": "p2m146",
+    "class": "Friends",
+    "when": "21-02-2022 20:03",
+    "what": "Coffee session",
+    "where": "the Berlin flat",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p23",
+        "name": "Anna"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Sphere",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m147",
+    "class": "Travel",
+    "when": "27-09-2022 23:50",
+    "what": "Sunset over a night market",
+    "where": "Havana",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Malamente",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 3
+  },
+  {
+    "id": "p2m148",
+    "class": "Travel",
+    "when": "11-09-2022 14:09",
+    "what": "Feast at a night market",
+    "where": "Lisbon",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Ye No Go Die",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m149",
+    "class": "Work",
+    "when": "04-07-2022 09:06",
+    "what": "Finished the redesign",
+    "where": "Lake Bled",
+    "why": "Proud presentation",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Troupel",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 3
+  },
+  {
+    "id": "p2m150",
+    "class": "Work",
+    "when": "10-07-2022 14:43",
+    "what": "Finished the redesign",
+    "where": "Hoi An",
+    "why": "Long day paid off",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Chicago",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 3
+  },
+  {
+    "id": "p2m151",
+    "class": "Work",
+    "when": "22-11-2022 16:16",
+    "what": "Finished the feature",
+    "where": "Istanbul",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Near Light",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 3
+  },
+  {
+    "id": "p2m152",
+    "class": "Milestones",
+    "when": "06-04-2023 17:55",
+    "what": "The decision",
+    "where": "the office rooftop",
+    "why": "New chapter",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Venom",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Knew I wouldn't be the same person on the other side.",
+    "importance": 2
+  },
+  {
+    "id": "p2m153",
+    "class": "Travel",
+    "when": "02-04-2023 21:15",
+    "what": "Hiking to the medina",
+    "where": "Salta",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Yüce Dağ",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 2
+  },
+  {
+    "id": "p2m154",
+    "class": "Friends",
+    "when": "10-04-2023 15:32",
+    "what": "Dance party",
+    "where": "Lake Bled",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p22",
+        "name": "Omar"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Excited"
+    ],
+    "music": {
+      "name": "SAOKO",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m155",
+    "class": "Travel",
+    "when": "27-04-2023 18:21",
+    "what": "Swimming in a night market",
+    "where": "Cusco",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Tabu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m156",
+    "class": "Travel",
+    "when": "20-07-2023 21:31",
+    "what": "Swimming in rooftop bars",
+    "where": "Valparaiso",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Pink Label",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 5
+  },
+  {
+    "id": "p2m157",
+    "class": "Friends",
+    "when": "08-03-2023 10:49",
+    "what": "Late night conversation",
+    "where": "Porto",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p11",
+        "name": "Yuki"
+      },
+      {
+        "id": "p28",
+        "name": "Nikhil"
+      },
+      {
+        "id": "p10",
+        "name": "Tom"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Different",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m158",
+    "class": "Friends",
+    "when": "19-12-2023 09:32",
+    "what": "Dance party",
+    "where": "Porto",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Faraji",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 4
+  },
+  {
+    "id": "p2m159",
+    "class": "Travel",
+    "when": "07-06-2023 14:14",
+    "what": "Dancing in street corners",
+    "where": "Cusco",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Common Ground",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m160",
+    "class": "Family",
+    "when": "17-10-2022 19:03",
+    "what": "Tempelhofer Feld moment",
+    "where": "Tempelhofer Feld",
+    "why": "Mama's birthday",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Excited"
+    ],
+    "music": {
+      "name": "Ye No Go Die",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 2
+  },
+  {
+    "id": "p2m161",
+    "class": "Friends",
+    "when": "27-05-2022 21:03",
+    "what": "Late night conversation",
+    "where": "Naples",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p23",
+        "name": "Anna"
+      }
+    ],
+    "feeling": [
+      "Happy"
+    ],
+    "music": {
+      "name": "Kiara",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 4
+  },
+  {
+    "id": "p2m162",
+    "class": "Work",
+    "when": "15-08-2022 10:48",
+    "what": "Finished the feature",
+    "where": "Sevilla",
+    "why": "Team win",
+    "who": [
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Proud"
+    ],
+    "music": {
+      "name": "Émanenhot",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 4
+  },
+  {
+    "id": "p2m163",
+    "class": "Family",
+    "when": "04-08-2023 12:16",
+    "what": "Sevilla moment",
+    "where": "Sevilla",
+    "why": "Mama's birthday",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Cazibalar",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 4
+  },
+  {
+    "id": "p2m164",
+    "class": "Travel",
+    "when": "17-02-2023 14:08",
+    "what": "Bargaining in local markets",
+    "where": "Havana",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Free"
+    ],
+    "music": {
+      "name": "Might Bang",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m165",
+    "class": "Friends",
+    "when": "19-05-2022 12:10",
+    "what": "Long walk",
+    "where": "Istanbul",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p09",
+        "name": "Leila"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Proud"
+    ],
+    "music": {
+      "name": "Saman",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 4
+  },
+  {
+    "id": "p2m166",
+    "class": "Friends",
+    "when": "25-11-2022 17:08",
+    "what": "Cooking together",
+    "where": "Mama's kitchen",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Excited"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 3
+  },
+  {
+    "id": "p2m167",
+    "class": "Friends",
+    "when": "03-08-2023 23:24",
+    "what": "Long walk",
+    "where": "Montevideo",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p25",
+        "name": "Chiara"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p26",
+        "name": "Mateo"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Carrie & Lowell",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 2
+  },
+  {
+    "id": "p2m168",
+    "class": "Family",
+    "when": "22-06-2023 18:20",
+    "what": "Busan moment",
+    "where": "Busan",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Free"
+    ],
+    "music": {
+      "name": "Thursday",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 2
+  },
+  {
+    "id": "p2m169",
+    "class": "Travel",
+    "when": "14-02-2023 13:14",
+    "what": "Feast at the medina",
+    "where": "Valparaiso",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Might Bang",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 2
+  },
+  {
+    "id": "p2m170",
+    "class": "Friends",
+    "when": "08-03-2022 09:56",
+    "what": "Dance party",
+    "where": "the Berlin flat",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      },
+      {
+        "id": "p08",
+        "name": "Sam"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Sorta",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m171",
+    "class": "Travel",
+    "when": "13-04-2022 12:53",
+    "what": "Feast at the medina",
+    "where": "Ubud",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Calm"
+    ],
+    "music": {
+      "name": "Different",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 2
+  },
+  {
+    "id": "p2m172",
+    "class": "Travel",
+    "when": "20-04-2023 10:32",
+    "what": "Hiking to coastal caves",
+    "where": "Kyoto",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Rediscovery",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 2
+  },
+  {
+    "id": "p2m173",
+    "class": "Family",
+    "when": "27-10-2023 23:39",
+    "what": "Porto moment",
+    "where": "Porto",
+    "why": "Papa made it special",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Excited"
+    ],
+    "music": {
+      "name": "Yüce Dağ",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Quiet morning with coffee and no need to talk.",
+    "importance": 2
+  },
+  {
+    "id": "p2m174",
+    "class": "Family",
+    "when": "13-06-2023 19:04",
+    "what": "Porto moment",
+    "where": "Porto",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Proud"
+    ],
+    "music": {
+      "name": "Alive",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Mama's hand on my shoulder felt like home.",
+    "importance": 4
+  },
+  {
+    "id": "p2m175",
+    "class": "Travel",
+    "when": "09-09-2023 20:19",
+    "what": "Hiking to local markets",
+    "where": "Havana",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Mediate",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m176",
+    "class": "Work",
+    "when": "05-04-2023 18:16",
+    "what": "Finished the proposal",
+    "where": "Montevideo",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Émanenhot",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 3
+  },
+  {
+    "id": "p2m177",
+    "class": "Work",
+    "when": "16-09-2025 21:01",
+    "what": "Finished the project",
+    "where": "Istanbul",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Youuu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 2
+  },
+  {
+    "id": "p2m178",
+    "class": "Travel",
+    "when": "06-09-2025 08:58",
+    "what": "Getting lost in street corners",
+    "where": "Amman",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m179",
+    "class": "Friends",
+    "when": "08-12-2024 08:57",
+    "what": "Long walk",
+    "where": "Sevilla",
+    "why": "Reconnection",
+    "who": [
+      {
+        "id": "p26",
+        "name": "Mateo"
+      },
+      {
+        "id": "p10",
+        "name": "Tom"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Émanenhot",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 2
+  },
+  {
+    "id": "p2m180",
+    "class": "Travel",
+    "when": "22-11-2024 15:45",
+    "what": "Laughing at rooftop bars",
+    "where": "Zanzibar",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Proud"
+    ],
+    "music": {
+      "name": "Maria",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m181",
+    "class": "Travel",
+    "when": "23-02-2024 21:55",
+    "what": "Getting lost in street corners",
+    "where": "Cartagena",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Kool Ibiza",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 3
+  },
+  {
+    "id": "p2m182",
+    "class": "Travel",
+    "when": "23-02-2024 09:36",
+    "what": "Sunset over coastal caves",
+    "where": "Hanoi",
+    "why": "Chasing sunsets",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Pink Label",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m183",
+    "class": "Work",
+    "when": "09-10-2024 16:55",
+    "what": "Finished the project",
+    "where": "Chefchaouen",
+    "why": "Team win",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "ye",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 3
+  },
+  {
+    "id": "p2m184",
+    "class": "Travel",
+    "when": "03-02-2025 15:48",
+    "what": "Hiking to palace gardens",
+    "where": "Cartagena",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Hoppípolla",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m185",
+    "class": "Milestones",
+    "when": "04-07-2025 22:31",
+    "what": "Becoming",
+    "where": "Porto",
+    "why": "Finally",
+    "who": [
+      {
+        "id": "p26",
+        "name": "Mateo"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Tears",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 4
+  },
+  {
+    "id": "p2m186",
+    "class": "Friends",
+    "when": "04-05-2025 17:27",
+    "what": "Coffee session",
+    "where": "Porto",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p24",
+        "name": "Jonas"
+      },
+      {
+        "id": "p23",
+        "name": "Anna"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Death",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 3
+  },
+  {
+    "id": "p2m187",
+    "class": "Milestones",
+    "when": "15-11-2024 13:33",
+    "what": "New beginning",
+    "where": "Café Luna",
+    "why": "New chapter",
+    "who": [
+      {
+        "id": "p08",
+        "name": "Sam"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "Mystics",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Knew I wouldn't be the same person on the other side.",
+    "importance": 3
+  },
+  {
+    "id": "p2m188",
+    "class": "Travel",
+    "when": "02-06-2024 16:54",
+    "what": "Swimming in mountain peaks",
+    "where": "Salta",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Untitled",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m189",
+    "class": "Family",
+    "when": "20-02-2025 22:11",
+    "what": "Porto moment",
+    "where": "Porto",
+    "why": "Just because",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Papa told the story again, and we laughed like children.",
+    "importance": 3
+  },
+  {
+    "id": "p2m190",
+    "class": "Work",
+    "when": "16-04-2024 18:17",
+    "what": "Finished the proposal",
+    "where": "Porto",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 5
+  },
+  {
+    "id": "p2m191",
+    "class": "Travel",
+    "when": "27-10-2024 15:54",
+    "what": "Getting lost in coastal caves",
+    "where": "Marrakech",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Chigarum",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 2
+  },
+  {
+    "id": "p2m192",
+    "class": "Travel",
+    "when": "17-04-2025 21:44",
+    "what": "Bargaining in palace gardens",
+    "where": "Ubud",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Kerala",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 2
+  },
+  {
+    "id": "p2m193",
+    "class": "Friends",
+    "when": "08-02-2024 22:02",
+    "what": "Coffee session",
+    "where": "Naples",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p25",
+        "name": "Chiara"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Plenitude",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 3
+  },
+  {
+    "id": "p2m194",
+    "class": "Travel",
+    "when": "02-03-2025 14:14",
+    "what": "Swimming in street corners",
+    "where": "Cusco",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Focus",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 3
+  },
+  {
+    "id": "p2m195",
+    "class": "Friends",
+    "when": "11-12-2025 17:03",
+    "what": "Late night conversation",
+    "where": "Naples",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p25",
+        "name": "Chiara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Holocene",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 4
+  },
+  {
+    "id": "p2m196",
+    "class": "Friends",
+    "when": "20-12-2025 13:40",
+    "what": "Coffee session",
+    "where": "the office rooftop",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Free"
+    ],
+    "music": {
+      "name": "Mordechai",
+      "artist": "Khruangbin"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 3
+  },
+  {
+    "id": "p2m197",
+    "class": "Work",
+    "when": "26-10-2024 10:15",
+    "what": "Finished the feature",
+    "where": "Sevilla",
+    "why": "Team win",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Radiation",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Mentor's advice unlocked something I'd been stuck on.",
+    "importance": 3
+  },
+  {
+    "id": "p2m198",
+    "class": "Work",
+    "when": "17-07-2025 19:59",
+    "what": "Finished the project",
+    "where": "Sevilla",
+    "why": "Mentor moment",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Excited"
+    ],
+    "music": {
+      "name": "Show Me",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Stayed late with the team and it finally worked.",
+    "importance": 2
+  },
+  {
+    "id": "p2m199",
+    "class": "Travel",
+    "when": "03-08-2025 18:23",
+    "what": "Getting lost in rooftop bars",
+    "where": "Ubud",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Venom",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m200",
+    "class": "Work",
+    "when": "12-05-2025 15:10",
+    "what": "Finished the proposal",
+    "where": "the office rooftop",
+    "why": "Project launch",
+    "who": [
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Mediate",
+      "artist": "Bon Iver"
+    },
+    "photos": [],
+    "summary": "The presentation landed exactly right.",
+    "importance": 3
+  },
+  {
+    "id": "p2m201",
+    "class": "Friends",
+    "when": "02-09-2024 13:16",
+    "what": "Long walk",
+    "where": "Hoi An",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p08",
+        "name": "Sam"
+      },
+      {
+        "id": "p11",
+        "name": "Yuki"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Time dissolved and it felt like we'd never been apart.",
+    "importance": 2
+  },
+  {
+    "id": "p2m202",
+    "class": "Friends",
+    "when": "23-01-2024 23:49",
+    "what": "Dance party",
+    "where": "Lake Bled",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p24",
+        "name": "Jonas"
+      },
+      {
+        "id": "p28",
+        "name": "Nikhil"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Says",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 4
+  },
+  {
+    "id": "p2m203",
+    "class": "Work",
+    "when": "20-02-2024 13:17",
+    "what": "Finished the proposal",
+    "where": "Tempelhofer Feld",
+    "why": "Breakthrough",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p16",
+        "name": "Marcus"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Common Ground",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Got the feedback that made it all click.",
+    "importance": 3
+  },
+  {
+    "id": "p2m204",
+    "class": "Travel",
+    "when": "28-08-2024 19:32",
+    "what": "Laughing at the bazaar",
+    "where": "Tbilisi",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Excited"
+    ],
+    "music": {
+      "name": "Common Ground",
+      "artist": "Parcels"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 3
+  },
+  {
+    "id": "p2m205",
+    "class": "Family",
+    "when": "28-05-2024 11:02",
+    "what": "Sevilla moment",
+    "where": "Sevilla",
+    "why": "Holiday tradition",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Calm"
+    ],
+    "music": {
+      "name": "Youuu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 2
+  },
+  {
+    "id": "p2m206",
+    "class": "Travel",
+    "when": "14-09-2024 23:48",
+    "what": "Feast at palace gardens",
+    "where": "Oaxaca",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Free",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 4
+  },
+  {
+    "id": "p2m207",
+    "class": "Family",
+    "when": "16-07-2024 20:11",
+    "what": "Tempelhofer Feld moment",
+    "where": "Tempelhofer Feld",
+    "why": "Sunday dinner",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Selfish",
+      "artist": "Little Simz"
+    },
+    "photos": [],
+    "summary": "Felt the weight of their love in the smallest gestures.",
+    "importance": 3
+  },
+  {
+    "id": "p2m208",
+    "class": "Friends",
+    "when": "13-04-2025 16:21",
+    "what": "Long walk",
+    "where": "Essaouira",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p24",
+        "name": "Jonas"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Free"
+    ],
+    "music": {
+      "name": "Sphere",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m209",
+    "class": "Friends",
+    "when": "22-03-2025 09:36",
+    "what": "Film night",
+    "where": "Istanbul",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Calm"
+    ],
+    "music": {
+      "name": "Waves",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Quiet presence felt louder than words.",
+    "importance": 2
+  },
+  {
+    "id": "p2m210",
+    "class": "Travel",
+    "when": "27-11-2024 19:13",
+    "what": "Getting lost in palace gardens",
+    "where": "Oaxaca",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Free",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Wanderer",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 3
+  },
+  {
+    "id": "p2m211",
+    "class": "Family",
+    "when": "20-11-2025 18:51",
+    "what": "Essaouira moment",
+    "where": "Essaouira",
+    "why": "Oma called",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Free"
+    ],
+    "music": {
+      "name": "Ascend",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Oma's kitchen smelled like my childhood.",
+    "importance": 4
+  },
+  {
+    "id": "p2m212",
+    "class": "Travel",
+    "when": "05-02-2025 21:16",
+    "what": "Bargaining in mountain peaks",
+    "where": "Salta",
+    "why": "Following a map",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "SAOKO",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m213",
+    "class": "Travel",
+    "when": "17-04-2025 15:14",
+    "what": "Hiking to palace gardens",
+    "where": "Bangkok",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p03",
+        "name": "Amara"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Chatma",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 4
+  },
+  {
+    "id": "p2m214",
+    "class": "Travel",
+    "when": "09-03-2025 21:07",
+    "what": "Hiking to street corners",
+    "where": "Tbilisi",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Happy"
+    ],
+    "music": {
+      "name": "Carrie & Lowell",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 2
+  },
+  {
+    "id": "p2m215",
+    "class": "Friends",
+    "when": "25-05-2025 18:18",
+    "what": "Dance party",
+    "where": "Lake Bled",
+    "why": "Film night",
+    "who": [
+      {
+        "id": "p08",
+        "name": "Sam"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Kütür",
+      "artist": "Altin Gün"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 2
+  },
+  {
+    "id": "p2m216",
+    "class": "Friends",
+    "when": "24-08-2024 17:37",
+    "what": "Coffee session",
+    "where": "the Berlin flat",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Malamente",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "The kind of night that becomes a story we retell forever.",
+    "importance": 2
+  },
+  {
+    "id": "p2m217",
+    "class": "Family",
+    "when": "08-04-2024 21:31",
+    "what": "Lake Bled moment",
+    "where": "Lake Bled",
+    "why": "Just because",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Carrie & Lowell",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Papa told the story again, and we laughed like children.",
+    "importance": 3
+  },
+  {
+    "id": "p2m218",
+    "class": "Family",
+    "when": "14-04-2024 19:49",
+    "what": "Essaouira moment",
+    "where": "Essaouira",
+    "why": "Sunday ritual",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      }
+    ],
+    "feeling": [
+      "Excited",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Alive",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Felt the weight of their love in the smallest gestures.",
+    "importance": 3
+  },
+  {
+    "id": "p2m219",
+    "class": "Friends",
+    "when": "07-12-2024 23:56",
+    "what": "Film night",
+    "where": "Tempelhofer Feld",
+    "why": "Late-night talk",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p07",
+        "name": "Nora"
+      },
+      {
+        "id": "p09",
+        "name": "Leila"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Faraji",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m220",
+    "class": "Travel",
+    "when": "23-09-2025 12:03",
+    "what": "Hiking to palace gardens",
+    "where": "Cartagena",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Chicago",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 3
+  },
+  {
+    "id": "p2m221",
+    "class": "Milestones",
+    "when": "19-08-2026 09:41",
+    "what": "Leaving",
+    "where": "Essaouira",
+    "why": "New chapter",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Nostalgic",
+      "Calm"
+    ],
+    "music": {
+      "name": "Youuu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "The fear and thrill mixed into something pure.",
+    "importance": 3
+  },
+  {
+    "id": "p2m222",
+    "class": "Travel",
+    "when": "12-03-2026 22:35",
+    "what": "Swimming in local markets",
+    "where": "Taipei",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      },
+      {
+        "id": "p06",
+        "name": "Felix"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Horizon",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m223",
+    "class": "Travel",
+    "when": "17-07-2026 10:11",
+    "what": "Swimming in rooftop bars",
+    "where": "Tbilisi",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Aute Cuture",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 4
+  },
+  {
+    "id": "p2m224",
+    "class": "Travel",
+    "when": "18-01-2026 21:46",
+    "what": "Swimming in the bazaar",
+    "where": "Cartagena",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Different",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m225",
+    "class": "Milestones",
+    "when": "03-03-2026 20:45",
+    "what": "The decision",
+    "where": "Istanbul",
+    "why": "Finally",
+    "who": [
+      {
+        "id": "p20",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Alive",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Everything before and after divides at this moment.",
+    "importance": 3
+  },
+  {
+    "id": "p2m226",
+    "class": "Travel",
+    "when": "11-02-2026 22:24",
+    "what": "Dancing in a night market",
+    "where": "Fez",
+    "why": "On a whim",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Radiation",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "The rooftops turned gold as the call to prayer echoed.",
+    "importance": 4
+  },
+  {
+    "id": "p2m227",
+    "class": "Friends",
+    "when": "12-02-2026 13:17",
+    "what": "Late night conversation",
+    "where": "Istanbul",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p27",
+        "name": "Freya"
+      },
+      {
+        "id": "p09",
+        "name": "Leila"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Cascade",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m228",
+    "class": "Travel",
+    "when": "16-04-2026 23:29",
+    "what": "Laughing at local markets",
+    "where": "Amman",
+    "why": "Birthday trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Happy"
+    ],
+    "music": {
+      "name": "Waves",
+      "artist": "Four Tet"
+    },
+    "photos": [],
+    "summary": "Tasted colors and felt music in every moment.",
+    "importance": 4
+  },
+  {
+    "id": "p2m229",
+    "class": "Milestones",
+    "when": "26-03-2026 12:21",
+    "what": "Returning",
+    "where": "Essaouira",
+    "why": "New chapter",
+    "who": [
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      }
+    ],
+    "feeling": [
+      "Bittersweet",
+      "Grateful"
+    ],
+    "music": {
+      "name": "Mystery",
+      "artist": "Sufjan Stevens"
+    },
+    "photos": [],
+    "summary": "Knew I wouldn't be the same person on the other side.",
+    "importance": 2
+  },
+  {
+    "id": "p2m230",
+    "class": "Travel",
+    "when": "27-12-2026 22:42",
+    "what": "Feast at a night market",
+    "where": "Luang Prabang",
+    "why": "With the crew",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Proud"
+    ],
+    "music": {
+      "name": "Rediscovery",
+      "artist": "Nils Frahm"
+    },
+    "photos": [],
+    "summary": "Found exactly what I didn't know I was looking for.",
+    "importance": 4
+  },
+  {
+    "id": "p2m231",
+    "class": "Travel",
+    "when": "17-01-2026 13:04",
+    "what": "Bargaining in the medina",
+    "where": "Ubud",
+    "why": "Finding myself",
+    "who": [
+      {
+        "id": "p02",
+        "name": "Kai"
+      }
+    ],
+    "feeling": [
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Youuu",
+      "artist": "Men I Trust"
+    },
+    "photos": [],
+    "summary": "Strangers became friends over shared plates and stories.",
+    "importance": 3
+  },
+  {
+    "id": "p2m232",
+    "class": "Milestones",
+    "when": "03-03-2026 12:43",
+    "what": "New beginning",
+    "where": "Sevilla",
+    "why": "Finally",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Papa"
+      },
+      {
+        "id": "p14",
+        "name": "Ines"
+      },
+      {
+        "id": "p12",
+        "name": "Mama"
+      }
+    ],
+    "feeling": [
+      "Proud",
+      "Excited"
+    ],
+    "music": {
+      "name": "Focus",
+      "artist": "Sault"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 3
+  },
+  {
+    "id": "p2m233",
+    "class": "Travel",
+    "when": "15-01-2026 13:16",
+    "what": "Laughing at local markets",
+    "where": "Havana",
+    "why": "First solo trip",
+    "who": [
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p03",
+        "name": "Amara"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Calm"
+    ],
+    "music": {
+      "name": "Nightmares",
+      "artist": "Bonobo"
+    },
+    "photos": [],
+    "summary": "Watched the sun sink into the ocean with arms around friends.",
+    "importance": 2
+  },
+  {
+    "id": "p2m234",
+    "class": "Friends",
+    "when": "07-03-2026 18:34",
+    "what": "Dance party",
+    "where": "Naples",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p01",
+        "name": "Zoe"
+      },
+      {
+        "id": "p22",
+        "name": "Omar"
+      }
+    ],
+    "feeling": [
+      "Grateful",
+      "Excited"
+    ],
+    "music": {
+      "name": "Sahara Blues",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m235",
+    "class": "Travel",
+    "when": "12-04-2026 12:13",
+    "what": "Hiking to street corners",
+    "where": "Reykjavik",
+    "why": "Backpacking adventure",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "music": {
+      "name": "Aute Cuture",
+      "artist": "Rosalía"
+    },
+    "photos": [],
+    "summary": "Lost time in a maze of narrow streets and spice vendors.",
+    "importance": 3
+  },
+  {
+    "id": "p2m236",
+    "class": "Friends",
+    "when": "27-09-2026 18:25",
+    "what": "Long walk",
+    "where": "Sevilla",
+    "why": "Coffee date",
+    "who": [
+      {
+        "id": "p04",
+        "name": "Diego"
+      },
+      {
+        "id": "p10",
+        "name": "Tom"
+      }
+    ],
+    "feeling": [
+      "Free"
+    ],
+    "music": {
+      "name": "The Reprise",
+      "artist": "Yussef Dayes"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 3
+  },
+  {
+    "id": "p2m237",
+    "class": "Milestones",
+    "when": "23-10-2026 08:54",
+    "what": "New beginning",
+    "where": "Lake Bled",
+    "why": "Changed everything",
+    "who": [
+      {
+        "id": "p10",
+        "name": "Tom"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Horizon",
+      "artist": "Tycho"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 2
+  },
+  {
+    "id": "p2m238",
+    "class": "Friends",
+    "when": "18-12-2026 19:56",
+    "what": "Film night",
+    "where": "Lake Bled",
+    "why": "Random Tuesday",
+    "who": [
+      {
+        "id": "p11",
+        "name": "Yuki"
+      },
+      {
+        "id": "p19",
+        "name": "Sophie"
+      },
+      {
+        "id": "p08",
+        "name": "Sam"
+      }
+    ],
+    "feeling": [
+      "Proud"
+    ],
+    "music": {
+      "name": "Last Last",
+      "artist": "Burna Boy"
+    },
+    "photos": [],
+    "summary": "Found myself in the reflection of their eyes.",
+    "importance": 2
+  },
+  {
+    "id": "p2m239",
+    "class": "Milestones",
+    "when": "13-04-2026 23:24",
+    "what": "Becoming",
+    "where": "Busan",
+    "why": "Changed everything",
+    "who": [
+      {
+        "id": "p15",
+        "name": "Oma"
+      }
+    ],
+    "feeling": [
+      "Calm",
+      "Bittersweet"
+    ],
+    "music": {
+      "name": "Blue Souls",
+      "artist": "Cortex"
+    },
+    "photos": [],
+    "summary": "Felt the ground shift beneath me.",
+    "importance": 3
+  },
+  {
+    "id": "p2m240",
+    "class": "Friends",
+    "when": "07-10-2026 22:08",
+    "what": "Coffee session",
+    "where": "the office rooftop",
+    "why": "Birthday bash",
+    "who": [
+      {
+        "id": "p18",
+        "name": "Raj"
+      },
+      {
+        "id": "p17",
+        "name": "Elena"
+      },
+      {
+        "id": "p24",
+        "name": "Jonas"
+      }
+    ],
+    "feeling": [
+      "Calm"
+    ],
+    "music": {
+      "name": "Chatma",
+      "artist": "Tinariwen"
+    },
+    "photos": [],
+    "summary": "Laughed until we couldn't breathe.",
+    "importance": 2
+  },
+  {
+    "id": "p2m241",
+    "class": "Travel",
+    "when": "04-04-2026 18:30",
+    "what": "Feast at coastal caves",
+    "where": "Zanzibar",
+    "why": "Chasing sunsets",
+    "who": [
+      {
+        "id": "p05",
+        "name": "Priya"
+      }
+    ],
+    "feeling": [
+      "Grateful"
+    ],
+    "music": {
+      "name": "Island",
+      "artist": "Ólafur Arnalds"
+    },
+    "photos": [],
+    "summary": "Laughed so hard my cheeks hurt under the stars.",
+    "importance": 3
+  }
+]

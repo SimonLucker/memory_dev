@@ -9,7 +9,10 @@ const KEY = process.env.PEXELS_API_KEY;
 if (!KEY) { console.error('PEXELS_API_KEY not set'); process.exit(1); }
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const memPath = join(root, 'src/data/memories.json');
+// --person p2 targets Maya's file; default is person 1
+const pIdx = process.argv.indexOf('--person');
+const person = pIdx > -1 ? process.argv.splice(pIdx, 2)[1] : 'p1';
+const memPath = join(root, person === 'p2' ? 'src/data/memories-p2.json' : 'src/data/memories.json');
 const outDir = join(root, 'public/photos');
 mkdirSync(outDir, { recursive: true });
 
