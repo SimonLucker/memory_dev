@@ -60,6 +60,28 @@ The scene should feel like drifting through a memory space, not a frozen chart:
 - **Dust field**: behind the graph canvas, one absolutely-positioned `<canvas>` (own rAF loop, ~70 particles): tiny 1-2px paper-colored dots at alpha 0.05-0.18 drifting slowly upward-left with sin wobble, wrapping at edges. Plus 2-3 huge blurred radial nebula blobs (peach/lavender at alpha ~0.05) painted once. This layer never interacts — `pointer-events: none`.
 - Everything slow: nothing on screen should complete a cycle faster than ~8s. Calm, zen, meditative.
 
+## Parallax (Phase 2 — 2.5D becomes real depth)
+
+Subtle, both-trigger parallax: layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
+
+- **Per-node world offset**, applied identically in `nodeCanvasObject`, label placement, AND `nodePointerAreaPaint` (hitboxes must follow the pixels):
+  `off = (1 - effDepth) * (camCenter * 0.05 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
+  - `camCenter` = world coords of the viewport center, computed once per frame in `onRenderFramePre` via `fg.screen2GraphCoords(w/2, h/2)` — panning makes far orbs lag behind near ones.
+  - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `14 / k` (constant ~14 screen px at any zoom `k`). Track via one `mousemove` listener.
+- Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (≤ ~10 screen px, within linkHoverPrecision).
+- **DustField layers**: split motes into far (~35, smaller, slower, alpha low) and near (~35, bigger, faster) layers + nebula (slowest). Each layer offsets by the same smoothed mouse vector times a per-layer factor (nebula 4px, far 9px, near 18px screen amplitude). Dust is decoration only — no camera term needed there.
+
+## Label anti-overlap (Phase 2)
+
+Labels must never overlap each other. Greedy priority culling, recomputed each frame in `onRenderFramePre`:
+
+1. Gather label candidates per the existing declutter rules (hovered/selected always; else importance/zoom-ramped).
+2. Sort by priority: hovered first, then selected, then importance desc, then id (stable tiebreak — prevents flicker).
+3. For each candidate compute its screen-space label rect (measureText + pill, at the node's parallax-offset position, +4px padding); keep it only if it intersects no already-kept rect.
+4. Store the surviving id set in a ref; `nodeCanvasObject` draws a label only if its id survived.
+
+Deterministic, no state, one array per frame. The slow drift means labels appear/disappear rarely; the stable sort keeps winners winning.
+
 ## Focus HUD (FocusHud.jsx)
 
 On node click: `centerAt(node.x, node.y, 600)` + `zoom(3, 600)`, then an absolutely-positioned overlay:

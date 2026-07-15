@@ -6,6 +6,7 @@ import DustField from './DustField.jsx';
 import { CLASS_COLORS, DAWN, DAWN_SAT, PAPER, PEACH } from '../lib/palette.js';
 
 const TAU = Math.PI * 2;
+const ZERO = { x: 0, y: 0 }; // shared frozen zero-offset for focused/anchored nodes
 
 // --- tiny color helpers (pure) — accept #hex or rgb() so mix() results can be re-mixed ---
 function hexToRgb(h) {
@@ -48,8 +49,15 @@ export default function GraphView({
   onSelect,
 }) {
   const fgRef = useRef(null);
+  const containerRef = useRef(null);
   const didFitRef = useRef(false); // one-shot initial zoomToFit (engine stays warm, so onEngineStop never fires)
   const tickRef = useRef(0);
+  // Parallax per-frame scratch (see Parallax Phase 2 in graph-view/SKILL.md).
+  const camRef = useRef({ x: 0, y: 0 });        // world coords of viewport center
+  const mouseTargetRef = useRef({ x: 0, y: 0 }); // raw normalized mouse [-0.5,0.5]
+  const mouseSmoothRef = useRef({ x: 0, y: 0 }); // lerp-smoothed, shared with DustField
+  const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 14/k, world units
+  const labelIdsRef = useRef(new Set());         // ids whose label survived the anti-overlap pass
   const [hoverId, setHoverId] = useState(null);
   const [hoverLink, setHoverLink] = useState(null);
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -149,6 +157,22 @@ export default function GraphView({
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Idle-drift parallax input: track normalized mouse over the container ([-0.5,0.5]²).
+  // Smoothing happens per-frame in onRenderFramePre; here we only record the raw target.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      mouseTargetRef.current = {
+        x: (e.clientX - rect.left) / rect.width - 0.5,
+        y: (e.clientY - rect.top) / rect.height - 0.5,
+      };
+    };
+    el.addEventListener('mousemove', onMove);
+    return () => el.removeEventListener('mousemove', onMove);
+  }, []);
+
   // --- state predicates (close over current props each render) ---
   const isDimmed = (node) => {
     if (!visibleIds.has(node.id)) return true;
@@ -162,6 +186,76 @@ export default function GraphView({
   const egoId = hoverId ?? selectedId ?? null;
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
+  // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
+  // off = (1 - effDepth) * (camCenter*0.05 + mouseWorld); effDepth = 1 for focused
+  // nodes (zero offset — anchors interactions + FocusHud), else node.depth.
+  const offsetOf = (node, focused) => {
+    if (focused) return ZERO;
+    const f = 1 - node.depth;
+    const cam = camRef.current;
+    const mw = mouseWorldRef.current;
+    return { x: f * (cam.x * 0.05 + mw.x), y: f * (cam.y * 0.05 + mw.y) };
+  };
+
+  // Greedy priority label culling — recomputed each frame in onRenderFramePre. Rects live
+  // in world units (measureText, radii, offsets all share that space), so world-space
+  // non-overlap ⟺ screen-space non-overlap under the uniform canvas transform.
+  const computeLabelSet = (ctx, globalScale) => {
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    const cand = [];
+    for (const node of graphData.nodes) {
+      if (node.x == null || isDimmed(node)) continue;
+      const selected = node.id === selectedId;
+      const active = node.id === hoverId;
+      const imp = node.mem.importance || 1;
+      let showYear = false;
+      let prio;
+      if (active) { prio = 3; showYear = true; }
+      else if (selected) { prio = 2; showYear = true; }
+      else {
+        if (ramp(globalScale, imp >= 4 ? 1.1 : 2.2) <= 0.01) continue;
+        prio = isHighlighted(node) ? 1 : 0;
+      }
+      cand.push({ node, focused: active || selected || isHighlighted(node), showYear, imp, prio, id: String(node.id) });
+    }
+    // hovered > selected > importance desc > id (stable tiebreak kills flicker)
+    cand.sort((a, b) => b.prio - a.prio || b.imp - a.imp || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    const t = performance.now();
+    const kept = [];
+    const survivors = new Set();
+    for (const c of cand) {
+      const { node, focused, showYear, imp } = c;
+      const r = Math.max(0.5, (4 + imp * 2) * (1 + 0.05 * Math.sin(t / 1400 + node.phase)) * (focused ? 1 : node.depth));
+      const off = offsetOf(node, focused);
+      const lx = node.x + off.x + r + 6;
+      const ny = node.y + off.y;
+      const wtxt = ctx.measureText(node.mem.what).width;
+      const rect = { l: lx - 4, r: lx + wtxt + 4, t: ny - 9, b: showYear ? ny + 19 : ny + 9 };
+      let ok = true;
+      for (const k of kept) {
+        if (rect.l < k.r && rect.r > k.l && rect.t < k.b && rect.b > k.t) { ok = false; break; }
+      }
+      if (ok) { kept.push(rect); survivors.add(node.id); }
+    }
+    labelIdsRef.current = survivors;
+  };
+
+  // Runs before every node/link paint: refresh camera center, smooth the mouse drift,
+  // and rebuild the surviving-label set. Order matters — offsets read here feed the paints.
+  const onRenderFramePre = (ctx, globalScale) => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    const c = fg.screen2GraphCoords(size.w / 2, size.h / 2);
+    if (c && Number.isFinite(c.x) && Number.isFinite(c.y)) camRef.current = c;
+    const s = mouseSmoothRef.current;
+    const tg = mouseTargetRef.current;
+    s.x += (tg.x - s.x) * 0.06; // ~0.06/frame easing
+    s.y += (tg.y - s.y) * 0.06;
+    const k = globalScale || 1;
+    mouseWorldRef.current = { x: (s.x * 14) / k, y: (s.y * 14) / k }; // ~14 screen px at any zoom
+    computeLabelSet(ctx, globalScale);
+  };
+
   // --- node paint ---
   const paintNode = (node, ctx, globalScale) => {
     if (node.x == null) return;
@@ -174,6 +268,12 @@ export default function GraphView({
     const focused = highlighted || selected || active;
     // neighbor of the currently focused node → part of its ego-network
     const inEgo = egoId != null && egoNeighbors != null && egoNeighbors.has(node.id);
+
+    // Parallax: far orbs lag pan/zoom + drift with the idle mouse; focused orbs anchor
+    // (zero offset) so the FocusHud and hitbox stay pinned. Same offset feeds label + hitbox.
+    const off = offsetOf(node, focused);
+    const nx = node.x + off.x;
+    const ny = node.y + off.y;
 
     // Alive: per-node breathing (desync via phase) + pseudo-depth (far = smaller/fainter).
     // THE focused node pops forward in size; its neighbor orbs only regain full alpha
@@ -190,7 +290,7 @@ export default function GraphView({
     if (dimmed) {
       ctx.globalAlpha = 0.1 * node.depth;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, r, 0, TAU);
+      ctx.arc(nx, ny, r, 0, TAU);
       ctx.fillStyle = accent;
       ctx.fill();
       ctx.restore();
@@ -208,8 +308,8 @@ export default function GraphView({
     //    Recede toward dusk with depth (cheap desaturation of far orbs).
     const far = mix(accent, '#8B85A0', (1 - node.depth) * 0.5);
     const grad = ctx.createRadialGradient(
-      node.x - r * 0.3, node.y - r * 0.3, r * 0.1,
-      node.x, node.y, r,
+      nx - r * 0.3, ny - r * 0.3, r * 0.1,
+      nx, ny, r,
     );
     if (highlighted) {
       grad.addColorStop(0, '#FFFFFF'); // near-white core (site's white node dots)
@@ -221,7 +321,7 @@ export default function GraphView({
       grad.addColorStop(1, darken(far, 0.25));
     }
     ctx.beginPath();
-    ctx.arc(node.x, node.y, r, 0, TAU);
+    ctx.arc(nx, ny, r, 0, TAU);
     ctx.fillStyle = grad;
     ctx.fill();
 
@@ -229,7 +329,7 @@ export default function GraphView({
 
     // 3. hairline ring
     ctx.beginPath();
-    ctx.arc(node.x, node.y, r + 1.5, 0, TAU);
+    ctx.arc(nx, ny, r + 1.5, 0, TAU);
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'rgba(242,240,236,0.35)';
     ctx.stroke();
@@ -240,14 +340,14 @@ export default function GraphView({
       ctx.setLineDash([0.5, 3]);
       ctx.lineWidth = 1;
       ctx.strokeStyle = PEACH;
-      ctx.arc(node.x, node.y, r + 7, 0, TAU);
+      ctx.arc(nx, ny, r + 7, 0, TAU);
       ctx.stroke();
       ctx.setLineDash([]);
     }
 
-    // 4. DECLUTTERED label (graph-view/SKILL.md step 4):
-    //    hovered/selected → what + year pill; else importance>=4 labels past 1.1,
-    //    everyone else only past 2.2, alpha-fading across ±0.15 of each threshold.
+    // 4. DECLUTTERED label (graph-view/SKILL.md step 4) + anti-overlap: hovered/selected →
+    //    what + year pill; else importance>=4 past 1.1, others past 2.2, alpha-fading across
+    //    ±0.15. Draw only if this id survived the greedy rect pass (onRenderFramePre) this frame.
     let labelAlpha;
     let showYear = false;
     if (active || selected) {
@@ -256,19 +356,19 @@ export default function GraphView({
     } else {
       labelAlpha = ramp(globalScale, (m.importance || 1) >= 4 ? 1.1 : 2.2);
     }
-    if (labelAlpha > 0.01) {
-      const lx = node.x + r + 6;
+    if (labelAlpha > 0.01 && labelIdsRef.current.has(node.id)) {
+      const lx = nx + r + 6;
       ctx.globalAlpha = labelAlpha;
       ctx.textBaseline = 'middle';
       ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
       ctx.fillStyle = PAPER;
-      ctx.fillText(m.what, lx, node.y);
+      ctx.fillText(m.what, lx, ny);
 
       if (showYear) {
         const year = m.when.slice(6, 10);
         ctx.font = '9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         const pw = ctx.measureText(year).width + 8;
-        const py = node.y + 9;
+        const py = ny + 9;
         ctx.fillStyle = 'rgba(0,0,0,0.45)';
         ctx.beginPath();
         ctx.roundRect(lx, py - 6, pw, 12, 4);
@@ -281,13 +381,16 @@ export default function GraphView({
     ctx.restore();
   };
 
-  // pointer/hit area matches the visible orb
+  // pointer/hit area matches the visible orb — including its parallax offset (hitboxes
+  // must follow the pixels; focused nodes get zero offset so they stay pinned).
   const paintNodePointer = (node, color, ctx) => {
     if (node.x == null) return;
+    const focused = isHighlighted(node) || node.id === selectedId || node.id === hoverId;
+    const off = offsetOf(node, focused);
     const r = 4 + (node.mem.importance || 1) * 2;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(node.x, node.y, r + 2, 0, TAU);
+    ctx.arc(node.x + off.x, node.y + off.y, r + 2, 0, TAU);
     ctx.fill();
   };
 
@@ -314,7 +417,19 @@ export default function GraphView({
     if (link === hoverLink) { alpha = 0.85; width += 0.4; } // hovered link loudest
     width = Math.max(0.1, width); // guard: stroke width never non-positive
 
-    const grad = ctx.createLinearGradient(s.x, s.y, t.x, t.y);
+    // Parallax: paint each endpoint from its own offset position (hover hit-test stays on
+    // true coords — fine at this ≤~10px amplitude). Shift the control point by the mean
+    // endpoint offset so the curve keeps its shape.
+    const so = offsetOf(s, isHighlighted(s) || s.id === selectedId || s.id === hoverId);
+    const to = offsetOf(t, isHighlighted(t) || t.id === selectedId || t.id === hoverId);
+    const sx = s.x + so.x;
+    const sy = s.y + so.y;
+    const tx = t.x + to.x;
+    const ty = t.y + to.y;
+    const mox = (so.x + to.x) / 2;
+    const moy = (so.y + to.y) / 2;
+
+    const grad = ctx.createLinearGradient(sx, sy, tx, ty);
     grad.addColorStop(0, stops[0]);
     grad.addColorStop(0.5, stops[1]);
     grad.addColorStop(1, stops[2]);
@@ -326,13 +441,13 @@ export default function GraphView({
     ctx.lineCap = 'round';
     ctx.setLineDash([0.5, 3]);
     ctx.beginPath();
-    ctx.moveTo(s.x, s.y);
-    // Paint from the library's own control points (computed from linkCurvature=0.2 before
-    // this custom paint runs) so the visible thread matches the hover hitbox exactly.
+    ctx.moveTo(sx, sy);
+    // Curve from the library's own control points (computed from linkCurvature=0.2 before
+    // this paint runs), shifted by the mean endpoint offset to track the parallax.
     const cp = link.__controlPoints;
-    if (cp && cp.length === 2) ctx.quadraticCurveTo(cp[0], cp[1], t.x, t.y);
-    else if (cp && cp.length === 4) ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], t.x, t.y);
-    else ctx.lineTo(t.x, t.y);
+    if (cp && cp.length === 2) ctx.quadraticCurveTo(cp[0] + mox, cp[1] + moy, tx, ty);
+    else if (cp && cp.length === 4) ctx.bezierCurveTo(cp[0] + mox, cp[1] + moy, cp[2] + mox, cp[3] + moy, tx, ty);
+    else ctx.lineTo(tx, ty);
     ctx.stroke();
     ctx.restore();
   };
@@ -374,14 +489,15 @@ export default function GraphView({
   const selectedNode = selectedId ? nodeById.get(selectedId) : null;
 
   return (
-    <div style={{ position: 'absolute', inset: 0 }}>
-      <DustField w={size.w} h={size.h} />
+    <div ref={containerRef} style={{ position: 'absolute', inset: 0 }}>
+      <DustField w={size.w} h={size.h} mouse={mouseSmoothRef} />
       <ForceGraph2D
         ref={fgRef}
         width={size.w}
         height={size.h}
         graphData={graphData}
         backgroundColor="rgba(0,0,0,0)"
+        onRenderFramePre={onRenderFramePre}
         nodeCanvasObject={paintNode}
         nodePointerAreaPaint={paintNodePointer}
         linkCanvasObjectMode={() => 'replace'}
