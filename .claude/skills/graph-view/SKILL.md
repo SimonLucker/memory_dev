@@ -62,14 +62,14 @@ The scene should feel like drifting through a memory space, not a frozen chart:
 
 ## Parallax (Phase 2 — 2.5D becomes real depth)
 
-Subtle, both-trigger parallax: layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
+Pronounced (user-tuned up from subtle), both-trigger parallax: layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
 
 - **Per-node world offset**, applied identically in `nodeCanvasObject`, label placement, AND `nodePointerAreaPaint` (hitboxes must follow the pixels):
-  `off = (1 - effDepth) * (camCenter * 0.05 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
+  `off = (1 - effDepth) * (camCenter * 0.25 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
   - `camCenter` = world coords of the viewport center, computed once per frame in `onRenderFramePre` via `fg.screen2GraphCoords(w/2, h/2)` — panning makes far orbs lag behind near ones.
-  - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `14 / k` (constant ~14 screen px at any zoom `k`). Track via one `mousemove` listener.
-- Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (≤ ~10 screen px, within linkHoverPrecision).
-- **DustField layers**: split motes into far (~35, smaller, slower, alpha low) and near (~35, bigger, faster) layers + nebula (slowest). Each layer offsets by the same smoothed mouse vector times a per-layer factor (nebula 4px, far 9px, near 18px screen amplitude). Dust is decoration only — no camera term needed there.
+  - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `80 / k` (constant ~80 screen px at any zoom `k`). Track via one `mousemove` listener.
+- Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (up to ~36 screen px at full mouse deflection — link hover is fuzziest at screen edges, exact at center).
+- **DustField layers**: split motes into far (~35, smaller, slower, alpha low) and near (~35, bigger, faster) layers + nebula (slowest). Each layer offsets by the same smoothed mouse vector times a per-layer factor (nebula 16px, far 36px, near 72px screen amplitude). Dust is decoration only — no camera term needed there.
 
 ## Label anti-overlap (Phase 2)
 

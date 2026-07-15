@@ -59,11 +59,11 @@ export default function DustField({ w, h, mouse }) {
       ctx.clearRect(0, 0, W, H);
 
       // Same smoothed mouse vector (normalized [-0.5,0.5]) the graph parallax uses; per-layer
-      // screen amplitude: nebula 4px < far 9px < near 18px (near reacts most → depth).
+      // screen amplitude: nebula 16px < far 36px < near 72px (near reacts most → depth).
       const m = (mouse && mouse.current) || { x: 0, y: 0 };
 
-      const nbx = m.x * 4;
-      const nby = m.y * 4;
+      const nbx = m.x * 16;
+      const nby = m.y * 16;
       for (const b of blobs) {
         const bx = b.x * W + nbx;
         const by = b.y * H + nby;
@@ -74,8 +74,8 @@ export default function DustField({ w, h, mouse }) {
         ctx.fillRect(0, 0, W, H);
       }
 
-      drawLayer(far, W, H, dt, m.x * 9, m.y * 9);
-      drawLayer(near, W, H, dt, m.x * 18, m.y * 18);
+      drawLayer(far, W, H, dt, m.x * 36, m.y * 36);
+      drawLayer(near, W, H, dt, m.x * 72, m.y * 72);
 
       raf = requestAnimationFrame(draw);
     };
