@@ -1,0 +1,395 @@
+/* Design tokens — sampled from memmory.vercel.app. Skill: visual-style. */
+:root {
+  --bg-gradient: linear-gradient(168deg, #443A62 0%, #2F2545 46%, #16111F 100%);
+  --glow-peach: rgba(245, 214, 188, 0.22);
+  --glow-purple: rgba(196, 152, 203, 0.20);
+
+  --paper: #F2F0EC;
+  --muted: rgba(242, 240, 236, 0.55);
+  --cream: #FAF7F2;
+  --ink: #1F2937;
+  --ink-deep: #111827;
+
+  --dawn-gradient: linear-gradient(165deg, #C8D4EC 0%, #F5D6BC 56%, #E0C5DC 100%);
+  --dawn-gradient-sat: linear-gradient(165deg, #5681CC 0%, #E68A45 56%, #A451BE 100%);
+
+  --accent-travel: #9DB4DE;
+  --fill-travel: rgba(125, 155, 212, 0.16);
+  --border-travel: rgba(150, 175, 225, 0.32);
+
+  --accent-work: #62C088;
+  --fill-work: rgba(70, 170, 112, 0.15);
+  --border-work: rgba(95, 190, 135, 0.34);
+
+  --accent-friends: #ECB890;
+  --fill-friends: rgba(236, 176, 132, 0.16);
+  --border-friends: rgba(240, 190, 155, 0.34);
+
+  --accent-milestones: #C79BCB;
+  --fill-milestones: rgba(190, 130, 200, 0.17);
+  --border-milestones: rgba(205, 150, 210, 0.34);
+
+  --accent-family: #D29DAE;
+  --fill-family: rgba(214, 150, 170, 0.16);
+  --border-family: rgba(224, 165, 182, 0.34);
+
+  --panel-bg: rgba(255, 255, 255, 0.07);
+  --panel-border: rgba(255, 255, 255, 0.14);
+  --panel-radius: 16px;
+  --panel-shadow: rgba(17, 24, 39, 0.06) 0 8px 24px;
+
+  --amber: #E8A23D;
+  --imessage-blue: #0A84FF;
+  --positive-green: #34C759;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  font-family: var(--font-sans);
+}
+
+/* Full-viewport dusk scene. Graph canvas + overlay panels live inside. */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% -8%, var(--glow-peach), transparent 62%),
+    radial-gradient(ellipse 80% 45% at 50% 108%, var(--glow-purple), transparent 62%),
+    var(--bg-gradient);
+  color: var(--paper);
+}
+
+.graph-layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Shared dusk-glass panel */
+.panel {
+  position: absolute;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--panel-shadow);
+  color: var(--paper);
+  z-index: 5;
+}
+
+/* Eyebrow / section label: tiny uppercase + pastel square dot */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--muted);
+}
+.eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--dawn-gradient);
+  flex-shrink: 0;
+}
+
+/* ---------- Timeline (left rail) ---------- */
+.timeline-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  padding: 40px 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+}
+.timeline-ridge {
+  position: absolute;
+  inset: 40px 0;
+  width: 100%;
+  height: calc(100% - 80px);
+  pointer-events: none;
+}
+.ridge-bar {
+  fill: var(--paper);
+  opacity: 0.35;
+}
+.timeline-years {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.timeline-years li {
+  margin: 0;
+  padding: 0;
+}
+.timeline-year {
+  position: relative;
+  appearance: none;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.timeline-year:hover {
+  color: var(--paper);
+}
+.timeline-year.is-selected {
+  color: var(--paper);
+  font-weight: 600;
+  background: linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) padding-box,
+    var(--dawn-gradient) border-box;
+}
+.timeline-year.is-selected::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 6px;
+  height: 1px;
+  background: var(--dawn-gradient);
+}
+
+/* ---------- Legend (bottom-left) ---------- */
+.legend {
+  left: 76px; /* clear of the 60px timeline rail — they must never overlap */
+  bottom: 20px;
+  width: 230px;
+  max-height: 66vh;
+  overflow-y: auto;
+  padding: 16px;
+}
+.legend-header {
+  margin-bottom: 10px;
+}
+.legend-row {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 4px;
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+.legend-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.legend-row.is-hidden {
+  opacity: 0.4;
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.legend-dot[data-class="Travel"] { background: radial-gradient(circle at 35% 30%, #fff, var(--accent-travel) 75%); }
+.legend-dot[data-class="Work"] { background: radial-gradient(circle at 35% 30%, #fff, var(--accent-work) 75%); }
+.legend-dot[data-class="Friends"] { background: radial-gradient(circle at 35% 30%, #fff, var(--accent-friends) 75%); }
+.legend-dot[data-class="Milestones"] { background: radial-gradient(circle at 35% 30%, #fff, var(--accent-milestones) 75%); }
+.legend-dot[data-class="Family"] { background: radial-gradient(circle at 35% 30%, #fff, var(--accent-family) 75%); }
+.legend-name {
+  flex: 1;
+  text-align: left;
+}
+.legend-count {
+  font-size: 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 1px 7px;
+  min-width: 18px;
+  text-align: center;
+}
+.legend-section {
+  margin-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+}
+.legend-section summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px;
+}
+.legend-section summary::-webkit-details-marker {
+  display: none;
+}
+.legend-badge {
+  font-size: 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+/* ---------- Shared chips ---------- */
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 4px 4px;
+}
+.chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--dawn-gradient);
+  flex-shrink: 0;
+}
+.chip.is-active {
+  background: linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+    var(--dawn-gradient) border-box;
+  border: 1px solid transparent;
+}
+.chip.chip-static {
+  cursor: default;
+}
+
+/* ---------- Query bar (bottom-right) ---------- */
+.querybar {
+  right: 20px;
+  bottom: 20px;
+  width: 360px; /* wide enough for the AVG IMPORTANCE stat label */
+  padding: 16px;
+}
+.stats-row {
+  display: flex;
+}
+.stat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 10px;
+}
+.stat:first-child {
+  padding-left: 0;
+}
+.stat + .stat {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.stat-label {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+}
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--paper);
+}
+.query-input-row {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 4px 4px 4px 14px;
+  transition: border-color 0.2s ease;
+}
+.query-input-row.no-match {
+  border-color: var(--amber);
+}
+.query-input-row input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.query-input-row input::placeholder {
+  color: var(--muted);
+}
+.query-clear {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.query-clear:hover {
+  color: var(--paper);
+}
+.query-send {
+  appearance: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--dawn-gradient);
+  color: var(--ink-deep);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.chip-row {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
