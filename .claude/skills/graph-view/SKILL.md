@@ -97,8 +97,8 @@ While a memory is selected, its neighbors ease away to give it air. CRITICAL ENG
 
 When ANY filter narrows the set (legend class toggle, attribute chips, year/month, or a query with matches), the matching memories drift toward the layout centroid and their mutual connections light up; removing filters lets them float home (the liveliness easing handles both directions for free):
 - `gatherIds` = query highlightIds if non-null, else visibleIds when it's a strict subset of all memories, else null.
-- Gathered targets form a PHYLLOTAXIS spiral around the layout centroid (`rad = 32*sqrt(i+0.35)`, golden angle, sorted importance-first so big memories sit centermost) — a tidy composition whose spacing keeps "on" orbs clear of each other with no collision math; overlap with dimmed "off" orbs is deliberately ignored. Gather easing 0.09/frame (snappier than the 0.035 ambient drift); wobble halves while gathered.
-- Edge boost: when gatherIds is active and BOTH endpoints are gathered, the thread paints at alpha ≥ 0.55 (+0.3px width) — the constellation's internal connections glow while everything else recedes (non-gathered edges already dim via their dimmed endpoints).
+- Gathered targets PRESERVE the natural force-layout shape: subset compacted by 0.55 around its own centroid, recentered on the layout centroid. (A phyllotaxis spiral was tried and scrapped: it scrambles neighbors, so every internal thread crosses the ball — chaos at 58 matches.) Overlap with dimmed "off" orbs is deliberately ignored. Gather easing 0.09/frame; wobble halves while gathered. Focus-repel distances are measured against BASE TARGETS (gathered or home) with R 120 while gathered, 170 otherwise — home-based distances are meaningless mid-gather.
+- Edge boost: when both endpoints are gathered, `alpha = min(0.75, alpha*1.6 + 0.05)` (+0.2px) — brighter but the WEIGHT HIERARCHY stays intact (heavy pronounced, light faded, same as the unfiltered default; a flat boost flattened everything into spaghetti).
 
 ## Selected-node crosshair (canvas, not DOM)
 

@@ -201,22 +201,27 @@ export default function GraphView({
     if (visibleIds.size < memories.length) return visibleIds;
     return null;
   }, [highlightIds, visibleIds, memories]);
-  // Gathered constellation targets: a phyllotaxis (sunflower) spiral around the layout
-  // centroid — most important memories in the middle, golden-angle spacing keeps every
-  // "on" orb clear of its neighbors with zero collision math. "Off" orbs are ignored
-  // entirely (they're dim ghosts; overlap with them is fine, per user).
+  // Gathered constellation targets: the matched subset keeps its NATURAL force-layout
+  // shape (connected memories stay adjacent, threads stay short — a phyllotaxis spiral
+  // scrambled neighbors and read as chaos), compacted by 0.55 around its own centroid
+  // and recentered on the layout centroid. "Off" orbs are ignored (dim ghosts; overlap
+  // with them is fine, per user).
   const gatherLayout = useMemo(() => {
     if (!gatherIds) return null;
-    const list = graphData.nodes.filter((n) => gatherIds.has(n.id));
-    list.sort((a, b) => (b.mem.importance || 1) - (a.mem.importance || 1) || (a.id < b.id ? -1 : 1));
-    const GA = Math.PI * (3 - Math.sqrt(5)); // golden angle
+    const list = graphData.nodes.filter((n) => gatherIds.has(n.id) && n.hx != null);
+    if (!list.length) return null;
+    let sx = 0, sy = 0;
+    for (const n of list) { sx += n.hx; sy += n.hy; }
+    const subC = { x: sx / list.length, y: sy / list.length };
     const c = centroidRef.current;
+    const SHRINK = 0.55;
     const map = new Map();
-    list.forEach((n, i) => {
-      const rad = 32 * Math.sqrt(i + 0.35);
-      const ang = i * GA;
-      map.set(n.id, { gx: c.x + rad * Math.cos(ang), gy: c.y + rad * Math.sin(ang) });
-    });
+    for (const n of list) {
+      map.set(n.id, {
+        gx: c.x + (n.hx - subC.x) * SHRINK,
+        gy: c.y + (n.hy - subC.y) * SHRINK,
+      });
+    }
     return map;
   }, [gatherIds, graphData]);
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
@@ -413,10 +418,15 @@ export default function GraphView({
         let tx = bx + wob * Math.sin(tNow / 2600 + n.phase * 7);
         let ty = by + wob * Math.cos(tNow / 3100 + n.phase * 5);
         if (selNode && n !== selNode && selNode.hx != null) {
-          const dx = n.hx - selNode.hx;
-          const dy = n.hy - selNode.hy;
+          // Repel relative to BASE TARGETS (gathered or home), not raw homes — measuring
+          // homes while gathered made the push meaningless inside the compacted set.
+          const sg = gatherLayout ? gatherLayout.get(selNode.id) : null;
+          const sbx = sg ? sg.gx : selNode.hx;
+          const sby = sg ? sg.gy : selNode.hy;
+          const dx = bx - sbx;
+          const dy = by - sby;
           const dist = Math.hypot(dx, dy) || 1;
-          const R = 170;
+          const R = g ? 120 : 170; // tighter radius inside a compacted constellation
           if (dist < R) {
             const push = 34 * (1 - dist / R); // up to ~34 world units of breathing room
             tx += (dx / dist) * push;
@@ -676,8 +686,10 @@ export default function GraphView({
     let alpha = Math.min(0.55, 0.05 + 0.5 * wl * wl);
     if (egoId != null) alpha = s.id === egoId || t.id === egoId ? 0.65 : 0.03;
     if (gatherIds && gatherIds.has(s.id) && gatherIds.has(t.id)) {
-      alpha = Math.max(alpha, 0.55); // the gathered constellation's own threads glow
-      width += 0.3;
+      // Brighten but PRESERVE the weight hierarchy — a flat boost made every internal
+      // thread equally loud and 58 gathered memories read as spaghetti.
+      alpha = Math.min(0.75, alpha * 1.6 + 0.05);
+      width += 0.2;
     }
     if (isDimmed(s) || isDimmed(t)) alpha = 0.04; // filtered/query-dimmed endpoint wins
     if (link === hoverLink) { alpha = 0.85; width += 0.4; } // hovered link loudest
