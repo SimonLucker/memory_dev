@@ -56,20 +56,20 @@ The scene should feel like drifting through a memory space, not a frozen chart:
 
 - **Perpetual gentle drift**: keep the simulation warm — `d3AlphaTarget ≈ 0.02`, `d3AlphaDecay 0` (or `cooldownTime Infinity`) so nodes never fully stop; combined with velocityDecay 0.75 this reads as slow floating, not jitter. This also guarantees continuous canvas redraws for the animations below. Verify exact prop names against the installed package: /tmp/mg/node_modules/react-force-graph-2d/dist/react-force-graph-2d.d.ts (bash).
 - **Breathing**: in `nodeCanvasObject`, modulate radius `r * (1 + 0.05 * sin(t/1400 + phase))` and glow blur `±30%` with `t = performance.now()` and `phase = hash(node.id)` so orbs pulse out of sync, like slow breathing.
-- **Depth layers**: assign each node a stable pseudo-depth `depth = 0.55 + 0.45 * hash01(node.id)` (NEVER name this field `z` -- x/y/z/vx/vy/vz/fx/fy/fz/index are d3-force-3d's reserved node fields and the engine mutates them; a `z` depth field gets corrupted into negative radii and crashes createRadialGradient with IndexSizeError, freezing the whole render loop); multiply radius and node alpha by `depth`. Far nodes are smaller, fainter, slightly desaturated — cheap parallax depth.
+- **Depth layers**: assign each node a stable pseudo-depth `depth = clamp(0.55 + 0.45*(importance-1)/4 + (hash01(id)-0.5)*0.06, 0.55, 1)` — depth follows size: bigger/more important orbs are foreground and parallax most, small ones recede (NEVER name this field `z` -- x/y/z/vx/vy/vz/fx/fy/fz/index are d3-force-3d's reserved node fields and the engine mutates them; a `z` depth field gets corrupted into negative radii and crashes createRadialGradient with IndexSizeError, freezing the whole render loop); multiply radius and node alpha by `depth`. Far nodes are smaller, fainter, slightly desaturated — cheap parallax depth.
 - **Dust field**: behind the graph canvas, one absolutely-positioned `<canvas>` (own rAF loop, ~70 particles): tiny 1-2px paper-colored dots at alpha 0.05-0.18 drifting slowly upward-left with sin wobble, wrapping at edges. Plus 2-3 huge blurred radial nebula blobs (peach/lavender at alpha ~0.05) painted once. This layer never interacts — `pointer-events: none`.
 - Everything slow: nothing on screen should complete a cycle faster than ~8s. Calm, zen, meditative.
 
 ## Parallax (Phase 2 — 2.5D becomes real depth)
 
-Pronounced (user-tuned up from subtle), both-trigger parallax: layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
+Both-trigger parallax, asymmetric by design: mouse drift whisper-subtle (~12px), pan/zoom camera parallax really pronounced (0.6 factor). layers separate on pan/zoom AND drift with mouse when idle. Zen rule: eased, slow, a few px — felt more than seen.
 
 - **Per-node world offset**, applied identically in `nodeCanvasObject`, label placement, AND `nodePointerAreaPaint` (hitboxes must follow the pixels):
-  `off = (1 - effDepth) * (camCenter * 0.25 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
+  `off = (1 - effDepth) * (camCenter * 0.6 + mouseWorld)` where `effDepth` is 1 for hovered/selected/highlighted nodes (they anchor — keeps FocusHud and interactions perfectly aligned) else `node.depth`.
   - `camCenter` = world coords of the viewport center, computed once per frame in `onRenderFramePre` via `fg.screen2GraphCoords(w/2, h/2)` — panning makes far orbs lag behind near ones.
-  - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `80 / k` (constant ~80 screen px at any zoom `k`). Track via one `mousemove` listener.
-- Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (up to ~36 screen px at full mouse deflection — link hover is fuzziest at screen edges, exact at center).
-- **DustField layers**: split motes into far (~35, smaller, slower, alpha low) and near (~35, bigger, faster) layers + nebula (slowest). Each layer offsets by the same smoothed mouse vector times a per-layer factor (nebula 16px, far 36px, near 72px screen amplitude). Dust is decoration only — no camera term needed there.
+  - `mouseWorld` = normalized mouse position (`[-0.5,0.5]²` over the container, lerp-smoothed with ~0.06/frame easing) times `12 / k` (constant ~12 screen px — mouse term is deliberately whisper-subtle; camera term carries the drama). Track via one `mousemove` listener.
+- Links: paint each endpoint at its own offset position. The library's link-hover hit-test stays on true coords — acceptable at this amplitude (small for mouse (~5px); during pans the offset is large but hover during a drag isn't a real interaction — link hover is fuzziest at screen edges, exact at center).
+- **DustField layers**: split motes into far (~35, smaller, slower, alpha low) and near (~35, bigger, faster) layers + nebula (slowest). Each layer offsets by the same smoothed mouse vector times a per-layer factor (nebula 5px, far 10px, near 20px screen amplitude — mouse only). Dust is decoration only — no camera term needed there.
 
 ## Label anti-overlap (Phase 2)
 

@@ -56,7 +56,7 @@ export default function GraphView({
   const camRef = useRef({ x: 0, y: 0 });        // world coords of viewport center
   const mouseTargetRef = useRef({ x: 0, y: 0 }); // raw normalized mouse [-0.5,0.5]
   const mouseSmoothRef = useRef({ x: 0, y: 0 }); // lerp-smoothed, shared with DustField
-  const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 80/k, world units
+  const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 12/k, world units
   const labelIdsRef = useRef(new Set());         // ids whose label survived the anti-overlap pass
   const [hoverId, setHoverId] = useState(null);
   const [hoverLink, setHoverLink] = useState(null);
@@ -67,7 +67,11 @@ export default function GraphView({
   const graphData = useMemo(() => ({
     nodes: memories.map((m) => {
       const hh = hash01(m.id);
-      return { id: m.id, mem: m, depth: 0.55 + 0.45 * hh, phase: hh * TAU };
+      const imp = m.importance || 1;
+      // depth follows size: importance 5 = foreground (1), importance 1 = background (0.55),
+      // plus a whisper of stable jitter so planes don't lock. Bigger orb == nearer == moves most.
+      const depth = Math.min(1, Math.max(0.55, 0.55 + 0.45 * ((imp - 1) / 4) + (hh - 0.5) * 0.06));
+      return { id: m.id, mem: m, depth, phase: hh * TAU };
     }),
     links: edges.map((e) => ({ source: e.source, target: e.target, weight: e.weight, shared: e.shared })),
   }), [memories, edges]);
@@ -187,14 +191,14 @@ export default function GraphView({
   const egoNeighbors = egoId != null ? adjacency.get(egoId) : null;
 
   // --- parallax world offset (graph-view/SKILL.md → Parallax Phase 2) ---
-  // off = (1 - effDepth) * (camCenter*0.25 + mouseWorld); effDepth = 1 for focused
+  // off = (1 - effDepth) * (camCenter*0.6 + mouseWorld); effDepth = 1 for focused
   // nodes (zero offset — anchors interactions + FocusHud), else node.depth.
   const offsetOf = (node, focused) => {
     if (focused) return ZERO;
     const f = 1 - node.depth;
     const cam = camRef.current;
     const mw = mouseWorldRef.current;
-    return { x: f * (cam.x * 0.25 + mw.x), y: f * (cam.y * 0.25 + mw.y) };
+    return { x: f * (cam.x * 0.6 + mw.x), y: f * (cam.y * 0.6 + mw.y) };
   };
 
   // Greedy priority label culling — recomputed each frame in onRenderFramePre. Rects live
@@ -252,7 +256,7 @@ export default function GraphView({
     s.x += (tg.x - s.x) * 0.06; // ~0.06/frame easing
     s.y += (tg.y - s.y) * 0.06;
     const k = globalScale || 1;
-    mouseWorldRef.current = { x: (s.x * 80) / k, y: (s.y * 80) / k }; // ~80 screen px at any zoom
+    mouseWorldRef.current = { x: (s.x * 12) / k, y: (s.y * 12) / k }; // ~12 screen px at any zoom
     computeLabelSet(ctx, globalScale);
   };
 
