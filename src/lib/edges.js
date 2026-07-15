@@ -70,7 +70,58 @@ export function deriveEdges(memories) {
     for (const edge of list.slice(0, 2)) keep.add(edge);
   }
 
-  return candidates.filter((edge) => edge.weight >= 6 || keep.has(edge));
+  const pruned = candidates.filter((edge) => edge.weight >= 6 || keep.has(edge));
+
+  // Per-person connectivity guarantee: every person's memories must form ONE connected
+  // web through these edges — when a person is (newly) tagged on a memory, it visibly
+  // joins their story via the strongest available links. Kruskal over that person's
+  // candidate edges bridges any gaps; added edges are flagged `personLink` so the
+  // display budget always includes them.
+  const inSet = new Set(pruned);
+  const personMems = new Map(); // person id -> [memory ids]
+  for (const m of memories) {
+    for (const p of m.who || []) {
+      if (!personMems.has(p.id)) personMems.set(p.id, []);
+      personMems.get(p.id).push(m.id);
+    }
+  }
+  const pairKey = (a, b) => (a < b ? a + '|' + b : b + '|' + a);
+  const prunedByPair = new Map();
+  for (const e of pruned) prunedByPair.set(pairKey(e.source, e.target), e);
+  for (const ids of personMems.values()) {
+    if (ids.length < 2) continue;
+    const idSet = new Set(ids);
+    const parent = new Map(ids.map((x) => [x, x]));
+    const find = (x) => {
+      while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); }
+      return x;
+    };
+    // union what's already connected among this person's memories
+    for (const id of ids) { /* no-op: parent seeded above */ }
+    for (const e of pruned) {
+      if (idSet.has(e.source) && idSet.has(e.target)) {
+        const a = find(e.source);
+        const b = find(e.target);
+        if (a !== b) parent.set(a, b);
+      }
+    }
+    // bridge remaining components with the strongest candidates between their memories
+    const local = candidates
+      .filter((e) => idSet.has(e.source) && idSet.has(e.target))
+      .sort((a, b) => b.weight - a.weight);
+    for (const e of local) {
+      const a = find(e.source);
+      const b = find(e.target);
+      if (a === b) continue;
+      parent.set(a, b);
+      if (!inSet.has(e)) {
+        e.personLink = true;
+        inSet.add(e);
+        pruned.push(e);
+      }
+    }
+  }
+  return pruned;
 }
 
 function uniqueLower(values) {
@@ -127,6 +178,8 @@ export function edgeBudget(edges, nodeCount) {
   const sorted = [...edges].sort((a, b) => b.weight - a.weight);
   for (const e of sorted) { parent.set(e.source, e.source); parent.set(e.target, e.target); }
   const keep = new Set();
+  // Person-connectivity edges are definitionally important — always shown.
+  for (const e of edges) if (e.personLink) keep.add(e.source + '|' + e.target);
   // Kruskal, maximizing weight: the strongest tree that spans every component.
   for (const e of sorted) {
     const rs = find(e.source);

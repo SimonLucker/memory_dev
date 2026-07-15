@@ -49,6 +49,7 @@ For every pair of memories, collect shared attributes:
 | feeling overlap | 1 per feeling | weak |
 | same music artist | 1 | weak |
 
+- **Per-person connectivity guarantee**: after pruning, every person's memories are made ONE connected web (Kruskal over that person's candidate edges bridges gaps; added edges get `personLink: true` and the display budget always includes them). Newly tagging a person on a memory therefore visibly links it into their story.
 - Sum weights. v2 pruning (v1's ≥2 threshold produced 243 edges for 40 nodes — an unreadable near-clique): keep an edge iff `weight >= 6` OR it is one of either endpoint's top-2 edges by weight (keeps every node connected). Measured on the v1 dataset this floor yields ~120 edges. Target 80–130 for ~40 nodes.
 - Edge object: `{ source, target, weight, shared: [{type, value}, ...] }`. The `shared` list is user-facing ("what these memories have in common").
 - Also export `buildVocab(memories)` → `{ people:[], classes:[], places:[], feelings:[], artists:[] }` (lowercased) for the query parser and filter chips.

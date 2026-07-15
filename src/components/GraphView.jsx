@@ -167,8 +167,8 @@ export default function GraphView({
     const map = new Map();
     for (const n of graphData.nodes) map.set(n.id, []);
     for (const e of edges) {
-      map.get(e.source)?.push({ shared: e.shared, weight: e.weight });
-      map.get(e.target)?.push({ shared: e.shared, weight: e.weight });
+      map.get(e.source)?.push({ shared: e.shared, weight: e.weight, otherId: e.target });
+      map.get(e.target)?.push({ shared: e.shared, weight: e.weight, otherId: e.source });
     }
     return map;
   }, [graphData, edges]);
@@ -861,17 +861,35 @@ export default function GraphView({
     ctx.restore();
   };
 
-  // --- hover tooltip: neighbor shared-attribute reasons ---
+  // --- hover tooltip: grouped by WHAT is shared → which memories it connects to ---
   const nodeLabel = (node) => {
     const nbrs = neighbors.get(node.id) || [];
-    const rows = nbrs
-      .slice(0, 8)
-      .map((n) => `<div style="opacity:.85;margin-top:2px">${esc(n.shared.map((x) => x.value).join(' · '))}</div>`)
+    const short = (txt) => (txt.length > 24 ? txt.slice(0, 23) + '…' : txt);
+    const groups = new Map(); // "type|value" -> { value, names: [] }
+    for (const n of nbrs) {
+      const other = nodeById.get(n.otherId);
+      if (!other) continue;
+      for (const sv of n.shared) {
+        const key = sv.type + '|' + sv.value;
+        if (!groups.has(key)) groups.set(key, { value: sv.value, names: [] });
+        const g = groups.get(key);
+        if (!g.names.includes(other.mem.what)) g.names.push(other.mem.what);
+      }
+    }
+    const rows = [...groups.values()]
+      .sort((a, b) => b.names.length - a.names.length)
+      .slice(0, 6)
+      .map((g) => {
+        const shown = g.names.slice(0, 3).map((x) => esc(short(x))).join(' · ');
+        const more = g.names.length > 3 ? ` <span style="opacity:.45">+${g.names.length - 3}</span>` : '';
+        return `<div style="margin-top:4px"><span style="font-weight:600">${esc(g.value)}</span>` +
+          `<div style="opacity:.65;font-size:10.5px;line-height:1.35">${shown}${more}</div></div>`;
+      })
       .join('');
     return (
       `<div style="font:11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#F2F0EC;` +
       `background:rgba(30,24,44,0.82);border:1px solid rgba(255,255,255,0.14);` +
-      `backdrop-filter:blur(8px);border-radius:12px;padding:8px 10px;max-width:220px">` +
+      `backdrop-filter:blur(8px);border-radius:12px;padding:8px 10px;max-width:250px">` +
       `<div style="font-weight:600;margin-bottom:4px">${esc(node.mem.what)}</div>` +
       (rows
         ? `<div style="font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;opacity:.5">Shares with</div>${rows}`
@@ -888,7 +906,7 @@ export default function GraphView({
     return (
       `<div style="font:11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#F2F0EC;` +
       `background:rgba(30,24,44,0.82);border:1px solid rgba(255,255,255,0.14);` +
-      `backdrop-filter:blur(8px);border-radius:12px;padding:8px 10px;max-width:220px">` +
+      `backdrop-filter:blur(8px);border-radius:12px;padding:8px 10px;max-width:250px">` +
       `<div style="font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;opacity:.5;margin-bottom:2px">Shared</div>` +
       (rows || `<div style="opacity:.5">—</div>`) +
       `</div>`
