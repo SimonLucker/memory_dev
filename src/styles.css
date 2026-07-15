@@ -166,18 +166,20 @@ html, body, #root {
 }
 .timeline-years li {
   margin: 0;
-  padding: 0;
+  padding: 0 6px 0 0;
+  display: flex;
+  justify-content: flex-end; /* hug the right edge of the rail, clear of the dot column */
 }
 .timeline-year {
   position: relative;
   appearance: none;
-  width: 100%;
+  width: auto; /* was 100%: the full-rail button invisibly covered the month dots */
   border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
   font-size: 11px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   border-radius: 999px;
   cursor: pointer;
 }
