@@ -4,6 +4,10 @@ A React + Vite prototype that visualizes personal memories as a force-directed g
 
 Nodes = memories. Edges = attributes two memories share (people, class, place, feeling, music). Everything is filterable.
 
+## Version control
+
+Repo: https://github.com/SimonLucker/memory_dev.git (remote `origin`). **After every completed and verified iteration** (feature landed, bug fixed, review passed), the orchestrator commits with a Conventional Commits message — terse, imperative, why over what, no AI attribution. One commit per completed unit of work, not per file. The orchestrator cannot push (no GitHub auth in the sandbox); remind Simon to `git push` after committing.
+
 ## Ground rules (all agents)
 
 - **Invoke the `ponytail` skill before writing any code.** Laziest solution that works. No speculative abstractions, no extra dependencies, no state libraries, no CSS frameworks.
