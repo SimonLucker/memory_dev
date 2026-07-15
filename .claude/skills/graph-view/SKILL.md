@@ -87,7 +87,7 @@ Deterministic, no state, one array per frame. The slow drift means labels appear
 
 ## Precomputed layout (build-time physics)
 
-`scripts/compute-layout.mjs [--person pX]` runs the exact runtime force config for 300 ticks in node and writes `src/data/layout-pX.json` (`{id:[x,y]}`). persons.js ships it; GraphView seeds node positions from it and sets `warmupTicks = allSeeded ? 0 : 200` — the synchronous warmup loop blocked the main thread ~0.5s at 241 nodes (the choppy person switch). Re-run the script whenever a person's memories change; unknown nodes fall back to runtime warmup.
+`scripts/compute-layout.mjs [--person pX]` runs the runtime force config PLUS anisotropic gravity (forceX/forceY toward origin, Y ~2x X so the layout settles a screen-shaped oval; per-person strengths, override via GRAVX/GRAVY env) for 300 ticks and writes `src/data/layout-pX.json`. Without gravity, disconnected clusters repel into vast empty gulfs — collision still guarantees breathing room, so gravity compresses empty space, not memories (`{id:[x,y]}`). persons.js ships it; GraphView seeds node positions from it and sets `warmupTicks = allSeeded ? 0 : 200` — the synchronous warmup loop blocked the main thread ~0.5s at 241 nodes (the choppy person switch). Re-run the script whenever a person's memories change; unknown nodes fall back to runtime warmup.
 
 ## Edge budget (readability at scale)
 

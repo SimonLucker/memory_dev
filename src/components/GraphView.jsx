@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
-import { forceCollide } from 'd3-force-3d'; // same module force-graph runs its sim on
+import { forceCollide, forceX, forceY } from 'd3-force-3d'; // same module force-graph runs its sim on
 import FocusHud from './FocusHud.jsx';
 import { edgeBudget } from '../lib/edges.js';
 import DustField from './DustField.jsx';
@@ -146,6 +146,10 @@ export default function GraphView({
       .strength((l) => Math.min(0.5, l.weight / 12)); // weak edges must not drag clusters together
     fg.d3Force('charge').strength(-250);
     fg.d3Force('collide', forceCollide((n) => rOf(n) + 16).iterations(2)); // +16 = label air
+    // Anisotropic gravity (parity with scripts/compute-layout.mjs): keeps disconnected
+    // clusters from repelling into empty gulfs; stronger Y so the layout stays screen-shaped.
+    fg.d3Force('gx', forceX(0).strength(0.06));
+    fg.d3Force('gy', forceY(0).strength(0.13));
     // Perpetual gentle drift: charge/link forces are scaled by alpha and die as the
     // sim cools, so this custom force ignores alpha — each orb bobs around the home
     // position it settled at (~16s cycle), never faster, never escaping.
