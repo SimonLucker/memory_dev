@@ -66,7 +66,6 @@ export default function GraphView({
   const mouseSmoothRef = useRef({ x: 0, y: 0 }); // lerp-smoothed, shared with DustField
   const mouseWorldRef = useRef({ x: 0, y: 0 });  // smoothed mouse * 12/k, world units
   const labelIdsRef = useRef(new Set());         // ids whose label survived the anti-overlap pass
-  const selectedIdRef = useRef(null);            // live selection, read inside the alpha-independent focus-repel force
   const [hoverId, setHoverId] = useState(null);
   const [hoverLink, setHoverLink] = useState(null);
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -135,37 +134,6 @@ export default function GraphView({
     // sim cools, so this custom force ignores alpha — each orb bobs around the home
     // position it settled at (~16s cycle), never faster, never escaping.
     const nodes = graphData.nodes;
-    // Perpetual gentle drift around each orb's settled home (recorded once, after warmup, in
-    // onRenderFramePre). Ignores alpha so it never dies as the sim cools.
-    fg.d3Force('drift', () => {
-      const t = performance.now();
-      for (const n of nodes) {
-        if (n.hx == null || n.x == null) continue;
-        n.vx += (n.hx - n.x) * 0.002 + 0.015 * Math.sin(t / 2600 + n.phase * 7);
-        n.vy += (n.hy - n.y) * 0.002 + 0.015 * Math.cos(t / 3100 + n.phase * 5);
-      }
-    });
-    // Focus repel (graph-view/SKILL.md → Focus repel): while a memory is selected its neighbors
-    // ease outward for breathing room. Alpha-independent like drift; reads the live selection from
-    // a ref so it never re-registers. On deselect it no-ops and the drift home-pull glides everyone
-    // back — no reheat, no snapping. Ceiling ≈ 30 world units (0.06 push vs 0.002 drift pull).
-    fg.d3Force('focusRepel', () => {
-      const sel = selectedIdRef.current;
-      if (sel == null) return;
-      const s = nodeById.get(sel);
-      if (!s || s.x == null) return;
-      const R = 140;
-      for (const n of nodes) {
-        if (n === s || n.x == null) continue;
-        const dx = n.x - s.x;
-        const dy = n.y - s.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist >= R || dist < 0.001) continue;
-        const f = 0.06 * (1 - dist / R); // radial falloff, 0 at R
-        n.vx += (dx / dist) * f;
-        n.vy += (dy / dist) * f;
-      }
-    });
     // warmupTicks pre-settles the layout with THESE forces: the graphData flush is debounced
     // ~1ms, so it runs after this effect configures them — no visible flop. Re-arm the
     // one-shot fit + entrance float for the (re)built data.
@@ -177,7 +145,6 @@ export default function GraphView({
   }, [graphData]);
 
   // Keep the focus-repel force's closure looking at the current selection without re-registering.
-  useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
   // Center + zoom on selection; zoom back out when cleared.
   useEffect(() => {
@@ -399,6 +366,35 @@ export default function GraphView({
     for (const n of graphData.nodes) {
       const anchored = n.id === selectedId;
       n.anchorA += ((anchored ? 1 : 0) - n.anchorA) * 0.15;
+    }
+    // Liveliness (engine-independent): force-graph's layout engine permanently stops after
+    // warmupTicks (update() pauses it and only the synchronous warmup loop ran), so d3 forces
+    // registered for ambient motion NEVER tick. Instead each node eases toward a moving
+    // target = home + slow wobble (+ radial push away from the selected memory). Direct
+    // position easing, no velocities — nothing can pause it except unmounting. Skipped
+    // during the entrance float so it can't fight the intro offsets.
+    if (!introActiveRef.current) {
+      const tNow = performance.now();
+      const selNode = selectedId ? nodeById.get(selectedId) : null;
+      for (const n of graphData.nodes) {
+        if (n.hx == null || n.x == null) continue;
+        if (n.fx != null) { n.hx = n.fx; n.hy = n.fy ?? n.hy; continue; } // being dragged — rehome
+        let tx = n.hx + 6 * Math.sin(tNow / 2600 + n.phase * 7);
+        let ty = n.hy + 6 * Math.cos(tNow / 3100 + n.phase * 5);
+        if (selNode && n !== selNode && selNode.hx != null) {
+          const dx = n.hx - selNode.hx;
+          const dy = n.hy - selNode.hy;
+          const dist = Math.hypot(dx, dy) || 1;
+          const R = 170;
+          if (dist < R) {
+            const push = 34 * (1 - dist / R); // up to ~34 world units of breathing room
+            tx += (dx / dist) * push;
+            ty += (dy / dist) * push;
+          }
+        }
+        n.x += (tx - n.x) * 0.035; // slow, zen easing toward the moving target
+        n.y += (ty - n.y) * 0.035;
+      }
     }
     // Labels wait until the entrance float finishes.
     if (introActiveRef.current) labelIdsRef.current = new Set();

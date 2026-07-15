@@ -159,6 +159,10 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  pointer-events: none; /* the full-height list sits over the ridge svg and was eating dot clicks */
+}
+.timeline-year {
+  pointer-events: auto; /* year buttons stay clickable */
 }
 .timeline-years li {
   margin: 0;

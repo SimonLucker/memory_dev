@@ -91,7 +91,7 @@ No physics flopping on load. Pre-settle the layout with `warmupTicks` ≈ 200 (e
 
 ## Focus repel (selection breathing room)
 
-While a memory is selected, its neighbors ease away to give it air: a custom d3 force (registered alongside drift) pushes every OTHER node radially away from the selected node — `strength ~ 0.06 * (1 - dist/R)` for `dist < R ≈ 140` world units, applied to vx/vy each tick, alpha-independent like drift. On deselect the force does nothing and the existing home-pull drift glides everyone back. No reheat needed (sim ticks perpetually), no position snapping.
+While a memory is selected, its neighbors ease away to give it air. CRITICAL ENGINE GOTCHA: with `warmupTicks` set, force-graph's layout engine permanently stops after the synchronous warmup (`update()` pauses it; nothing restarts live ticking), so custom d3 forces for ambient motion NEVER run. All liveliness (home wobble ±6 world units, focus repel, restore-on-deselect) is instead driven from `onRenderFramePre`: each node eases (`0.035/frame`) toward a moving target = `home + wobble(t) [+ radial push]`, where push = `34 * (1 - dist/R)`, `R = 170`, computed from HOME positions (stable). Direct position easing, no velocities, skipped while a node is user-dragged (`fx != null` → rehome) and during the entrance float. Never register d3 forces expecting live ticks.
 
 ## Selected-node crosshair (canvas, not DOM)
 
