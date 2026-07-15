@@ -7,6 +7,14 @@ import { CLASS_COLORS, DAWN, DAWN_SAT, PAPER, PEACH } from '../lib/palette.js';
 
 const TAU = Math.PI * 2;
 
+// Entrance float (graph-view/SKILL.md → Entrance): each orb drifts in from just outside the
+// centroid over ~1.1s, with a per-node stagger up to 0.5s (1.6s total), alpha ramping 0→depth.
+const INTRO_MS = 1100;
+const INTRO_STAGGER = 500;
+const INTRO_TOTAL = INTRO_MS + INTRO_STAGGER;
+const INTRO_DIST = 260;
+const easeOutCubic = (p) => 1 - (1 - p) ** 3;
+
 // --- tiny color helpers (pure) — accept #hex or rgb() so mix() results can be re-mixed ---
 function hexToRgb(h) {
   if (h[0] === 'r') return h.slice(4, -1).split(',').map((v) => parseInt(v, 10));
@@ -49,8 +57,11 @@ export default function GraphView({
 }) {
   const fgRef = useRef(null);
   const containerRef = useRef(null);
-  const didFitRef = useRef(false); // one-shot initial zoomToFit (engine stays warm, so onEngineStop never fires)
-  const tickRef = useRef(0);
+  const didFitRef = useRef(false);      // one-shot: after warmup settles, frame the graph + start the float
+  const introStartRef = useRef(0);      // performance.now() when the entrance float began (0 = not yet)
+  const introActiveRef = useRef(true);  // true until the float finishes — gates labels + pointer/hover
+  const introFadeRef = useRef(0);       // 0→1 global fade so edge threads appear with the float
+  const centroidRef = useRef({ x: 0, y: 0 }); // settled-layout center; the float radiates outward from it
   // Parallax per-frame scratch (see Parallax Phase 2 in graph-view/SKILL.md).
   const camRef = useRef({ x: 0, y: 0 });        // world coords of viewport center
   const mouseTargetRef = useRef({ x: 0, y: 0 }); // raw normalized mouse [-0.5,0.5]
@@ -125,18 +136,23 @@ export default function GraphView({
     // sim cools, so this custom force ignores alpha — each orb bobs around the home
     // position it settled at (~16s cycle), never faster, never escaping.
     const nodes = graphData.nodes;
+    // Perpetual gentle drift around each orb's settled home (recorded once, after warmup, in
+    // onRenderFramePre). Ignores alpha so it never dies as the sim cools.
     fg.d3Force('drift', () => {
       const t = performance.now();
       for (const n of nodes) {
-        if (n.x == null) continue;
-        if (n.hx == null && didFitRef.current) { n.hx = n.x; n.hy = n.y; } // record home after settle
-        if (n.hx == null) continue;
+        if (n.hx == null || n.x == null) continue;
         n.vx += (n.hx - n.x) * 0.002 + 0.015 * Math.sin(t / 2600 + n.phase * 7);
         n.vy += (n.hy - n.y) * 0.002 + 0.015 * Math.cos(t / 3100 + n.phase * 5);
       }
     });
+    // warmupTicks pre-settles the layout with THESE forces: the graphData flush is debounced
+    // ~1ms, so it runs after this effect configures them — no visible flop. Re-arm the
+    // one-shot fit + entrance float for the (re)built data.
     didFitRef.current = false;
-    tickRef.current = 0;
+    introStartRef.current = 0;
+    introActiveRef.current = true;
+    introFadeRef.current = 0;
     fg.d3ReheatSimulation();
   }, [graphData]);
 
@@ -202,6 +218,57 @@ export default function GraphView({
     return { x: f * (cam.x * 0.6 + mw.x), y: f * (cam.y * 0.6 + mw.y) };
   };
 
+  // Entrance float offset + fade for one node (graph-view/SKILL.md → Entrance). Drifts in from
+  // `dir * 260` (dir = centroid→home unit vector) easing to 0 over INTRO_MS after a per-node
+  // stagger; `a` ramps 0→1 (multiplies the orb's depth alpha). Returns settled once landed.
+  const introOf = (node) => {
+    const start = introStartRef.current;
+    if (!start) return { ix: 0, iy: 0, a: 0 };
+    const el = performance.now() - start - hash01(node.id) * INTRO_STAGGER;
+    const p = Math.max(0, Math.min(1, el / INTRO_MS));
+    if (p >= 1) return { ix: 0, iy: 0, a: 1 };
+    const hx = node.hx != null ? node.hx : node.x;
+    const hy = node.hx != null ? node.hy : node.y;
+    const c = centroidRef.current;
+    const dx = hx - c.x;
+    const dy = hy - c.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const k = (1 - easeOutCubic(p)) * INTRO_DIST;
+    return { ix: (dx / len) * k, iy: (dy / len) * k, a: p };
+  };
+
+  // Camera bounds (graph-view/SKILL.md → Camera bounds): the cluster must always stay
+  // meaningfully on screen (≥160 screen px visible). Debounced on any zoom/pan activity —
+  // more reliable than gesture-end events, and self-terminating: the clamped centerAt's
+  // own zoom events re-check and no-op once in bounds.
+  const clampTimerRef = useRef(null);
+  const clampNow = () => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const n of graphData.nodes) {
+      if (n.x == null) continue;
+      if (n.x < minX) minX = n.x;
+      if (n.x > maxX) maxX = n.x;
+      if (n.y < minY) minY = n.y;
+      if (n.y > maxY) maxY = n.y;
+    }
+    if (!Number.isFinite(minX)) return;
+    const c = fg.screen2GraphCoords(size.w / 2, size.h / 2);
+    if (!c || !Number.isFinite(c.x) || !Number.isFinite(c.y)) return;
+    const k = fg.zoom();
+    const halfW = size.w / (2 * k);
+    const halfH = size.h / (2 * k);
+    const m = 160 / k; // at least this much cluster stays visible, in world units
+    const cx = Math.min(maxX + halfW - m, Math.max(minX - halfW + m, c.x));
+    const cy = Math.min(maxY + halfH - m, Math.max(minY - halfH + m, c.y));
+    if (Math.abs(cx - c.x) > 1 || Math.abs(cy - c.y) > 1) fg.centerAt(cx, cy, 300);
+  };
+  const onZoomActivity = () => {
+    clearTimeout(clampTimerRef.current);
+    clampTimerRef.current = setTimeout(clampNow, 250);
+  };
+
   // Greedy priority label culling — recomputed each frame in onRenderFramePre. Rects live
   // in world units (measureText, radii, offsets all share that space), so world-space
   // non-overlap ⟺ screen-space non-overlap under the uniform canvas transform.
@@ -218,7 +285,7 @@ export default function GraphView({
       if (active) { prio = 3; showYear = true; }
       else if (selected) { prio = 2; showYear = true; }
       else {
-        if (ramp(globalScale, imp >= 4 ? 1.1 : 2.2) <= 0.01) continue;
+        if (ramp(globalScale, imp >= 4 ? 0.8 : 2.2) <= 0.01) continue;
         prio = isHighlighted(node) ? 1 : 0;
       }
       cand.push({ node, focused: active || selected || isHighlighted(node), showYear, imp, prio, id: String(node.id) });
@@ -250,6 +317,23 @@ export default function GraphView({
   const onRenderFramePre = (ctx, globalScale) => {
     const fg = fgRef.current;
     if (!fg) return;
+    // First painted frame after warmup: snapshot each orb's settled home + the layout centroid
+    // (the float radiates outward from it), frame the whole graph, and start the float clock.
+    if (!didFitRef.current) {
+      const nodes = graphData.nodes;
+      if (nodes.length && nodes[0].x != null) {
+        let sx = 0, sy = 0;
+        for (const n of nodes) { n.hx = n.x; n.hy = n.y; sx += n.x; sy += n.y; }
+        centroidRef.current = { x: sx / nodes.length, y: sy / nodes.length };
+        introStartRef.current = performance.now();
+        fg.zoomToFit(600, 100);
+        didFitRef.current = true;
+      }
+    }
+    // Entrance still running? gates labels + pointer/hover; threads fade in with introFade.
+    const introEl = introStartRef.current ? performance.now() - introStartRef.current : -1;
+    introActiveRef.current = introEl < 0 || introEl < INTRO_TOTAL;
+    introFadeRef.current = introEl < 0 ? 0 : Math.min(1, introEl / INTRO_TOTAL);
     const c = fg.screen2GraphCoords(size.w / 2, size.h / 2);
     if (c && Number.isFinite(c.x) && Number.isFinite(c.y)) camRef.current = c;
     const s = mouseSmoothRef.current;
@@ -265,7 +349,93 @@ export default function GraphView({
       const anchored = n.id === selectedId;
       n.anchorA += ((anchored ? 1 : 0) - n.anchorA) * 0.15;
     }
-    computeLabelSet(ctx, globalScale);
+    // Labels wait until the entrance float finishes.
+    if (introActiveRef.current) labelIdsRef.current = new Set();
+    else computeLabelSet(ctx, globalScale);
+  };
+
+  // Selected-node crosshair (graph-view/SKILL.md → Selected-node crosshair). Drawn in canvas at
+  // the orb's painted position (nx,ny) so it stays glued to the memory through pans/zooms — the
+  // selected node eases its parallax anchor to 1, so nx,ny converge on the true position.
+  const paintFocus = (node, ctx, nx, ny, r) => {
+    const t = performance.now();
+    const imp = node.mem.importance || 1;
+    const conns = (neighbors.get(node.id) || []).length;
+
+    ctx.save();
+    ctx.lineCap = 'round';
+
+    // 1. slow-rotating dotted ring just outside the orb
+    ctx.save();
+    ctx.translate(nx, ny);
+    ctx.rotate((t / 8000) * TAU); // ~8s per turn, zen
+    ctx.setLineDash([0.5, 3]);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = PEACH;
+    ctx.beginPath();
+    ctx.arc(0, 0, Math.max(0.5, r + 10), 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+    ctx.setLineDash([]);
+
+    // 2. two thin dawn-gradient arc gauges on top: importance (n/5), then connections (n/max)
+    const grad = ctx.createLinearGradient(nx - r, ny - r, nx + r, ny + r);
+    grad.addColorStop(0, DAWN[0]);
+    grad.addColorStop(0.56, DAWN[1]);
+    grad.addColorStop(1, DAWN[2]);
+    const gauge = (rad, frac, ticks) => {
+      rad = Math.max(0.5, rad);
+      const a0 = -TAU / 4 - TAU * 0.2; // centered on top, sweeping 40% of the circle clockwise
+      const span = TAU * 0.4;
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(242,240,236,0.14)';
+      ctx.beginPath();
+      ctx.arc(nx, ny, rad, a0, a0 + span);
+      ctx.stroke();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = grad;
+      ctx.beginPath();
+      ctx.arc(nx, ny, rad, a0, a0 + span * Math.max(0.001, Math.min(1, frac || 0)));
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(242,240,236,0.35)';
+      for (let i = 0; i <= ticks; i++) {
+        const a = a0 + (span * i) / ticks;
+        const cs = Math.cos(a);
+        const sn = Math.sin(a);
+        ctx.beginPath();
+        ctx.moveTo(nx + cs * (rad - 2.5), ny + sn * (rad - 2.5));
+        ctx.lineTo(nx + cs * (rad + 2.5), ny + sn * (rad + 2.5));
+        ctx.stroke();
+      }
+    };
+    gauge(r + 14, imp / 5, 5);
+    gauge(r + 19, conns / maxConnections, Math.min(maxConnections, 10));
+
+    // 3. static corner brackets just outside the gauges
+    const bd = r + 24;
+    const bl = 5;
+    ctx.strokeStyle = 'rgba(242,240,236,0.5)';
+    ctx.lineWidth = 1;
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const px = nx + dx * bd;
+      const py = ny + dy * bd;
+      ctx.beginPath();
+      ctx.moveTo(px - dx * bl, py);
+      ctx.lineTo(px, py);
+      ctx.lineTo(px, py - dy * bl);
+      ctx.stroke();
+    }
+
+    // 4. eyebrow caption under the node
+    ctx.font = '9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px';
+    ctx.fillStyle = 'rgba(242,240,236,0.7)';
+    ctx.fillText(`IMPORTANCE ${imp}/5  ·  ${conns}/${maxConnections} LINKS`, nx, ny + r + 32);
+
+    ctx.restore();
   };
 
   // --- node paint ---
@@ -285,8 +455,9 @@ export default function GraphView({
     // anchor toward 1 (offset → 0) so it glides to true position — FocusHud + hitbox pin
     // without the leap-out-from-cursor snap. Same offset feeds label + hitbox.
     const off = offsetOf(node);
-    const nx = node.x + off.x;
-    const ny = node.y + off.y;
+    const intro = introOf(node); // entrance float-in offset + 0→1 alpha ramp
+    const nx = node.x + off.x + intro.ix;
+    const ny = node.y + off.y + intro.iy;
 
     // Alive: per-node breathing (desync via phase) + pseudo-depth (far = smaller/fainter).
     // THE focused node pops forward in size; its neighbor orbs only regain full alpha
@@ -301,7 +472,7 @@ export default function GraphView({
     ctx.save();
 
     if (dimmed) {
-      ctx.globalAlpha = 0.1 * node.depth;
+      ctx.globalAlpha = 0.1 * node.depth * intro.a;
       ctx.beginPath();
       ctx.arc(nx, ny, r, 0, TAU);
       ctx.fillStyle = accent;
@@ -310,7 +481,7 @@ export default function GraphView({
       return;
     }
 
-    ctx.globalAlpha = alphaZ; // depth fade (full for focused node + its neighbors)
+    ctx.globalAlpha = alphaZ * intro.a; // depth fade × entrance float-in
 
     // 1. faint glow, pulsing gently in time with the breath
     const glowPulse = 1 + 0.3 * osc;
@@ -367,7 +538,7 @@ export default function GraphView({
       labelAlpha = 1;
       showYear = true;
     } else {
-      labelAlpha = ramp(globalScale, (m.importance || 1) >= 4 ? 1.1 : 2.2);
+      labelAlpha = ramp(globalScale, (m.importance || 1) >= 4 ? 0.8 : 2.2);
     }
     if (labelAlpha > 0.01 && labelIdsRef.current.has(node.id)) {
       const lx = nx + r + 6;
@@ -391,13 +562,16 @@ export default function GraphView({
       }
     }
 
+    // Node-anchored crosshair for the selected memory (after the entrance settles).
+    if (selected && !introActiveRef.current) paintFocus(node, ctx, nx, ny, r);
+
     ctx.restore();
   };
 
   // pointer/hit area matches the visible orb — including its parallax offset (hitboxes
   // must follow the pixels; focused nodes get zero offset so they stay pinned).
   const paintNodePointer = (node, color, ctx) => {
-    if (node.x == null) return;
+    if (node.x == null || introActiveRef.current) return; // interactions wait for the float to finish
     const off = offsetOf(node);
     const r = 4 + (node.mem.importance || 1) * 2;
     ctx.fillStyle = color;
@@ -427,6 +601,7 @@ export default function GraphView({
     if (egoId != null) alpha = s.id === egoId || t.id === egoId ? 0.65 : 0.03;
     if (isDimmed(s) || isDimmed(t)) alpha = 0.04; // filtered/query-dimmed endpoint wins
     if (link === hoverLink) { alpha = 0.85; width += 0.4; } // hovered link loudest
+    alpha *= introFadeRef.current; // threads fade in as the memories float into place
     width = Math.max(0.1, width); // guard: stroke width never non-positive
 
     // Parallax: paint each endpoint from its own offset position (hover hit-test stays on
@@ -434,12 +609,14 @@ export default function GraphView({
     // endpoint offset so the curve keeps its shape.
     const so = offsetOf(s);
     const to = offsetOf(t);
-    const sx = s.x + so.x;
-    const sy = s.y + so.y;
-    const tx = t.x + to.x;
-    const ty = t.y + to.y;
-    const mox = (so.x + to.x) / 2;
-    const moy = (so.y + to.y) / 2;
+    const si = introOf(s);
+    const ti = introOf(t);
+    const sx = s.x + so.x + si.ix;
+    const sy = s.y + so.y + si.iy;
+    const tx = t.x + to.x + ti.ix;
+    const ty = t.y + to.y + ti.iy;
+    const mox = (sx - s.x + tx - t.x) / 2; // shift control points by the mean endpoint offset
+    const moy = (sy - s.y + ty - t.y) / 2;
 
     const grad = ctx.createLinearGradient(sx, sy, tx, ty);
     grad.addColorStop(0, stops[0]);
@@ -522,28 +699,19 @@ export default function GraphView({
         onLinkHover={(link) => setHoverLink(link || null)}
         onNodeClick={(node) => onSelect(node.id)}
         onBackgroundClick={() => onSelect(null)}
+        onZoom={onZoomActivity}
+        onZoomEnd={onZoomActivity}
         d3VelocityDecay={0.75}
+        warmupTicks={200}
         cooldownTime={Infinity}
-        onEngineTick={() => {
-          // Keep the sim perpetually warm (above) means onEngineStop never fires — so frame
-          // the whole graph once, after the initial spread has settled (~120 ticks).
-          if (didFitRef.current) return;
-          if (++tickRef.current > 120) {
-            didFitRef.current = true;
-            fgRef.current?.zoomToFit(600, 100);
-          }
-        }}
+        autoPauseRedraw={false} /* with warmupTicks the engine can report stopped → autoPause
+          freezes ALL painting until first interaction (blank first load). We animate every
+          frame anyway (intro, breathing, drift), so pausing is never wanted. */
+        minZoom={0.5}
+        maxZoom={8}
       />
       {selectedNode && (
-        <FocusHud
-          memory={selectedNode.mem}
-          connections={(neighbors.get(selectedNode.id) || []).length}
-          maxConnections={maxConnections}
-          cx={size.w / 2}
-          cy={size.h / 2}
-          nodeScreenR={(4 + (selectedNode.mem.importance || 1) * 2) * 3}
-          onClose={() => onSelect(null)}
-        />
+        <FocusHud memory={selectedNode.mem} onClose={() => onSelect(null)} />
       )}
     </div>
   );

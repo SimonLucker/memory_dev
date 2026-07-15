@@ -75,12 +75,6 @@ export default function App() {
   const classCounts = useMemo(() =>
     CLASSES.map(name => ({ name, count: memories.filter(m => m.class === name).length })), [])
 
-  const countsByYear = useMemo(() => {
-    const c = {}
-    for (const m of memories) { const y = yearOf(m); c[y] = (c[y] || 0) + 1 }
-    return c
-  }, [])
-
   return (
     <div className="scene">
       <div className="graph-layer">
@@ -95,7 +89,7 @@ export default function App() {
       </div>
       <Timeline
         years={years}
-        countsByYear={countsByYear}
+        memories={memories}
         selectedYear={selectedYear}
         onSelectYear={setSelectedYear}
       />

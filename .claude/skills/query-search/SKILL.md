@@ -13,7 +13,7 @@ Four small stats derived from the *currently visible* memories: Memories (count)
 
 ## Input
 
-Pill input, placeholder "Ask a question...", circular dawn-gradient send button. Enter or click = run query. An "x" clears it. Bottom chip row: "My memories" chip + result count chip (cosmetic parity with the video).
+Pill input, placeholder "Ask a question...", circular dawn-gradient send button. Enter or click = run query. An "x" clears it. Bottom chip row: result count chip only, shown while a query is active (the "My memories" chip was removed by user request).
 
 ## Parser — parseQuery(text, vocab) in lib/search.js
 

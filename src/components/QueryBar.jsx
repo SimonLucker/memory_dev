@@ -62,7 +62,6 @@ export default function QueryBar({ stats, matchCount, onSubmit, onClear }) {
       </div>
 
       <div className="chip-row">
-        <span className="chip chip-static">My memories</span>
         {matchCount !== null && (
           <span className="chip chip-static">{matchCount} match{matchCount === 1 ? '' : 'es'}</span>
         )}

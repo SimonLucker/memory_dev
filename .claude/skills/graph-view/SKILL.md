@@ -15,7 +15,7 @@ Soft matte pastel sphere, radius `r = 4 + importance * 2`, colored by class acce
 3. Ring: 1px circle at `r + 1.5`, `rgba(242,240,236,0.35)`.
 4. Label — DECLUTTERED policy (the v1 all-labels-on screen was unreadable):
    - hovered or selected: always show `what` + year pill.
-   - otherwise: only nodes with `importance >= 4` AND `globalScale > 1.1` show `what` (no year pill); everything else unlabeled until zoomed to `globalScale > 2.2`.
+   - otherwise: only nodes with `importance >= 4` AND `globalScale > 0.8` show `what` (no year pill); everything else unlabeled until zoomed to `globalScale > 2.2`.
    - Fade labels in/out with zoom (alpha ramp over ±0.15 around each threshold), 10px sans paper `#F2F0EC`, dark pill `rgba(0,0,0,0.45)` for the year.
 
 States:
@@ -81,6 +81,27 @@ Labels must never overlap each other. Greedy priority culling, recomputed each f
 4. Store the surviving id set in a ref; `nodeCanvasObject` draws a label only if its id survived.
 
 Deterministic, no state, one array per frame. The slow drift means labels appear/disappear rarely; the stable sort keeps winners winning.
+
+## Entrance (first load)
+
+No physics flopping on load. Pre-settle the layout with `warmupTicks` ≈ 200 (engine runs before first paint) AND set `autoPauseRedraw={false}` — with warmup the engine can report stopped, and autoPause then freezes all painting until the first user interaction (symptom: blank page that springs to life on a wheel/drag). This scene animates every frame regardless, so auto-pausing is never wanted. `zoomToFit` right after mount (the tick-120 wait is obsolete once warmup pre-settles). Then float the memories in: for ~1.6s, each node paints at `settled + dir * 260 * (1 - easeOutCubic(p))` where `dir` = unit vector from the graph centroid (nodes drift inward from just outside), `p` = clamped progress with a per-node stagger (`hash01(id) * 0.5s`), alpha ramping 0→depth. Labels and interactions wait until the intro ends (skip hover/pointer paint while p < 1). Dust/nebula unaffected.
+
+## Selected-node crosshair (canvas, not DOM)
+
+The rotating dashed crosshair + gauges must track the NODE, not the viewport center — pans and zooms leave it glued to the memory until deselect. Ponytail answer: draw it in `nodeCanvasObject` for the selected node (world coords = free tracking):
+- Rotating dotted ring at `r + 10`: `setLineDash([0.5, 3])`, rotation phase `t / 8000 * TAU` (slow, zen), peach.
+- Four corner brackets just outside it, static.
+- Two thin arc gauges: importance (n/5) and connections (n/maxConnections), dawn-gradient strokes, subtle tick marks.
+- Small caption under the node: "IMPORTANCE n/5 · k/max LINKS" in the eyebrow style (9.5px upper, letter-spaced, paper @ 0.7).
+- FocusHud.jsx keeps ONLY the detail card + ✕ (drop its SVG gauges/brackets entirely).
+
+## Camera bounds
+
+The cluster must never leave the screen: `minZoom 0.5`, `maxZoom 8` props, plus a gentle rubber-band — debounce (~250ms) on BOTH `onZoom` and `onZoomEnd` (gesture-end alone is unreliable for synthetic input), then clamp the camera center so ≥160 screen px of the node bbox stays visible: `cx ∈ [minX - w/2k + 160/k, maxX + w/2k - 160/k]` (same for y); if it moved >1 world unit, `centerAt(clamped, 300)`. NO guard flag: the clamped centerAt's own zoom events re-check and no-op once in bounds (self-terminating). A time-window guard once let rapid gestures escape; a bare bbox+120 clamp once let the cluster park invisibly at a screen corner.
+
+## Detail card photo
+
+`memory.photo` may point to a real image (`photos/<id>.jpg`, served from public/). Render an `<img src={memory.photo}>` (radius 14, slight tilt, object-fit cover, height 150) and fall back to the existing gradient placeholder `onError` or when the path is missing.
 
 ## Focus HUD (FocusHud.jsx)
 

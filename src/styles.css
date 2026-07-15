@@ -111,7 +111,7 @@ html, body, #root {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 60px;
+  width: 96px;
   padding: 40px 0;
   z-index: 5;
   display: flex;
@@ -124,9 +124,27 @@ html, body, #root {
   height: calc(100% - 80px);
   pointer-events: none;
 }
-.ridge-bar {
-  fill: var(--paper);
-  opacity: 0.35;
+.ridge-line {
+  fill: none;
+  stroke: url(#timeline-ridge-gradient);
+  stroke-opacity: 0.5;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.ridge-dots {
+  position: absolute;
+  inset: 40px 0;
+  width: 100%;
+  height: calc(100% - 80px);
+  pointer-events: none;
+}
+.ridge-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--paper);
+  opacity: 0.7;
+  pointer-events: auto;
 }
 .timeline-years {
   position: relative;
@@ -177,7 +195,7 @@ html, body, #root {
 
 /* ---------- Legend (bottom-left) ---------- */
 .legend {
-  left: 76px; /* clear of the 60px timeline rail — they must never overlap */
+  left: 112px; /* clear of the 96px timeline rail — they must never overlap */
   bottom: 20px;
   width: 230px;
   max-height: 66vh;
