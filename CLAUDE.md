@@ -13,14 +13,24 @@ Repo: https://github.com/SimonLucker/memory_dev.git (remote `origin`). **After e
 - **Invoke the `ponytail` skill before writing any code.** Laziest solution that works. No speculative abstractions, no extra dependencies, no state libraries, no CSS frameworks.
 - Stack is fixed: React + Vite + `react-force-graph-2d`. Nothing else unless a skill says so.
 - Read the relevant `.claude/skills/*/SKILL.md` before implementing a feature — they contain the spec, design tokens, and algorithms.
-- All derived data (edges, vocab, years) is computed client-side from `src/data/memories.json`. No backend.
+- All derived data (edges, vocab, years) is computed client-side from `src/data/memories.json`. The only server pieces are dev-only vite middlewares (`vite.config.js`): JSON/layout persistence, photo upload, and the AI proxy (Azure OpenAI chat + Deepgram transcription; keys in `.env`, see `.env.example`; mock chat when no key). Later target: Supabase (Postgres + storage + edge functions) behind the same fetch paths.
 
 ## Target file layout
 
+## POC pipeline (early fall)
+
+Three views, switched by the top-center pills, in pipeline order **Memorialize → Vault → Cortex**; one shared memories state in App feeds all three:
+
+- **Memorialize** (`components/Memorialize.jsx`): chat guide (photo / voice / text in, one clarifying question at a time) that ends in a memory-JSON draft card → "Save to vault" appends it via `App.addMemory` (id minted, who-names resolved, graph position seeded near strongest neighbours, persisted to JSON + layout file).
+- **Vault** (`components/Vault.jsx`): scannable card list of all memories, newest first, text filter; freshly memorialized card is highlighted; click opens the memory in the Cortex.
+- **Cortex**: the existing graph.
+
 ```
 src/
-  App.jsx              # composition + shared state (filters, selection, query)
+  App.jsx              # composition + shared state (filters, selection, query, views, pipeline)
   components/
+    Memorialize.jsx    # memorialization chat (create memories)
+    Vault.jsx          # memory vault list
     GraphView.jsx      # force graph canvas (skill: graph-view)
     Timeline.jsx       # left year rail + sparkline (skill: timeline)
     Legend.jsx         # bottom-left legend + filters (skill: legend-filters)
