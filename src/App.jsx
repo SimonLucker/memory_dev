@@ -39,8 +39,9 @@ const resolveWho = (names, memories) => {
 }
 
 export default function App() {
-  const [view, setView] = useState('cortex')
-  const [personId, setPersonId] = useState(PERSONS[0].id)
+  // Open ready to capture: Simon's profile, Memorialize first.
+  const [view, setView] = useState('memorialize')
+  const [personId, setPersonId] = useState('p3')
   const person = PERSONS.find(p => p.id === personId)
   // Memories are editable state, seeded from the bundled JSON. Persistence goes
   // through lib/api.js: Supabase (deployed) or the vite dev endpoints (local).
