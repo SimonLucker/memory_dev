@@ -26,10 +26,15 @@ const devApi = (env) => ({
       try {
         const { person, memories, layout } = JSON.parse(await readBody(req))
         const suffix = person === 'p2' ? '-p2' : ''
-        writeFileSync(join(root, 'src/data', `memories${suffix}.json`), JSON.stringify(memories, null, 2) + '\n')
+        const memFile = join(root, 'src/data', `memories${suffix}.json`)
+        writeFileSync(memFile, JSON.stringify(memories, null, 2) + '\n')
+        // The watcher ignores these files (no mid-edit page reload), so vite's module
+        // cache must be invalidated by hand or reloads serve the stale JSON.
+        server.moduleGraph.onFileChange(memFile)
         if (layout) {
           const file = join(root, 'src/data', person === 'p2' ? 'layout-p2.json' : 'layout-p1.json')
           writeFileSync(file, JSON.stringify({ ...JSON.parse(readFileSync(file, 'utf8')), ...layout }) + '\n')
+          server.moduleGraph.onFileChange(file)
         }
         res.end('ok')
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
