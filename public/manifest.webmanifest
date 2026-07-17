@@ -1,0 +1,9 @@
+{
+  "name": "Memmory",
+  "short_name": "Memmory",
+  "display": "standalone",
+  "background_color": "#16111F",
+  "theme_color": "#16111F",
+  "start_url": "./",
+  "icons": [{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }]
+}

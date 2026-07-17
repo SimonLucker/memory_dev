@@ -786,3 +786,84 @@ html, body, #root {
   flex-shrink: 0;
 }
 .send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ---------- Phone layout (≤700px) — Tier 1 iPhone pass ---------- */
+/* Desktop: the legend toggle doesn't exist and the wrap is transparent. */
+.legend-toggle { display: none; }
+
+@media (max-width: 700px) {
+  .view-pills {
+    top: calc(10px + env(safe-area-inset-top));
+    padding: 3px;
+  }
+  .view-pills button { font-size: 12px; padding: 6px 12px; }
+
+  /* Person switch drops below the pills — no room side by side. */
+  .person-switch {
+    top: calc(54px + env(safe-area-inset-top));
+    right: 10px;
+  }
+
+  /* Timeline rail: no room on a phone; year/month filtering stays available
+     through the query bar. ponytail: bring back as a bottom scrubber if missed. */
+  .timeline-rail { display: none; }
+
+  /* Legend becomes a toggle-opened sheet (App wraps it in .legend-wrap). */
+  .legend-wrap:not(.open) .legend { display: none; }
+  .legend {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    max-height: 55vh;
+    overflow-y: auto;
+    z-index: 7;
+  }
+  .legend-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 10px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--paper);
+    font-size: 15px;
+    z-index: 7;
+    cursor: pointer;
+  }
+
+  /* Query bar: full width along the bottom, clear of the legend toggle. */
+  .querybar {
+    left: 60px;
+    right: 10px;
+    width: auto;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    padding: 10px 12px;
+  }
+
+  /* Focus card: bottom sheet instead of right-side column (beats inline styles). */
+  .focus-card {
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-height: 52vh !important;
+    z-index: 9; /* above the bottom query bar it now shares an edge with */
+  }
+
+  /* Vault + Memorialize columns breathe around the stacked top pills. */
+  .vault-head { padding-top: calc(100px + env(safe-area-inset-top)); } /* clears pills + person switch */
+  .vault-head h1 { font-size: 21px; }
+  .vault-photo { width: 64px; height: 64px; }
+  .vault-imp { display: none; }
+  .composer { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .chat-msg { max-width: 88%; }
+}

@@ -119,6 +119,7 @@ export default function FocusHud({ memory, onEdit, onClose }) {
     // full-screen wrapper stays click-through so graph gestures pass; the card re-enables events
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       <div
+        className="focus-card"
         style={{
           ...panel,
           pointerEvents: 'auto',

@@ -110,6 +110,7 @@ export default function App() {
   const [selectedMonth, setSelectedMonth] = useState(null) // { year, month } | null — mutually exclusive with year
   const [queryResult, setQueryResult] = useState(null) // { ids: Set|null, count: number }
   const [selectedId, setSelectedId] = useState(null)
+  const [legendOpen, setLegendOpen] = useState(false) // phones: legend hides behind a toggle
 
   const visibleMemories = useMemo(() =>
     memories.filter(m =>
@@ -228,14 +229,19 @@ export default function App() {
             selectedMonth={selectedMonth}
             onSelectMonth={(m) => { setSelectedMonth(m); setSelectedYear(null) }}
           />
-          <Legend
-            classCounts={classCounts}
-            hiddenClasses={hiddenClasses}
-            onToggleClass={toggleClass}
-            vocab={vocab}
-            activeFilters={activeFilters}
-            onToggleFilter={toggleFilter}
-          />
+          <div className={legendOpen ? 'legend-wrap open' : 'legend-wrap'}>
+            <Legend
+              classCounts={classCounts}
+              hiddenClasses={hiddenClasses}
+              onToggleClass={toggleClass}
+              vocab={vocab}
+              activeFilters={activeFilters}
+              onToggleFilter={toggleFilter}
+            />
+          </div>
+          <button className="legend-toggle" onClick={() => setLegendOpen(o => !o)}>
+            {legendOpen ? '✕' : '✦'}
+          </button>
           <QueryBar
             stats={stats}
             matchCount={queryResult ? queryResult.count : null}
