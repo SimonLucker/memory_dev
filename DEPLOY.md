@@ -38,13 +38,17 @@ That's the whole database setup: a table for memories and a bucket for photos.
 
 ## Part 3 — Copy your two project keys
 
-1. In the left sidebar, click the gear icon → **Project Settings** → **API**.
-2. You need two values from this page — keep it open, you'll paste them three times today:
+1. Click the **Connect** button at the top of the dashboard. The dialog shows
+   both values you need — keep them handy, you'll paste them three times today:
    - **Project URL** — looks like `https://abcdefgh.supabase.co`
-   - **anon public** key — a long string of letters under "Project API keys"
+     (also shown under **Project Settings → Data API**)
+   - **Publishable key** — starts with `sb_publishable_...`
+     (also shown under **Project Settings → API Keys**; older projects call
+     this the "anon public" key — same thing. Never use the **Secret keys**.)
 
 The part of the URL before `.supabase.co` (here `abcdefgh`) is your
-**project ref** — you'll need it in the next part.
+**project ref** — it's also in your browser's address bar. You'll need it in
+the next part.
 
 ## Part 4 — Set up the AI functions (Terminal)
 
@@ -102,7 +106,7 @@ One command, run once. Replace the two values with yours from Part 3:
 
 ```sh
 VITE_SUPABASE_URL=https://abcdefgh.supabase.co \
-VITE_SUPABASE_ANON_KEY=PASTE_YOUR_ANON_KEY_HERE \
+VITE_SUPABASE_ANON_KEY=PASTE_YOUR_PUBLISHABLE_KEY_HERE \
 node scripts/seed-supabase.mjs
 ```
 
@@ -132,7 +136,7 @@ Your own profile (Simon) deliberately starts empty — you'll fill it from your 
    | Name | Value |
    |---|---|
    | `VITE_SUPABASE_URL` | your Project URL from Part 3 |
-   | `VITE_SUPABASE_ANON_KEY` | your anon key from Part 3 |
+   | `VITE_SUPABASE_ANON_KEY` | your Publishable key from Part 3 |
 
 6. Now click **Deploy**. After a minute you get your address, something like
    `https://memory-dev.vercel.app`. Click it to check it loads.
