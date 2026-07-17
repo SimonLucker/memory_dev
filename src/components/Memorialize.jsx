@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CLASS_COLORS } from '../lib/palette.js'
+import * as api from '../lib/api.js'
 
 const today = () => {
   const d = new Date()
@@ -70,15 +71,9 @@ export default function Memorialize({ personName, onSave }) {
     setBusy(true)
     setNotice(null)
     try {
-      const r = await fetch('/__ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: toApi(next) }),
-      })
-      const data = await r.json()
-      if (data.error) throw new Error(data.error)
-      const d = extractDraft(data.content)
-      const spoken = data.content.replace(/```json[\s\S]*?```/, '').trim()
+      const content = await api.chat(toApi(next))
+      const d = extractDraft(content)
+      const spoken = content.replace(/```json[\s\S]*?```/, '').trim()
       setMessages(prev => [...prev, { role: 'assistant', text: spoken }])
       if (d) setDraft(d)
     } catch (e) {
@@ -128,8 +123,7 @@ export default function Memorialize({ personName, onSave }) {
         setBusy(true)
         try {
           const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' })
-          const r = await fetch('/__ai/transcribe', { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob })
-          const data = await r.json()
+          const data = await api.transcribe(blob)
           if (data.error) setNotice(data.error)
           if (data.transcript) setInput(prev => (prev ? prev + ' ' : '') + data.transcript)
         } catch (e) { setNotice('Transcription failed: ' + e.message) } finally { setBusy(false) }
@@ -148,9 +142,7 @@ export default function Memorialize({ personName, onSave }) {
       for (const m of messages) {
         if (!m.image) continue
         const blob = await (await fetch(m.image)).blob()
-        const r = await fetch('/__upload-photo', { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob })
-        const { path } = await r.json()
-        photos.push(path)
+        photos.push(await api.uploadPhoto(blob))
       }
       onSave({ ...draft, photos }) // App appends, persists, and jumps to the Vault
     } catch (e) {

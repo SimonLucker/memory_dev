@@ -1314,5 +1314,81 @@
       "photos/m040_2.jpg",
       "photos/m040_3.jpg"
     ]
+  },
+  {
+    "id": "m041",
+    "photos": [
+      "photos/new_1784290172121.jpg"
+    ],
+    "music": {
+      "name": "This Old House",
+      "artist": "Against All Logic"
+    },
+    "class": "Travel",
+    "what": "Climbed the lookout mountain in Ålesund",
+    "when": "17-07-2026 12:00",
+    "where": "Ålesund, Norway",
+    "why": "A visit to Ålesund that brought back memories of the first time there four years ago",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "summary": "Glenn climbed the lookout mountain in Ålesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago.",
+    "importance": 4
+  },
+  {
+    "id": "m042",
+    "photos": [
+      "photos/new_1784290597705.jpg"
+    ],
+    "music": {
+      "name": "This Old House",
+      "artist": "Against All Logic"
+    },
+    "class": "Travel",
+    "what": "Climbing Alesund’s local mountain",
+    "when": "17-01-2022 12:00",
+    "where": "Alesund, Norway",
+    "why": "A winter trip with Ben to climb the local mountain and take in the view, made meaningful by the nostalgic feeling and the song playing on the way there.",
+    "who": [
+      {
+        "id": "p12",
+        "name": "Ben"
+      }
+    ],
+    "feeling": [
+      "Nostalgic"
+    ],
+    "summary": "A winter climb in Alesund with Ben, with music on the way and a nostalgic feeling in the air as you looked out over the view.",
+    "importance": 4
+  },
+  {
+    "id": "m043",
+    "photos": [
+      "photos/new_1784295613504.jpg"
+    ],
+    "music": null,
+    "class": "Milestones",
+    "what": "Bought our first car",
+    "when": "16-07-2026 12:00",
+    "where": "Geldermalsen",
+    "why": "It gives us more freedom to explore and makes it easier to do groceries together.",
+    "who": [
+      {
+        "id": "p13",
+        "name": "Amber"
+      }
+    ],
+    "feeling": [
+      "Happy",
+      "Free"
+    ],
+    "summary": "Glenn and Amber bought their first car in Geldermalsen, a small but exciting step that gives them more freedom to explore and handle everyday errands together.",
+    "importance": 5
   }
 ]

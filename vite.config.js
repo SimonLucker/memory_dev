@@ -19,24 +19,24 @@ const readBody = (req) => new Promise((resolve) => {
 const devApi = (env) => ({
   name: 'dev-api',
   configureServer(server) {
-    // Persist a person's full memories array back into the source JSON.
-    // Optional `layout` entry ({ id: [x, y] }) is merged into the person's layout file
-    // so new memories stay position-seeded after a reload.
+    // Per-memory persistence into the source JSON (mirrors the Supabase upsert/delete
+    // the deployed build uses — lib/api.js is the shared contract).
+    // Body: { person, upsert: memory } or { person, delete: id }.
     server.middlewares.use('/__save-memories', async (req, res) => {
       if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
       try {
-        const { person, memories, layout } = JSON.parse(await readBody(req))
-        const suffix = person === 'p2' ? '-p2' : ''
-        const memFile = join(root, 'src/data', `memories${suffix}.json`)
+        const { person, upsert, delete: delId } = JSON.parse(await readBody(req))
+        const memFile = join(root, 'src/data', person === 'p1' ? 'memories.json' : `memories-${person}.json`)
+        let memories = JSON.parse(readFileSync(memFile, 'utf8'))
+        if (upsert) {
+          const i = memories.findIndex((m) => m.id === upsert.id)
+          i === -1 ? memories.push(upsert) : (memories[i] = upsert)
+        }
+        if (delId) memories = memories.filter((m) => m.id !== delId)
         writeFileSync(memFile, JSON.stringify(memories, null, 2) + '\n')
         // The watcher ignores these files (no mid-edit page reload), so vite's module
         // cache must be invalidated by hand or reloads serve the stale JSON.
         server.moduleGraph.onFileChange(memFile)
-        if (layout) {
-          const file = join(root, 'src/data', person === 'p2' ? 'layout-p2.json' : 'layout-p1.json')
-          writeFileSync(file, JSON.stringify({ ...JSON.parse(readFileSync(file, 'utf8')), ...layout }) + '\n')
-          server.moduleGraph.onFileChange(file)
-        }
         res.end('ok')
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })

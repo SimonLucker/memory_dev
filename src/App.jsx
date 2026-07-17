@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import GraphView from './components/GraphView.jsx'
 import Timeline from './components/Timeline.jsx'
 import Legend from './components/Legend.jsx'
@@ -10,6 +10,7 @@ import { PERSONS } from './data/persons.js'
 import { deriveEdges, buildVocab, yearsOf } from './lib/edges.js'
 import { parseQuery, filterMemories, memoryMatches } from './lib/search.js'
 import { CLASS_COLORS } from './lib/palette.js'
+import * as api from './lib/api.js'
 
 const CLASSES = Object.keys(CLASS_COLORS)
 const yearOf = m => m.when.slice(6, 10)
@@ -41,49 +42,63 @@ export default function App() {
   const [view, setView] = useState('cortex')
   const [personId, setPersonId] = useState(PERSONS[0].id)
   const person = PERSONS.find(p => p.id === personId)
-  // Memories are editable state (seeded from the JSON); edits persist via the dev-server
-  // /__save-memories endpoint (vite.config.js) straight back into the data files.
+  // Memories are editable state, seeded from the bundled JSON. Persistence goes
+  // through lib/api.js: Supabase (deployed) or the vite dev endpoints (local).
   const [memMap, setMemMap] = useState(() => Object.fromEntries(PERSONS.map(p => [p.id, p.memories])))
-  // Layout grows at runtime: new memories get a client-seeded position (near their
-  // strongest neighbours) merged over the precomputed layout file.
-  const [layoutMap, setLayoutMap] = useState(() => Object.fromEntries(PERSONS.map(p => [p.id, p.layout])))
   const [newId, setNewId] = useState(null) // last memory born in Memorialize, highlighted in Vault
   const memories = memMap[personId]
 
-  const persist = (pid, next, layoutEntry) =>
-    fetch('/__save-memories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ person: pid, memories: next, ...(layoutEntry ? { layout: layoutEntry } : {}) }),
-    }).catch(() => console.warn('save endpoint unavailable — edit kept in memory only'))
+  // Deployed builds load the source of truth from Supabase (bundled JSON is the
+  // instant first paint; the DB replaces it as soon as it answers).
+  useEffect(() => {
+    if (!api.remote) return
+    let live = true
+    Promise.all(PERSONS.map(p => api.loadMemories(p.id).then(ms => [p.id, ms])))
+      .then(entries => { if (live) setMemMap(Object.fromEntries(entries)) })
+      .catch(e => console.warn('remote load failed — showing bundled data', e))
+    return () => { live = false }
+  }, [])
+
+  // Static precomputed layout + per-memory _pos (new memories carry their own
+  // seeded position, so no layout table or layout-file writes are needed).
+  const layout = useMemo(() => ({
+    ...person.layout,
+    ...Object.fromEntries(memories.filter(m => m._pos).map(m => [m.id, m._pos])),
+  }), [person, memories])
+
+  const applyUpsert = updated => {
+    setMemMap(prev => ({
+      ...prev,
+      [personId]: prev[personId].some(m => m.id === updated.id)
+        ? prev[personId].map(m => (m.id === updated.id ? updated : m))
+        : [...prev[personId], updated],
+    }))
+    api.upsertMemory(personId, updated).catch(e => console.warn('save failed', e))
+  }
 
   const saveMemory = updated => {
     if (updated.__whoNames) {
       updated = { ...updated, who: resolveWho(updated.__whoNames, memories) }
       delete updated.__whoNames
     }
-    const next = memories.map(m => (m.id === updated.id ? updated : m))
-    setMemMap(prev => ({ ...prev, [personId]: next }))
-    persist(personId, next)
+    applyUpsert(updated)
   }
 
   const toggleFavorite = id => {
-    const next = memories.map(m => (m.id === id ? { ...m, favorite: !m.favorite } : m))
-    setMemMap(prev => ({ ...prev, [personId]: next }))
-    persist(personId, next)
+    const m = memories.find(m => m.id === id)
+    if (m) applyUpsert({ ...m, favorite: !m.favorite })
   }
 
   const deleteMemory = id => {
-    const next = memories.filter(m => m.id !== id)
-    setMemMap(prev => ({ ...prev, [personId]: next }))
-    persist(personId, next)
+    setMemMap(prev => ({ ...prev, [personId]: prev[personId].filter(m => m.id !== id) }))
+    api.removeMemory(personId, id).catch(e => console.warn('delete failed', e))
     if (selectedId === id) setSelectedId(null)
     if (newId === id) setNewId(null)
   }
 
   // Memorialization → Vault → Cortex pipeline entry point.
   const addMemory = draft => {
-    const prefix = personId === 'p2' ? 'p2m' : 'm'
+    const prefix = personId === 'p1' ? 'm' : personId + 'm'
     const maxN = memories.reduce((a, m) => Math.max(a, Number(m.id.replace(/\D/g, '')) || 0), 0)
     const memory = {
       id: prefix + String(maxN + 1).padStart(3, '0'),
@@ -92,11 +107,9 @@ export default function App() {
       ...draft,
       who: resolveWho((draft.who || []).map(p => p.name || p), memories),
     }
-    const next = [...memories, memory]
     // Seed a graph position near the strongest connected neighbours so the Cortex
     // doesn't need a full re-layout (GraphView only seeds from the layout map).
-    const layout = layoutMap[personId]
-    const near = deriveEdges(next)
+    const near = deriveEdges([...memories, memory])
       .filter(e => e.source === memory.id || e.target === memory.id)
       .sort((a, b) => b.weight - a.weight)
       .map(e => layout[e.source === memory.id ? e.target : e.source])
@@ -105,10 +118,8 @@ export default function App() {
     const pool = near.length ? near : Object.values(layout)
     const cx = pool.reduce((a, p) => a + p[0], 0) / (pool.length || 1)
     const cy = pool.reduce((a, p) => a + p[1], 0) / (pool.length || 1)
-    const pos = [Math.round(cx + (Math.random() - 0.5) * 60), Math.round(cy + (Math.random() - 0.5) * 60)]
-    setLayoutMap(prev => ({ ...prev, [personId]: { ...prev[personId], [memory.id]: pos } }))
-    setMemMap(prev => ({ ...prev, [personId]: next }))
-    persist(personId, next, { [memory.id]: pos })
+    memory._pos = [Math.round(cx + (Math.random() - 0.5) * 60), Math.round(cy + (Math.random() - 0.5) * 60)]
+    applyUpsert(memory)
     setNewId(memory.id)
     setView('vault')
     return memory.id
@@ -220,7 +231,7 @@ export default function App() {
           </button>
         ))}
       </nav>
-      <PersonSwitch persons={PERSONS} activeId={personId} onSwitch={switchPerson} />
+      <PersonSwitch persons={PERSONS.map(p => ({ ...p, memories: memMap[p.id] }))} activeId={personId} onSwitch={switchPerson} />
 
       {/* Phone chrome (hidden ≥701px): person fold-out top-left, views fold-out top-right. */}
       {(mobileMenu || legendOpen) && (
@@ -259,7 +270,7 @@ export default function App() {
             <GraphView
               key={personId}
               memories={memories}
-              layout={layoutMap[personId]}
+              layout={layout}
               edges={edges}
               visibleIds={visibleIds}
               highlightIds={queryResult ? queryResult.ids : null}

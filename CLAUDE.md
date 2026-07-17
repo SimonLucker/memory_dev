@@ -13,7 +13,8 @@ Repo: https://github.com/SimonLucker/memory_dev.git (remote `origin`). **After e
 - **Invoke the `ponytail` skill before writing any code.** Laziest solution that works. No speculative abstractions, no extra dependencies, no state libraries, no CSS frameworks.
 - Stack is fixed: React + Vite + `react-force-graph-2d`. Nothing else unless a skill says so.
 - Read the relevant `.claude/skills/*/SKILL.md` before implementing a feature — they contain the spec, design tokens, and algorithms.
-- All derived data (edges, vocab, years) is computed client-side from `src/data/memories.json`. The only server pieces are dev-only vite middlewares (`vite.config.js`): JSON/layout persistence, photo upload, and the AI proxy (Azure OpenAI chat + Deepgram transcription; keys in `.env`, see `.env.example`; mock chat when no key). Later target: Supabase (Postgres + storage + edge functions) behind the same fetch paths.
+- All derived data (edges, vocab, years) is computed client-side. Persistence goes through the adapter `src/lib/api.js`, which picks its backend at build time: with `VITE_SUPABASE_URL`+`VITE_SUPABASE_ANON_KEY` set it talks to Supabase (Postgres `memories` table of jsonb rows, Storage bucket `photos`, Edge Functions `ai-chat`/`transcribe` — see `supabase/`, seeded by `scripts/seed-supabase.mjs`, deploy guide in `DEPLOY.md`); without them it uses the dev-only vite middlewares in `vite.config.js` (per-memory JSON upsert/delete, photo serving+upload, AI proxy with mock chat when no key; keys in `.env`, see `.env.example`). New memories carry their graph position as `_pos` on the memory object itself.
+- Personas: p1 Glenn (demo data, ex-"Simon"), p2 Maya (demo), p3 Simon (fresh, real memories).
 
 ## Target file layout
 
