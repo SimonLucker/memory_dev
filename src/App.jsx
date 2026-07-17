@@ -110,7 +110,9 @@ export default function App() {
   const [selectedMonth, setSelectedMonth] = useState(null) // { year, month } | null — mutually exclusive with year
   const [queryResult, setQueryResult] = useState(null) // { ids: Set|null, count: number }
   const [selectedId, setSelectedId] = useState(null)
-  const [legendOpen, setLegendOpen] = useState(false) // phones: legend hides behind a toggle
+  const [legendOpen, setLegendOpen] = useState(false) // phones: filters sheet, opened from the query sheet
+  const [mobileMenu, setMobileMenu] = useState(null) // 'person' | 'views' | null — corner fold-outs
+  const [sheetOpen, setSheetOpen] = useState(false) // phones: query bar bottom sheet
 
   const visibleMemories = useMemo(() =>
     memories.filter(m =>
@@ -205,6 +207,37 @@ export default function App() {
       </nav>
       <PersonSwitch persons={PERSONS} activeId={personId} onSwitch={switchPerson} />
 
+      {/* Phone chrome (hidden ≥701px): person fold-out top-left, views fold-out top-right. */}
+      {(mobileMenu || legendOpen) && (
+        <div className="m-scrim" onClick={() => { setMobileMenu(null); setLegendOpen(false) }} />
+      )}
+      <button className="m-corner left" onClick={() => setMobileMenu(m => (m === 'person' ? null : 'person'))}>
+        {person.name[0]}
+      </button>
+      <button className="m-corner right" onClick={() => setMobileMenu(m => (m === 'views' ? null : 'views'))}>
+        {VIEWS.find(v => v.id === view).label} ▾
+      </button>
+      {mobileMenu === 'person' && (
+        <div className="m-menu left">
+          {PERSONS.map(p => (
+            <button key={p.id} className={p.id === personId ? 'active' : ''}
+              onClick={() => { switchPerson(p.id); setMobileMenu(null) }}>
+              {p.name} <span className="person-count">{memMap[p.id].length}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {mobileMenu === 'views' && (
+        <div className="m-menu right">
+          {VIEWS.map(v => (
+            <button key={v.id} className={view === v.id ? 'active' : ''}
+              onClick={() => { setView(v.id); setMobileMenu(null) }}>
+              {v.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {view === 'cortex' && (
         <>
           <div className="graph-layer">
@@ -229,6 +262,16 @@ export default function App() {
             selectedMonth={selectedMonth}
             onSelectMonth={(m) => { setSelectedMonth(m); setSelectedYear(null) }}
           />
+          {/* Phone: same timeline, horizontal top strip (the vertical rail hides ≤700px). */}
+          <Timeline
+            horizontal
+            years={years}
+            memories={memories}
+            selectedYear={selectedYear}
+            onSelectYear={(y) => { setSelectedYear(y); setSelectedMonth(null) }}
+            selectedMonth={selectedMonth}
+            onSelectMonth={(m) => { setSelectedMonth(m); setSelectedYear(null) }}
+          />
           <div className={legendOpen ? 'legend-wrap open' : 'legend-wrap'}>
             <Legend
               classCounts={classCounts}
@@ -239,16 +282,26 @@ export default function App() {
               onToggleFilter={toggleFilter}
             />
           </div>
-          <button className="legend-toggle" onClick={() => setLegendOpen(o => !o)}>
-            {legendOpen ? '✕' : '✦'}
-          </button>
-          <QueryBar
-            stats={stats}
-            matchCount={queryResult ? queryResult.count : null}
-            filters={filterChips}
-            onSubmit={submitQuery}
-            onClear={() => setQueryResult(null)}
-          />
+          {/* Phone: query bar lives in a tap-up bottom sheet; filters open from inside it.
+              Desktop: the wrapper is display:contents and the extras are hidden. */}
+          <div className={sheetOpen ? 'query-sheet open' : 'query-sheet'}>
+            <div className="sheet-actions">
+              <button onClick={() => setLegendOpen(o => !o)}>✦ Filters</button>
+              <button onClick={() => { setSheetOpen(false); setLegendOpen(false) }}>▾</button>
+            </div>
+            <QueryBar
+              stats={stats}
+              matchCount={queryResult ? queryResult.count : null}
+              filters={filterChips}
+              onSubmit={submitQuery}
+              onClear={() => setQueryResult(null)}
+            />
+          </div>
+          {!sheetOpen && (
+            <button className="query-collapsed" onClick={() => setSheetOpen(true)}>
+              Ask your memories…{filterChips.length ? ` · ${filterChips.length} active` : ''}
+            </button>
+          )}
         </>
       )}
 

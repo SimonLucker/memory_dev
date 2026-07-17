@@ -25,7 +25,9 @@ function smoothPath(pts) {
   return d;
 }
 
-export default function Timeline({ years, memories, selectedYear, onSelectYear, selectedMonth, onSelectMonth }) {
+// horizontal: the phone variant — time runs left→right along a top strip
+// (density becomes ridge height), same dot/halo/hit mechanics.
+export default function Timeline({ years, memories, selectedYear, onSelectYear, selectedMonth, onSelectMonth, horizontal }) {
   const points = useMemo(() => {
     if (!years || years.length === 0) return [];
     const counts = {};
@@ -39,8 +41,10 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
       }
     }
     const denom = Math.max(raw.length - 1, 1);
-    return raw.map((p, i) => ({ ...p, x: 6 + p.count * 9, y: (i / denom) * 100 }));
-  }, [years, memories]);
+    return raw.map((p, i) => horizontal
+      ? { ...p, x: (i / denom) * 100, y: Math.max(4, 28 - p.count * 4) }
+      : { ...p, x: 6 + p.count * 9, y: (i / denom) * 100 });
+  }, [years, memories, horizontal]);
 
   if (!years || years.length === 0) return null;
 
@@ -69,8 +73,9 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
   // circle. Same x/y as the path data, so they land exactly on the curve —
   // no separate HTML overlay, no ResizeObserver needed.
   return (
-    <div className="timeline-rail" onWheel={handleWheel}>
-      <svg className="timeline-ridge" viewBox="0 0 96 100" preserveAspectRatio="none">
+    <div className={horizontal ? 'timeline-rail horizontal' : 'timeline-rail'} onWheel={handleWheel}>
+      <div className="timeline-inner">
+      <svg className="timeline-ridge" viewBox={horizontal ? '0 0 100 32' : '0 0 96 100'} preserveAspectRatio="none">
         <defs>
           <linearGradient id="timeline-ridge-gradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#C8D4EC" />
@@ -129,6 +134,7 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
           );
         })}
       </ul>
+      </div>
     </div>
   );
 }
