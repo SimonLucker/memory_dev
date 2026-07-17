@@ -88,12 +88,30 @@ export default function Memorialize({ personName, onSave }) {
     }
   }
 
+  // iPhone camera shots arrive as 4000px HEIC/JPEG monsters. Re-encode through a
+  // canvas at pick time: bounded JPEG (browser applies EXIF rotation while drawing),
+  // small enough to travel as a data URL through the AI chat and the upload endpoint.
   const pickPhoto = e => {
     const f = e.target.files?.[0]
     if (!f) return
-    const reader = new FileReader()
-    reader.onload = () => setPhoto({ dataUrl: reader.result, blob: f })
-    reader.readAsDataURL(f)
+    const url = URL.createObjectURL(f)
+    const img = new Image()
+    img.onload = () => {
+      const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight))
+      const c = document.createElement('canvas')
+      c.width = Math.round(img.naturalWidth * scale)
+      c.height = Math.round(img.naturalHeight * scale)
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
+      setPhoto({ dataUrl: c.toDataURL('image/jpeg', 0.85) })
+      URL.revokeObjectURL(url)
+    }
+    img.onerror = () => { // undecodable format: fall back to the raw file
+      URL.revokeObjectURL(url)
+      const reader = new FileReader()
+      reader.onload = () => setPhoto({ dataUrl: reader.result })
+      reader.readAsDataURL(f)
+    }
+    img.src = url
     e.target.value = ''
   }
 

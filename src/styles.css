@@ -131,21 +131,18 @@ html, body, #root {
   stroke-width: 1.5;
   stroke-linecap: round;
 }
-/* Dots are zero-length <line> points (round linecap) inside the ridge svg —
-   see the comment in Timeline.jsx for why, vs. an HTML overlay or <circle>. */
+/* Dots are pixel-space <circle>s (the svg viewBox mirrors its measured size —
+   see Timeline.jsx). Safari smears anything drawn via non-scaling-stroke. */
 .ridge-dot {
-  stroke: var(--paper);
-  stroke-linecap: round;
-  stroke-opacity: 0.7;
+  fill: var(--paper);
+  fill-opacity: 0.7;
 }
 .ridge-dot-halo {
-  stroke: url(#timeline-ridge-gradient);
-  stroke-linecap: round;
-  stroke-opacity: 0.9;
+  fill: url(#timeline-ridge-gradient);
+  fill-opacity: 0.9;
 }
 .ridge-dot-hit {
-  stroke: transparent;
-  stroke-linecap: round;
+  fill: transparent;
   pointer-events: all;
   cursor: pointer;
 }

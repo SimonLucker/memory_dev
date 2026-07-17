@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // Left vertical year rail: month-ridge density line + year labels. Skill: timeline.
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -25,11 +25,33 @@ function smoothPath(pts) {
   return d;
 }
 
+// The svg is measured (ResizeObserver) and everything is drawn in PIXEL space
+// with a matching viewBox — real circles, uniform strokes. The previous approach
+// (fixed 0-100 viewBox + preserveAspectRatio="none" + zero-length lines with
+// vector-effect="non-scaling-stroke") rendered smeared ellipses on Safari, which
+// scales non-scaling strokes anyway under a non-uniform viewBox transform.
+//
 // horizontal: the phone variant — time runs left→right along a top strip
 // (density becomes ridge height), same dot/halo/hit mechanics.
 export default function Timeline({ years, memories, selectedYear, onSelectYear, selectedMonth, onSelectMonth, horizontal }) {
+  const svgRef = useRef(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      setBox((b) => (b.w === r.width && b.h === r.height ? b : { w: r.width, h: r.height }));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const points = useMemo(() => {
-    if (!years || years.length === 0) return [];
+    if (!years || years.length === 0 || !box.w || !box.h) return [];
     const counts = {};
     for (const m of memories || []) {
       counts[`${yearOf(m)}-${monthOf(m)}`] = (counts[`${yearOf(m)}-${monthOf(m)}`] || 0) + 1;
@@ -42,9 +64,9 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
     }
     const denom = Math.max(raw.length - 1, 1);
     return raw.map((p, i) => horizontal
-      ? { ...p, x: (i / denom) * 100, y: Math.max(4, 28 - p.count * 4) }
-      : { ...p, x: 6 + p.count * 9, y: (i / denom) * 100 });
-  }, [years, memories, horizontal]);
+      ? { ...p, x: (i / denom) * box.w, y: Math.max(4, box.h - 6 - p.count * 4) }
+      : { ...p, x: 6 + p.count * 9, y: (i / denom) * box.h });
+  }, [years, memories, horizontal, box]);
 
   if (!years || years.length === 0) return null;
 
@@ -63,19 +85,10 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
     onSelectMonth?.(isActive(p) ? null : { year: p.year, month: p.month });
   }
 
-  // The rail's svg uses preserveAspectRatio="none" so the ridge line can fill
-  // the full rail height from a fixed 0-100 viewBox (x stays 1:1 with px,
-  // y stretches non-uniformly). A plain <circle r> in that space renders as
-  // an ellipse. Dots are drawn instead as zero-length <line> points with a
-  // round linecap and vector-effect="non-scaling-stroke" — that vector
-  // effect renders the stroke (including the round cap) in screen space,
-  // immune to the surrounding non-uniform scale, so the cap stays a true
-  // circle. Same x/y as the path data, so they land exactly on the curve —
-  // no separate HTML overlay, no ResizeObserver needed.
   return (
     <div className={horizontal ? 'timeline-rail horizontal' : 'timeline-rail'} onWheel={handleWheel}>
       <div className="timeline-inner">
-      <svg className="timeline-ridge" viewBox={horizontal ? '0 0 100 32' : '0 0 96 100'} preserveAspectRatio="none">
+      <svg ref={svgRef} className="timeline-ridge" viewBox={`0 0 ${Math.max(box.w, 1)} ${Math.max(box.h, 1)}`}>
         <defs>
           <linearGradient id="timeline-ridge-gradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#C8D4EC" />
@@ -83,37 +96,18 @@ export default function Timeline({ years, memories, selectedYear, onSelectYear, 
             <stop offset="100%" stopColor="#E0C5DC" />
           </linearGradient>
         </defs>
-        <path className="ridge-line" d={pathD} vectorEffect="non-scaling-stroke" />
+        <path className="ridge-line" d={pathD} />
         {dots.map((p) => {
           const r = Math.min(6, 2 + p.count);
-          const diameter = r * 2;
           const active = isActive(p);
           const label = `${MONTHS[p.month - 1]} ${p.year} · ${p.count} memor${p.count === 1 ? 'y' : 'ies'}`;
           return (
             <g key={`${p.year}-${p.month}`}>
-              {active && (
-                <line
-                  x1={p.x} y1={p.y} x2={p.x} y2={p.y}
-                  className="ridge-dot-halo"
-                  strokeWidth={diameter + 6}
-                  vectorEffect="non-scaling-stroke"
-                />
-              )}
-              <line
-                x1={p.x} y1={p.y} x2={p.x} y2={p.y}
-                className="ridge-dot"
-                strokeWidth={diameter}
-                vectorEffect="non-scaling-stroke"
-              />
-              <line
-                x1={p.x} y1={p.y} x2={p.x} y2={p.y}
-                className="ridge-dot-hit"
-                strokeWidth={16}
-                vectorEffect="non-scaling-stroke"
-                onClick={() => handleDotClick(p)}
-              >
+              {active && <circle cx={p.x} cy={p.y} r={r + 3} className="ridge-dot-halo" />}
+              <circle cx={p.x} cy={p.y} r={r} className="ridge-dot" />
+              <circle cx={p.x} cy={p.y} r={9} className="ridge-dot-hit" onClick={() => handleDotClick(p)}>
                 <title>{label}</title>
-              </line>
+              </circle>
             </g>
           );
         })}
