@@ -87,7 +87,7 @@ function TagEditor({ values, onChange, accent, fill, border, placeholder }) {
   );
 }
 
-export default function FocusHud({ memory, onEdit, onClose }) {
+export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
   const accent = CLASS_COLORS[memory.class] || DAWN[0];
   const fill = CLASS_FILLS[memory.class] || 'rgba(255,255,255,0.06)';
   const border = CLASS_BORDERS[memory.class] || 'rgba(255,255,255,0.14)';
@@ -207,8 +207,9 @@ export default function FocusHud({ memory, onEdit, onClose }) {
               key={heroSrc}
               src={heroSrc}
               alt=""
+              onClick={() => onPhotoTap?.(heroSrc)}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
             />
           )}
         </div>

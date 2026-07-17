@@ -784,6 +784,84 @@ html, body, #root {
 }
 .send-btn:disabled { opacity: 0.4; cursor: default; }
 
+/* Search row: input + favorites toggle */
+.vault-tools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vault-tools .vault-search { flex: 1; }
+.fav-filter {
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 10px 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.fav-filter.on {
+  color: #E58BA0;
+  border-color: rgba(229, 139, 160, 0.5);
+  background: rgba(229, 139, 160, 0.12);
+}
+
+/* Card side column: favorite, importance, delete */
+.vault-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.fav-btn, .del-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  line-height: 1;
+  color: rgba(242, 240, 236, 0.3);
+  cursor: pointer;
+  padding: 4px;
+}
+.fav-btn.on { color: #E58BA0; }
+.fav-btn:hover { color: rgba(229, 139, 160, 0.8); }
+.del-btn { font-size: 13px; }
+.del-btn:hover { color: rgba(242, 240, 236, 0.7); }
+.del-btn.confirm {
+  color: #fff;
+  background: rgba(214, 84, 84, 0.85);
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  padding: 5px 10px;
+}
+
+/* Full-screen photo viewer — tap anywhere to close */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(12, 8, 18, 0.93);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.lightbox img {
+  max-width: 96vw;
+  max-height: 92vh;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0 20px 80px;
+}
+.vault-photo { cursor: zoom-in; }
+.vault-photo.placeholder { cursor: inherit; }
+
 /* ---------- Phone layout (≤700px) — cortex v2 ---------- */
 /* Desktop: all phone chrome is inert. */
 .m-corner, .m-menu, .m-scrim, .sheet-actions, .query-collapsed { display: none; }
@@ -978,6 +1056,9 @@ html, body, #root {
     max-height: 52vh !important;
     z-index: 7;
   }
+
+  /* 16px inputs: anything smaller makes iOS Safari auto-zoom the page on focus. */
+  .vault-search, .composer-row textarea, .query-input-row input { font-size: 16px; }
 
   /* Vault + Memorialize columns clear the corner buttons. */
   .vault-head { padding-top: calc(64px + env(safe-area-inset-top)); }

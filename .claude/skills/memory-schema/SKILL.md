@@ -28,6 +28,7 @@ description: The memory JSON schema, sample data generation rules, and the edge 
 - `feeling` is an array (video schema shows "Happy - Nostalgic").
 - `summary` and `importance` are marked auto-generated in the source schema — fill them in sample data anyway.
 - `importance` 1–5 → node radius.
+- `favorite` (optional boolean) — user-starred in the Vault (♥ toggle; ♥ filter beside the search). Absent = false.
 - `photos` is an ARRAY (0..n paths under public/photos/). UI: first photo is the hero; extras render as a thumbnail strip; gradient placeholder when empty. scripts/fetch-photos.mjs seeds one per memory; scripts/add-photos.mjs adds more (`node scripts/add-photos.mjs m001:4 m007:3` or `--spread N`).
 
 ## Sample data rules (memories.json)

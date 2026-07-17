@@ -103,6 +103,7 @@ export default function GraphView({
   selectedId,
   onSelect,
   onEdit,
+  onPhotoTap,
   gatherActive,
 }) {
   const fgRef = useRef(null);
@@ -985,7 +986,7 @@ export default function GraphView({
         maxZoom={8}
       />
       {selectedNode && (
-        <FocusHud key={selectedNode.id} memory={selectedNode.mem} onEdit={onEdit} onClose={() => onSelect(null)} />
+        <FocusHud key={selectedNode.id} memory={selectedNode.mem} onEdit={onEdit} onPhotoTap={onPhotoTap} onClose={() => onSelect(null)} />
       )}
     </div>
   );

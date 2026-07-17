@@ -67,6 +67,20 @@ export default function App() {
     persist(personId, next)
   }
 
+  const toggleFavorite = id => {
+    const next = memories.map(m => (m.id === id ? { ...m, favorite: !m.favorite } : m))
+    setMemMap(prev => ({ ...prev, [personId]: next }))
+    persist(personId, next)
+  }
+
+  const deleteMemory = id => {
+    const next = memories.filter(m => m.id !== id)
+    setMemMap(prev => ({ ...prev, [personId]: next }))
+    persist(personId, next)
+    if (selectedId === id) setSelectedId(null)
+    if (newId === id) setNewId(null)
+  }
+
   // Memorialization → Vault → Cortex pipeline entry point.
   const addMemory = draft => {
     const prefix = personId === 'p2' ? 'p2m' : 'm'
@@ -113,6 +127,7 @@ export default function App() {
   const [legendOpen, setLegendOpen] = useState(false) // phones: filters sheet, opened from the query sheet
   const [mobileMenu, setMobileMenu] = useState(null) // 'person' | 'views' | null — corner fold-outs
   const [sheetOpen, setSheetOpen] = useState(false) // phones: query bar bottom sheet
+  const [lightbox, setLightbox] = useState(null) // photo url shown full-screen, tap to close
 
   const visibleMemories = useMemo(() =>
     memories.filter(m =>
@@ -251,6 +266,7 @@ export default function App() {
               selectedId={selectedId}
               onSelect={setSelectedId}
               onEdit={saveMemory}
+              onPhotoTap={setLightbox}
               gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
             />
           </div>
@@ -306,11 +322,18 @@ export default function App() {
       )}
 
       {view === 'vault' && (
-        <Vault memories={memories} newId={newId} onOpen={openInCortex} />
+        <Vault memories={memories} newId={newId} onOpen={openInCortex}
+          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={setLightbox} />
       )}
 
       {view === 'memorialize' && (
         <Memorialize personName={person.name} onSave={addMemory} />
+      )}
+
+      {lightbox && (
+        <div className="lightbox" onClick={() => setLightbox(null)}>
+          <img src={lightbox} alt="" />
+        </div>
       )}
     </div>
   )
