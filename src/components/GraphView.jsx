@@ -241,8 +241,12 @@ export default function GraphView({
     if (selectedId) {
       const node = nodeById.get(selectedId);
       if (node && node.x != null) {
-        fg.centerAt(node.x, node.y, 600);
-        fg.zoom(3, 600);
+        const K = 3;
+        // Phones: park the node ~24% from the top so the bottom-sheet detail card
+        // (max 52vh from the bottom) never covers it.
+        const dy = size.w <= 700 ? (size.h / 2 - size.h * 0.24) / K : 0;
+        fg.centerAt(node.x, node.y + dy, 600);
+        fg.zoom(K, 600);
       }
     } else {
       fg.zoom(1.2, 600);
@@ -587,7 +591,7 @@ export default function GraphView({
   // Selected-node crosshair (graph-view/SKILL.md → Selected-node crosshair). Drawn in canvas at
   // the orb's painted position (nx,ny) so it stays glued to the memory through pans/zooms — the
   // selected node eases its parallax anchor to 1, so nx,ny converge on the true position.
-  const paintFocus = (node, ctx, nx, ny, r) => {
+  const paintFocus = (node, ctx, nx, ny, r, invK = 1) => {
     const t = performance.now();
     const imp = node.mem.importance || 1;
     const conns = (neighbors.get(node.id) || []).length;
@@ -663,7 +667,16 @@ export default function GraphView({
     ctx.textBaseline = 'middle';
     if ('letterSpacing' in ctx) ctx.letterSpacing = '1px';
     ctx.fillStyle = 'rgba(242,240,236,0.7)';
-    ctx.fillText(`IMPORTANCE ${imp}/5  ·  ${conns}/${maxConnections} LINKS`, nx, ny + r + 32);
+    if (window.innerWidth <= 700) {
+      // Phone: float the gauge to the node's lower-left at screen-constant size —
+      // anything straight below the node disappears under the bottom-sheet card.
+      ctx.font = `${9.5 * invK}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.fillText(`IMPORTANCE ${imp}/5`, nx - r - 18 * invK, ny + r + 4 * invK);
+      ctx.fillText(`${conns}/${maxConnections} LINKS`, nx - r - 18 * invK, ny + r + 18 * invK);
+    } else {
+      ctx.fillText(`IMPORTANCE ${imp}/5  ·  ${conns}/${maxConnections} LINKS`, nx, ny + r + 32);
+    }
 
     ctx.restore();
   };
@@ -795,7 +808,7 @@ export default function GraphView({
     }
 
     // Node-anchored crosshair for the selected memory (after the entrance settles).
-    if (selected && !introActiveRef.current) paintFocus(node, ctx, nx, ny, r);
+    if (selected && !introActiveRef.current) paintFocus(node, ctx, nx, ny, r, 1 / Math.max(0.1, globalScale));
 
     ctx.restore();
   };

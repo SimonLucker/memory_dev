@@ -41,6 +41,20 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })
 
+    // Serve photos straight from disk. Vite's own public-file serving relies on a
+    // watcher-fed file list, and the watcher deliberately ignores public/photos
+    // (uploads must not trigger reloads) — so photos uploaded mid-session fell
+    // through to the index.html fallback until a server restart.
+    server.middlewares.use('/photos', (req, res, next) => {
+      try {
+        const name = decodeURIComponent((req.url || '').split('?')[0]).replace(/^\//, '')
+        if (!name || name.includes('..') || name.includes('/')) return next()
+        const buf = readFileSync(join(root, 'public/photos', name))
+        res.setHeader('Content-Type', name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+        res.end(buf)
+      } catch { next() }
+    })
+
     // Save an uploaded photo into public/photos; returns its memory-relative path.
     server.middlewares.use('/__upload-photo', async (req, res) => {
       if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
