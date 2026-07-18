@@ -1,5 +1,72 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CLASS_COLORS, CLASS_FILLS, CLASS_BORDERS, DAWN, PAPER, PEACH } from '../lib/palette.js';
+import { findTrack, appleMusicSearchUrl } from '../lib/api.js';
+
+// Inline preview player: sits between the photos and the text, scrolls with the
+// card, autoplays on open and stops when the card unmounts (memory closed).
+function SongRow({ music }) {
+  const [song, setSong] = useState(null); // { info } | { missing: true }
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    let live = true;
+    findTrack(music).then((info) => {
+      if (live) setSong(info?.previewUrl ? { info } : { missing: true });
+    });
+    return () => { live = false };
+  }, []);
+
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.paused ? a.play() : a.pause();
+  };
+
+  const btn = {
+    border: 'none', borderRadius: '50%', width: 30, height: 30, cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+    fontSize: 11, color: PAPER, background: 'rgba(255,255,255,0.12)', textDecoration: 'none',
+  };
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16,
+      padding: '8px 10px', borderRadius: 12,
+      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+    }}>
+      {song?.info?.artworkUrl100
+        ? <img src={song.info.artworkUrl100} alt="" style={{ width: 34, height: 34, borderRadius: 8, flexShrink: 0 }} />
+        : <div style={{ width: 34, height: 34, borderRadius: 8, flexShrink: 0, background: `linear-gradient(145deg, ${DAWN[0]}55, ${DAWN[2]}55)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13 }}>♪</div>}
+      <div style={{ flex: 1, minWidth: 0, lineHeight: 1.3 }}>
+        <div style={{ fontSize: 12, color: PAPER, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {song?.info?.trackName || music.name}
+        </div>
+        <div style={{ fontSize: 10.5, color: 'rgba(242,240,236,0.55)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {song?.missing ? 'No preview found' : song?.info ? song.info.artistName : music.artist || 'Finding song…'}
+        </div>
+      </div>
+      {song?.info && (
+        <>
+          <audio
+            ref={audioRef}
+            src={song.info.previewUrl}
+            autoPlay
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
+            onEnded={() => setPlaying(false)}
+          />
+          <button onClick={toggle} style={btn}>{playing ? '❚❚' : '▶'}</button>
+        </>
+      )}
+      <a
+        href={song?.info?.trackViewUrl || appleMusicSearchUrl(music)}
+        target="_blank" rel="noreferrer" title="Open in Apple Music"
+        style={{ ...btn, background: `linear-gradient(165deg, ${DAWN[0]}, ${PEACH} 56%, ${DAWN[2]})`, color: '#1F2937', fontWeight: 700 }}
+      >↗</a>
+    </div>
+  );
+}
 
 // The rotating crosshair, gauges, brackets and caption now live in GraphView's canvas paint
 // (graph-view/SKILL.md → Selected-node crosshair) so they stay glued to the node through
@@ -87,7 +154,7 @@ function TagEditor({ values, onChange, accent, fill, border, placeholder }) {
   );
 }
 
-export default function FocusHud({ memory, onEdit, onClose, onPhotoTap, onPlayMusic }) {
+export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
   const accent = CLASS_COLORS[memory.class] || DAWN[0];
   const fill = CLASS_FILLS[memory.class] || 'rgba(255,255,255,0.06)';
   const border = CLASS_BORDERS[memory.class] || 'rgba(255,255,255,0.14)';
@@ -238,6 +305,8 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap, onPlayMu
           </div>
         )}
 
+        {memory.music && <SongRow key={memory.id} music={memory.music} />}
+
         <div style={{ fontSize: 9.5, letterSpacing: 2, textTransform: 'uppercase', color: accent }}>
           {memory.class} · {year}
         </div>
@@ -291,19 +360,6 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap, onPlayMu
           </>
         )}
 
-        {memory.music && (
-          <>
-            <SectionLabel dot={DAWN[2]}>Music</SectionLabel>
-            <div
-              style={{ fontSize: 13, cursor: 'pointer' }}
-              title="Play preview"
-              onClick={() => onPlayMusic?.(memory.music)}
-            >
-              <span style={{ color: '#34C759' }}>▶</span> {memory.music.name}
-              {memory.music.artist ? <span style={{ color: 'rgba(242,240,236,0.55)' }}> — {memory.music.artist}</span> : null}
-            </div>
-          </>
-        )}
 
         <SectionLabel dot={accent}>Why</SectionLabel>
         <div style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(242,240,236,0.85)' }}>

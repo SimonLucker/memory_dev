@@ -300,7 +300,6 @@ export default function App() {
               onSelect={setSelectedId}
               onEdit={saveMemory}
               onPhotoTap={setLightbox}
-              onPlayMusic={playMusic}
               gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
             />
           </div>
