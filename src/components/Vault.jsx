@@ -28,7 +28,7 @@ const GROUP_KEYS = {
 
 // The Memory Vault: every memory as a calm, scannable list. Click a card to
 // open that memory in the Cortex; heart to favorite, trash to delete (two-tap).
-export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhoto }) {
+export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhoto, onPlay }) {
   const [q, setQ] = useState('')
   const [favOnly, setFavOnly] = useState(false)
   const [order, setOrder] = useState('new')
@@ -98,7 +98,12 @@ export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhot
           <p className="vault-summary">{m.summary}</p>
           <div className="vault-chips">
             {m.who.map(p => <span key={p.id} className="chip">{p.name}</span>)}
-            {m.music && <span className="chip music">♪ {m.music.name}</span>}
+            {m.music && (
+              <button className="chip music" title="Play preview"
+                onClick={e => { e.stopPropagation(); onPlay(m.music) }}>
+                ▶ {m.music.name}
+              </button>
+            )}
           </div>
         </div>
         <div className="vault-side">

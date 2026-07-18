@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import GraphView from './components/GraphView.jsx'
 import Timeline from './components/Timeline.jsx'
 import Legend from './components/Legend.jsx'
@@ -11,6 +11,7 @@ import { deriveEdges, buildVocab, yearsOf } from './lib/edges.js'
 import { parseQuery, filterMemories, memoryMatches } from './lib/search.js'
 import { CLASS_COLORS } from './lib/palette.js'
 import * as api from './lib/api.js'
+import { findTrack, appleMusicSearchUrl } from './lib/music.js'
 
 const CLASSES = Object.keys(CLASS_COLORS)
 const yearOf = m => m.when.slice(6, 10)
@@ -140,6 +141,26 @@ export default function App() {
   const [mobileMenu, setMobileMenu] = useState(null) // 'person' | 'views' | null — corner fold-outs
   const [sheetOpen, setSheetOpen] = useState(false) // phones: query bar bottom sheet
   const [lightbox, setLightbox] = useState(null) // photo url shown full-screen, tap to close
+  const [track, setTrack] = useState(null) // mini player: { status, music, info? }
+  const [playing, setPlaying] = useState(true)
+  const audioRef = useRef(null)
+
+  // ♪ tapped on a memory: look the song up in Apple's catalog and play its
+  // 30-second preview in the mini player (full song is one tap away).
+  const playMusic = async music => {
+    if (!music) return
+    setTrack({ status: 'loading', music })
+    setPlaying(true)
+    const info = await findTrack(music)
+    setTrack(info?.previewUrl ? { status: 'ready', music, info } : { status: 'missing', music })
+  }
+
+  const togglePlay = () => {
+    const a = audioRef.current
+    if (!a) return
+    a.paused ? a.play() : a.pause()
+    setPlaying(!a.paused)
+  }
 
   const visibleMemories = useMemo(() =>
     memories.filter(m =>
@@ -279,6 +300,7 @@ export default function App() {
               onSelect={setSelectedId}
               onEdit={saveMemory}
               onPhotoTap={setLightbox}
+              onPlayMusic={playMusic}
               gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
             />
           </div>
@@ -335,7 +357,7 @@ export default function App() {
 
       {view === 'vault' && (
         <Vault memories={memories} newId={newId} onOpen={openInCortex}
-          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={setLightbox} />
+          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={setLightbox} onPlay={playMusic} />
       )}
 
       {view === 'memorialize' && (
@@ -345,6 +367,40 @@ export default function App() {
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <img src={lightbox} alt="" />
+        </div>
+      )}
+
+      {track && (
+        <div className="music-player">
+          {track.status === 'ready' && track.info.artworkUrl100 && (
+            <img className="mp-art" src={track.info.artworkUrl100} alt="" />
+          )}
+          <div className="mp-body">
+            <strong>{track.music.name}</strong>
+            <span>
+              {track.status === 'loading' ? 'Finding song…'
+                : track.status === 'missing' ? 'No preview found'
+                : track.music.artist || track.info.artistName}
+            </span>
+          </div>
+          {track.status === 'ready' && (
+            <>
+              <audio
+                ref={audioRef}
+                src={track.info.previewUrl}
+                autoPlay
+                onEnded={() => setPlaying(false)}
+              />
+              <button className="mp-btn" onClick={togglePlay}>{playing ? '❚❚' : '▶'}</button>
+            </>
+          )}
+          <a
+            className="mp-btn mp-link"
+            title="Open in Apple Music"
+            href={track.status === 'ready' && track.info.trackViewUrl ? track.info.trackViewUrl : appleMusicSearchUrl(track.music)}
+            target="_blank" rel="noreferrer"
+          >↗</a>
+          <button className="mp-btn" onClick={() => setTrack(null)}>✕</button>
         </div>
       )}
     </div>

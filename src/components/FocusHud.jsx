@@ -87,7 +87,7 @@ function TagEditor({ values, onChange, accent, fill, border, placeholder }) {
   );
 }
 
-export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
+export default function FocusHud({ memory, onEdit, onClose, onPhotoTap, onPlayMusic }) {
   const accent = CLASS_COLORS[memory.class] || DAWN[0];
   const fill = CLASS_FILLS[memory.class] || 'rgba(255,255,255,0.06)';
   const border = CLASS_BORDERS[memory.class] || 'rgba(255,255,255,0.14)';
@@ -294,8 +294,12 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
         {memory.music && (
           <>
             <SectionLabel dot={DAWN[2]}>Music</SectionLabel>
-            <div style={{ fontSize: 13 }}>
-              ♪ {memory.music.name}
+            <div
+              style={{ fontSize: 13, cursor: 'pointer' }}
+              title="Play preview"
+              onClick={() => onPlayMusic?.(memory.music)}
+            >
+              <span style={{ color: '#34C759' }}>▶</span> {memory.music.name}
               {memory.music.artist ? <span style={{ color: 'rgba(242,240,236,0.55)' }}> — {memory.music.artist}</span> : null}
             </div>
           </>
