@@ -86,7 +86,7 @@ export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhot
       >
         {m.photos?.length
           ? <img className="vault-photo" src={m.photos[0]} alt="" loading="lazy"
-              onClick={e => { e.stopPropagation(); onPhoto(m.photos[0]) }} />
+              onClick={e => { e.stopPropagation(); onPhoto(m.photos, 0) }} />
           : <div className="vault-photo placeholder" style={{ background: `linear-gradient(145deg, ${accent}55, ${accent}22)` }} />}
         <div className="vault-body">
           <div className="vault-title">

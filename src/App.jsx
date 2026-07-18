@@ -140,7 +140,25 @@ export default function App() {
   const [legendOpen, setLegendOpen] = useState(false) // phones: filters sheet, opened from the query sheet
   const [mobileMenu, setMobileMenu] = useState(null) // 'person' | 'views' | null — corner fold-outs
   const [sheetOpen, setSheetOpen] = useState(false) // phones: query bar bottom sheet
-  const [lightbox, setLightbox] = useState(null) // photo url shown full-screen, tap to close
+  const [lightbox, setLightbox] = useState(null) // { photos: [...], index } — full-screen viewer
+  const swipeRef = useRef({ x: 0, moved: false })
+
+  const openLightbox = (photos, index = 0) =>
+    setLightbox({ photos: Array.isArray(photos) ? photos : [photos], index })
+  const stepLightbox = dir =>
+    setLightbox(lb => lb && { ...lb, index: (lb.index + dir + lb.photos.length) % lb.photos.length })
+
+  // Lightbox keys: ← → step, Esc closes.
+  useEffect(() => {
+    if (!lightbox) return
+    const h = e => {
+      if (e.key === 'Escape') setLightbox(null)
+      if (e.key === 'ArrowLeft') stepLightbox(-1)
+      if (e.key === 'ArrowRight') stepLightbox(1)
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [!!lightbox])
   const [track, setTrack] = useState(null) // mini player: { status, music, info? }
   const [playing, setPlaying] = useState(true)
   const audioRef = useRef(null)
@@ -299,7 +317,7 @@ export default function App() {
               selectedId={selectedId}
               onSelect={setSelectedId}
               onEdit={saveMemory}
-              onPhotoTap={setLightbox}
+              onPhotoTap={openLightbox}
               gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
             />
           </div>
@@ -356,7 +374,7 @@ export default function App() {
 
       {view === 'vault' && (
         <Vault memories={memories} newId={newId} onOpen={openInCortex}
-          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={setLightbox} onPlay={playMusic} />
+          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={openLightbox} onPlay={playMusic} />
       )}
 
       {view === 'memorialize' && (
@@ -364,8 +382,27 @@ export default function App() {
       )}
 
       {lightbox && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
-          <img src={lightbox} alt="" />
+        <div
+          className="lightbox"
+          onClick={() => { if (!swipeRef.current.moved) setLightbox(null) }}
+          onTouchStart={e => { swipeRef.current = { x: e.touches[0].clientX, moved: false } }}
+          onTouchEnd={e => {
+            const dx = e.changedTouches[0].clientX - swipeRef.current.x
+            if (Math.abs(dx) > 40 && lightbox.photos.length > 1) {
+              swipeRef.current.moved = true
+              stepLightbox(dx < 0 ? 1 : -1)
+              setTimeout(() => { swipeRef.current.moved = false }, 350)
+            }
+          }}
+        >
+          <img src={lightbox.photos[lightbox.index]} alt="" />
+          {lightbox.photos.length > 1 && (
+            <>
+              <button className="lb-arrow left" onClick={e => { e.stopPropagation(); stepLightbox(-1) }}>‹</button>
+              <button className="lb-arrow right" onClick={e => { e.stopPropagation(); stepLightbox(1) }}>›</button>
+              <div className="lb-count">{lightbox.index + 1} / {lightbox.photos.length}</div>
+            </>
+          )}
         </div>
       )}
 

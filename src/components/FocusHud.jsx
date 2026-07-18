@@ -274,7 +274,7 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
               key={heroSrc}
               src={heroSrc}
               alt=""
-              onClick={() => onPhotoTap?.(heroSrc)}
+              onClick={() => onPhotoTap?.(photos, hero)}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
               style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
             />
