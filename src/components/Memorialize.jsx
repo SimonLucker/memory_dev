@@ -42,7 +42,7 @@ const extractDraft = text => {
 export default function Memorialize({ personName, onSave }) {
   const [messages, setMessages] = useState([]) // {role, text, image?} — UI shape
   const [input, setInput] = useState('')
-  const [photo, setPhoto] = useState(null) // { dataUrl, blob } pending attachment
+  const [photos, setPhotos] = useState([]) // pending attachments, data URLs
   const [busy, setBusy] = useState(false)
   const [recording, setRecording] = useState(false)
   const [draft, setDraft] = useState(null) // parsed memory JSON awaiting save
@@ -56,18 +56,24 @@ export default function Memorialize({ personName, onSave }) {
   // UI messages → OpenAI chat format (images as data-URL parts).
   const toApi = msgs => [
     { role: 'system', content: systemPrompt(personName) },
-    ...msgs.map(m => m.image
-      ? { role: m.role, content: [{ type: 'text', text: m.text || 'Here is a photo.' }, { type: 'image_url', image_url: { url: m.image } }] }
+    ...msgs.map(m => m.images?.length
+      ? {
+          role: m.role,
+          content: [
+            { type: 'text', text: m.text || 'Here are some photos.' },
+            ...m.images.map(url => ({ type: 'image_url', image_url: { url } })),
+          ],
+        }
       : { role: m.role, content: m.text }),
   ]
 
   const send = async () => {
-    if (busy || (!input.trim() && !photo)) return
-    const mine = { role: 'user', text: input.trim(), image: photo?.dataUrl }
+    if (busy || (!input.trim() && !photos.length)) return
+    const mine = { role: 'user', text: input.trim(), images: photos }
     const next = [...messages, mine]
     setMessages(next)
     setInput('')
-    setPhoto(null)
+    setPhotos([])
     setBusy(true)
     setNotice(null)
     try {
@@ -87,26 +93,26 @@ export default function Memorialize({ personName, onSave }) {
   // canvas at pick time: bounded JPEG (browser applies EXIF rotation while drawing),
   // small enough to travel as a data URL through the AI chat and the upload endpoint.
   const pickPhoto = e => {
-    const f = e.target.files?.[0]
-    if (!f) return
-    const url = URL.createObjectURL(f)
-    const img = new Image()
-    img.onload = () => {
-      const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight))
-      const c = document.createElement('canvas')
-      c.width = Math.round(img.naturalWidth * scale)
-      c.height = Math.round(img.naturalHeight * scale)
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
-      setPhoto({ dataUrl: c.toDataURL('image/jpeg', 0.85) })
-      URL.revokeObjectURL(url)
+    for (const f of Array.from(e.target.files || [])) {
+      const url = URL.createObjectURL(f)
+      const img = new Image()
+      img.onload = () => {
+        const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight))
+        const c = document.createElement('canvas')
+        c.width = Math.round(img.naturalWidth * scale)
+        c.height = Math.round(img.naturalHeight * scale)
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
+        setPhotos(prev => [...prev, c.toDataURL('image/jpeg', 0.85)])
+        URL.revokeObjectURL(url)
+      }
+      img.onerror = () => { // undecodable format: fall back to the raw file
+        URL.revokeObjectURL(url)
+        const reader = new FileReader()
+        reader.onload = () => setPhotos(prev => [...prev, reader.result])
+        reader.readAsDataURL(f)
+      }
+      img.src = url
     }
-    img.onerror = () => { // undecodable format: fall back to the raw file
-      URL.revokeObjectURL(url)
-      const reader = new FileReader()
-      reader.onload = () => setPhoto({ dataUrl: reader.result })
-      reader.readAsDataURL(f)
-    }
-    img.src = url
     e.target.value = ''
   }
 
@@ -138,13 +144,14 @@ export default function Memorialize({ personName, onSave }) {
     setBusy(true)
     try {
       // Every photo shared in this conversation belongs to the memory.
-      const photos = []
+      const uploaded = []
       for (const m of messages) {
-        if (!m.image) continue
-        const blob = await (await fetch(m.image)).blob()
-        photos.push(await api.uploadPhoto(blob))
+        for (const image of m.images || []) {
+          const blob = await (await fetch(image)).blob()
+          uploaded.push(await api.uploadPhoto(blob))
+        }
       }
-      onSave({ ...draft, photos }) // App appends, persists, and jumps to the Vault
+      onSave({ ...draft, photos: uploaded }) // App appends, persists, and jumps to the Vault
     } catch (e) {
       setNotice('Could not save: ' + e.message)
       setBusy(false)
@@ -169,7 +176,7 @@ export default function Memorialize({ personName, onSave }) {
         )}
         {messages.map((m, i) => (
           <div key={i} className={`chat-msg ${m.role}`}>
-            {m.image && <img className="chat-photo" src={m.image} alt="" />}
+            {(m.images || []).map((img, j) => <img key={j} className="chat-photo" src={img} alt="" />)}
             {m.text}
           </div>
         ))}
@@ -197,14 +204,18 @@ export default function Memorialize({ personName, onSave }) {
       </div>
 
       <div className="composer">
-        {photo && (
-          <div className="composer-photo">
-            <img src={photo.dataUrl} alt="" />
-            <button onClick={() => setPhoto(null)}>✕</button>
+        {photos.length > 0 && (
+          <div className="composer-photos">
+            {photos.map((p, i) => (
+              <div key={i} className="composer-photo">
+                <img src={p} alt="" />
+                <button onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))}>✕</button>
+              </div>
+            ))}
           </div>
         )}
         <div className="composer-row">
-          <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickPhoto} />
+          <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={pickPhoto} />
           <button className="icon-btn" title="Add a photo" onClick={() => fileRef.current.click()}>📷</button>
           <button className={'icon-btn' + (recording ? ' rec' : '')} title="Record your voice" onClick={toggleRecord}>
             {recording ? '■' : '🎙'}
@@ -216,7 +227,7 @@ export default function Memorialize({ personName, onSave }) {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
           />
-          <button className="send-btn" onClick={send} disabled={busy || (!input.trim() && !photo)}>↑</button>
+          <button className="send-btn" onClick={send} disabled={busy || (!input.trim() && !photos.length)}>↑</button>
         </div>
       </div>
     </div>

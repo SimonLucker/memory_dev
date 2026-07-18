@@ -88,8 +88,11 @@ export async function chat(messages) {
     headers: { ...(remote ? sbHeaders : {}), 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages }),
   })
-  const data = await r.json()
+  const data = await r.json().catch(() => ({}))
   if (data.error) throw new Error(data.error)
+  // Anything without content is a misconfiguration (wrong URL, gateway error…):
+  // surface the raw response instead of letting callers crash on undefined.
+  if (typeof data.content !== 'string') throw new Error('Unexpected AI response: ' + JSON.stringify(data).slice(0, 200))
   return data.content
 }
 
@@ -101,5 +104,9 @@ export async function transcribe(blob) {
     headers: { ...(remote ? sbHeaders : {}), 'Content-Type': blob.type || 'audio/webm' },
     body: blob,
   })
-  return r.json()
+  const data = await r.json().catch(() => ({}))
+  if (!('transcript' in data) && !data.error) {
+    return { transcript: '', error: 'Unexpected transcribe response: ' + JSON.stringify(data).slice(0, 120) }
+  }
+  return data
 }

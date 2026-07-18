@@ -706,10 +706,15 @@ html, body, #root {
   flex-shrink: 0;
   padding: 10px 0 22px;
 }
+.composer-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
 .composer-photo {
   position: relative;
   display: inline-block;
-  margin-bottom: 8px;
 }
 .composer-photo img {
   height: 64px;
