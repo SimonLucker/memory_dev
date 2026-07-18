@@ -89,6 +89,29 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 502; res.end(JSON.stringify({ error: String(e) })) }
     })
 
+    // Apple catalog lookup (mirrors the music-search edge function).
+    server.middlewares.use('/__music', async (req, res) => {
+      if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+      try {
+        const { artist, name, country } = JSON.parse(await readBody(req))
+        const cc = /^[A-Z]{2}$/.test(country || '') ? country : 'US'
+        const search = async (term, c) => {
+          const r = await fetch(`https://itunes.apple.com/search?media=music&limit=5&country=${c}&term=${encodeURIComponent(term)}`)
+          if (!r.ok) return null
+          const d = await r.json()
+          return (d.results || []).find((t) => t.previewUrl) || null
+        }
+        const full = `${artist || ''} ${name || ''}`.trim()
+        let t = full && await search(full, cc)
+        if (!t && artist && name) t = await search(name, cc)
+        if (!t && cc !== 'US') t = await search(full, 'US')
+        res.end(JSON.stringify({ result: t ? {
+          trackName: t.trackName, artistName: t.artistName,
+          previewUrl: t.previewUrl, artworkUrl100: t.artworkUrl100, trackViewUrl: t.trackViewUrl,
+        } : null }))
+      } catch (e) { res.end(JSON.stringify({ result: null, error: String(e) })) }
+    })
+
     // Voice → text via Deepgram. Body: raw audio bytes, content-type preserved.
     server.middlewares.use('/__ai/transcribe', async (req, res) => {
       if (req.method !== 'POST') { res.statusCode = 405; return res.end() }

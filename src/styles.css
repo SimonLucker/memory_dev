@@ -1171,3 +1171,11 @@ html, body, #root {
 .mp-link { background: var(--dawn-gradient); color: var(--ink-deep); font-weight: 700; }
 .chip.music { cursor: pointer; }
 .chip.music:hover { border-color: rgba(52, 199, 89, 0.5); }
+
+/* Draft-card song verification line (Memorialize) */
+.song-check {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: rgba(52, 199, 89, 0.85);
+}
+.song-check.warn { color: var(--amber); }

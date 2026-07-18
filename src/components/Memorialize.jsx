@@ -46,19 +46,32 @@ const dedupeLines = text => text
 
 // The Memorialization chat: photo / voice / text in → clarifying dialogue →
 // a memory JSON out, saved into the vault via onSave (App.addMemory).
-export default function Memorialize({ personName, onSave }) {
+export default function Memorialize({ personName, onSave, onPlay }) {
   const [messages, setMessages] = useState([]) // {role, text, image?} — UI shape
   const [input, setInput] = useState('')
   const [photos, setPhotos] = useState([]) // pending attachments, data URLs
   const [busy, setBusy] = useState(false)
   const [recording, setRecording] = useState(false)
   const [draft, setDraft] = useState(null) // parsed memory JSON awaiting save
+  const [songCheck, setSongCheck] = useState(null) // { status: 'loading'|'found'|'missing', info? }
   const [notice, setNotice] = useState(null)
   const recRef = useRef(null)
   const fileRef = useRef(null)
   const endRef = useRef(null)
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, busy, draft])
+
+  // Double-check the draft's song against Apple's catalog the moment it appears,
+  // so a wrong guess is caught (and playable) before the memory is saved.
+  useEffect(() => {
+    if (!draft?.music) { setSongCheck(null); return }
+    let live = true
+    setSongCheck({ status: 'loading' })
+    api.findTrack(draft.music).then(info => {
+      if (live) setSongCheck(info?.previewUrl ? { status: 'found', info } : { status: 'missing' })
+    })
+    return () => { live = false }
+  }, [draft?.music?.name, draft?.music?.artist])
 
   // UI messages → OpenAI chat format (images as data-URL parts).
   const toApi = msgs => [
@@ -200,8 +213,20 @@ export default function Memorialize({ personName, onSave }) {
             <p className="vault-summary">{draft.summary}</p>
             <div className="vault-chips">
               {(draft.who || []).map((p, i) => <span key={i} className="chip">{p.name || p}</span>)}
-              {draft.music && <span className="chip music">♪ {draft.music.name}</span>}
+              {draft.music && (
+                <button className="chip music" title="Play preview"
+                  onClick={() => onPlay?.(draft.music)}>
+                  ▶ {draft.music.name}
+                </button>
+              )}
             </div>
+            {songCheck && (
+              <div className={'song-check' + (songCheck.status === 'missing' ? ' warn' : '')}>
+                {songCheck.status === 'loading' && 'Checking the song in Apple Music…'}
+                {songCheck.status === 'found' && `✓ Found: ${songCheck.info.trackName} — ${songCheck.info.artistName}`}
+                {songCheck.status === 'missing' && '⚠ Song not found in Apple Music — tell me a correction, or save as is.'}
+              </div>
+            )}
             <button className="save-btn" onClick={saveDraft} disabled={busy}>Save to vault</button>
           </div>
         )}

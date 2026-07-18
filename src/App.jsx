@@ -11,7 +11,7 @@ import { deriveEdges, buildVocab, yearsOf } from './lib/edges.js'
 import { parseQuery, filterMemories, memoryMatches } from './lib/search.js'
 import { CLASS_COLORS } from './lib/palette.js'
 import * as api from './lib/api.js'
-import { findTrack, appleMusicSearchUrl } from './lib/music.js'
+import { findTrack, appleMusicSearchUrl } from './lib/api.js'
 
 const CLASSES = Object.keys(CLASS_COLORS)
 const yearOf = m => m.when.slice(6, 10)
@@ -361,7 +361,7 @@ export default function App() {
       )}
 
       {view === 'memorialize' && (
-        <Memorialize personName={person.name} onSave={addMemory} />
+        <Memorialize personName={person.name} onSave={addMemory} onPlay={playMusic} />
       )}
 
       {lightbox && (

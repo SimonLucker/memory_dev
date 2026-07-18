@@ -113,3 +113,24 @@ export async function transcribe(blob) {
   }
   return data
 }
+
+// Apple catalog lookup via our backend (edge function / dev middleware) —
+// server-side so browser content blockers and CORS can't break it.
+// → { trackName, artistName, previewUrl, artworkUrl100, trackViewUrl } | null
+export async function findTrack(music) {
+  if (!music) return null
+  const country = (((navigator.language || '').split('-')[1]) || 'US').toUpperCase()
+  const url = remote ? `${SB_URL}/functions/v1/music-search` : '/__music'
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { ...(remote ? sbHeaders : {}), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ artist: music.artist, name: music.name, country }),
+    })
+    return (await r.json()).result || null
+  } catch { return null }
+}
+
+// Fallback when the catalog finds nothing: hand the search to Apple Music.
+export const appleMusicSearchUrl = music =>
+  `https://music.apple.com/search?term=${encodeURIComponent(`${music.artist || ''} ${music.name || ''}`.trim())}`
