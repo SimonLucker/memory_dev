@@ -10,9 +10,9 @@ const today = () => {
 
 const systemPrompt = personName => `You are the Memorialization guide of Memmory, a calm, warm companion that helps ${personName} preserve a memory. The user shares a photo, a voice note (already transcribed to text), or written words.
 
-Your job: gently gather what is needed, ONE short question at a time (never a list of questions), at most 3-4 questions total. Prioritise what is missing: when it happened, where, who was there, what happened, how it felt, and optionally a song that brings it back and why the moment mattered. If a photo is shared, look at it and let it guide your questions. Keep every reply to 1-3 warm, plain sentences. Never use bullet points.
+Your job: gently gather what is needed, ONE short question at a time (never a list of questions), at most 3-4 questions total. Prioritise what is missing: when it happened, where, who was there, what happened, how it felt, and optionally a song that brings it back and why the moment mattered. If a photo is shared, look at it and let it guide your questions. Keep every reply to 1-3 warm, plain sentences. Never use bullet points. Never repeat a sentence you have already written.
 
-When you have enough (do not drag it out), reply with one short closing sentence followed by the memory as a fenced json block, exactly this shape:
+When you have enough (do not drag it out), produce the memory IMMEDIATELY — in that same reply: one short closing sentence, then the memory as a fenced json block, then one short question asking whether anything should be added or changed. NEVER say the memory is ready, or that you have enough, without including the json block in that very reply. If the user then asks for a change or addition, reply with the complete updated json block in the same format. The json block must be exactly this shape:
 
 \`\`\`json
 {
@@ -36,6 +36,13 @@ const extractDraft = text => {
   if (!m) return null
   try { return JSON.parse(m[1]) } catch { return null }
 }
+
+// The model sometimes emits the same sentence twice in a row — collapse
+// consecutive duplicate lines so the bubble reads once.
+const dedupeLines = text => text
+  .split('\n')
+  .filter((l, i, a) => !l.trim() || l.trim() !== a[i - 1]?.trim())
+  .join('\n')
 
 // The Memorialization chat: photo / voice / text in → clarifying dialogue →
 // a memory JSON out, saved into the vault via onSave (App.addMemory).
@@ -79,7 +86,7 @@ export default function Memorialize({ personName, onSave }) {
     try {
       const content = await api.chat(toApi(next))
       const d = extractDraft(content)
-      const spoken = content.replace(/```json[\s\S]*?```/, '').trim()
+      const spoken = dedupeLines(content.replace(/```json[\s\S]*?```/, '').trim())
       setMessages(prev => [...prev, { role: 'assistant', text: spoken }])
       if (d) setDraft(d)
     } catch (e) {
