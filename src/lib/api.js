@@ -9,7 +9,10 @@
 // New-memory graph positions travel INSIDE the memory as `_pos: [x, y]` — no
 // layout table, no layout-file writes; the static layout JSONs seed the base.
 
-const SB_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '')
+// Tolerate the common paste mistake of a service path on the project URL.
+const SB_URL = (import.meta.env.VITE_SUPABASE_URL || '')
+  .replace(/\/(rest|functions|storage)\/v1\/?$/, '')
+  .replace(/\/$/, '')
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 export const remote = Boolean(SB_URL && SB_KEY)
 
