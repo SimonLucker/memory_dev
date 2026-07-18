@@ -5,3 +5,4 @@ dist/
 *.log
 .env
 _to_delete/
+supabase/.temp/
