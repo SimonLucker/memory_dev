@@ -1073,3 +1073,34 @@ html, body, #root {
   .composer { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
   .chat-msg { max-width: 88%; }
 }
+
+/* ---------- Vault: order-by select + group headers ---------- */
+.order-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--panel-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23F2F0EC' fill-opacity='0.55'/%3E%3C/svg%3E") no-repeat right 14px center;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 10px 30px 10px 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.order-select option { color: var(--ink-deep); }
+.vault-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 4px 2px;
+}
+.vault-group-count {
+  font-size: 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
