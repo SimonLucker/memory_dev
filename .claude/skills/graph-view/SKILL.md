@@ -154,3 +154,15 @@ threads (< weight 10, not hovered/gathered/connector) stroke with the solid mid 
 instead of a per-frame createLinearGradient. The greedy label pass runs throttled (~6Hz)
 with hysteresis — current label holders outrank same-priority challengers — because dense
 clusters flickered as wobbling orbs flipped greedy winners every frame.
+
+## FocusHud additions (since the sections above were written)
+
+The focus card gained interactivity and the whole focus layout learned about phones. The rest of this file still stands — this section is additive.
+
+- **Photo lightbox tap-out**: the hero `<img>` calls `onPhotoTap(photos, hero)` on click (`cursor: zoom-in`). App wires this to `openLightbox` — a full-screen viewer over the WHOLE `photos` array, opened at the tapped index, stepping ← → (keys + touch-swipe), Esc/tap-out to close. Pass the array + index, never a lone URL (the lightbox steps through the array). The card's own thumbnail strip still swaps the hero locally; the lightbox is the zoom.
+- **Thumbnail drag-reorder**: the strip (up to 4 thumbs) is drag-sortable via POINTER events (one code path for mouse + touch; `touchAction:'none'`, `setPointerCapture`). A move past an 8px threshold sets `d.moved` and renders a TRANSIENT `dragOrder` live (index computed from `Δx / SLOT`, SLOT=54); `shownPhotos = dragOrder || photos`. On pointer-up, if moved, persist via `onEdit({...memory, photos: dragOrder})` — reordering makes the new first photo the card thumbnail EVERYWHERE — and remap `hero` to follow the dragged image. **Suppressed post-drag click**: `suppressClickRef` (250ms) swallows the click that fires after a drag so a reorder doesn't also swap the hero. A bare click (no move) still swaps the hero.
+- **SongRow placement**: the inline preview player sits between the thumbnail strip and the text sections, `key={memory.id}`. Full spec in the **music-preview** skill (autoplay on open, stops on unmount, element-derived play state for the iOS caveat).
+- **Phone focus layout** (`≤700px`): the pieces separate so nothing hides under the bottom sheet.
+  - Node parked ~24% from the top, not centered: the centerAt target adds `dy = (h/2 - h*0.24)/K` (K=3) so the bottom-sheet card (max 52vh) never covers the focused orb. Desktop keeps `dy=0`.
+  - The selected-node crosshair CAPTION floats to the node's **lower-left at screen-constant size** (`invK` scaling, right-aligned, two lines: `IMPORTANCE n/5`, `n/max LINKS`) instead of the desktop single line straight below — anything directly under the node disappears beneath the sheet. The gauges/brackets are unchanged.
+  - The focus-card becomes a bottom sheet via CSS (`.focus-card` media query: `top:auto; left/right:10px; bottom:10px; max-height:52vh`), overriding the desktop inline top-right position with `!important`.
