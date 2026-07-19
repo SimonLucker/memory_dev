@@ -18,7 +18,7 @@ When you have enough (do not drag it out), produce the memory IMMEDIATELY — in
 {
   "class": "Friends|Family|Travel|Work|Milestones",
   "what": "short title, a few words",
-  "when": "DD-MM-YYYY HH:mm (best guess; today is ${today()}; use 12:00 if time unknown)",
+  "when": "DD-MM-YYYY HH:mm (right now is ${today()}; if the user gives no date or time, assume it just happened and use right now — do NOT ask when unless their words suggest it was not today)",
   "where": "place",
   "why": "why this moment happened / mattered",
   "who": [{"name": "Sarah"}],
@@ -58,6 +58,16 @@ export default function Memorialize({ personName, onSave, onPlay }) {
   const recRef = useRef(null)
   const fileRef = useRef(null)
   const endRef = useRef(null)
+  const taRef = useRef(null)
+
+  // Composer grows with the text (capped) and shrinks back once it empties —
+  // sending clears the input, so the reset is automatic.
+  useEffect(() => {
+    const el = taRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px'
+  }, [input])
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, busy, draft])
 
@@ -253,6 +263,7 @@ export default function Memorialize({ personName, onSave, onPlay }) {
             {recording ? '■' : '🎙'}
           </button>
           <textarea
+            ref={taRef}
             rows={1}
             placeholder={recording ? 'Listening…' : 'Tell me about a moment…'}
             value={input}
