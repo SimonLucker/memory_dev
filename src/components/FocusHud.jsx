@@ -163,6 +163,50 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
   const who = memory.who || [];
   const photos = memory.photos || [];
   const [hero, setHero] = useState(0);
+
+  // Thumbnail drag-reorder (pointer events → one code path for mouse and touch).
+  // The transient order renders live during the drag; dropping persists it via
+  // onEdit, which also makes the new first photo the card thumbnail everywhere.
+  const [dragOrder, setDragOrder] = useState(null);
+  const [dragUrl, setDragUrl] = useState(null);
+  const dragRef = useRef(null); // { idx, x, y, moved }
+  const SLOT = 54; // 48px thumb + 6px gap
+
+  const thumbDown = (i) => (e) => {
+    dragRef.current = { idx: i, x: e.clientX, y: e.clientY, moved: false };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const thumbMove = (e) => {
+    const d = dragRef.current;
+    if (!d) return;
+    if (!d.moved && Math.abs(e.clientX - d.x) + Math.abs(e.clientY - d.y) < 8) return;
+    d.moved = true;
+    setDragUrl(photos[d.idx]);
+    const visCount = Math.min(photos.length, 4);
+    const to = Math.max(0, Math.min(visCount - 1, d.idx + Math.round((e.clientX - d.x) / SLOT)));
+    const next = [...photos];
+    const [ph] = next.splice(d.idx, 1);
+    next.splice(to, 0, ph);
+    setDragOrder(next);
+  };
+  const suppressClickRef = useRef(false);
+  const thumbUp = () => {
+    const d = dragRef.current;
+    dragRef.current = null;
+    setDragUrl(null);
+    if (d?.moved && dragOrder) {
+      const heroUrl = photos[hero];
+      onEdit?.({ ...memory, photos: dragOrder });
+      const nh = dragOrder.indexOf(heroUrl);
+      if (nh >= 0) setHero(nh);
+      // the click that follows a drag must not swap the hero
+      suppressClickRef.current = true;
+      setTimeout(() => { suppressClickRef.current = false }, 250);
+    }
+    setDragOrder(null);
+  };
+
+  const shownPhotos = dragOrder || photos;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(null);
   const startEdit = () => {
@@ -281,24 +325,34 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
           )}
         </div>
 
-        {/* thumbnail strip — only when there is more than one photo; click swaps into the hero */}
+        {/* thumbnail strip — click swaps into the hero; drag a thumb to reorder
+            the memory's photos (the first one becomes the card photo everywhere) */}
         {photos.length > 1 && (
           <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-            {photos.slice(0, 4).map((p, i) => (
+            {shownPhotos.slice(0, 4).map((p, i) => (
               <img
-                key={p}
+                key={`${p}-${i}`}
                 src={p}
                 alt=""
-                onClick={() => setHero(i)}
+                draggable={false}
+                onPointerDown={thumbDown(i)}
+                onPointerMove={thumbMove}
+                onPointerUp={thumbUp}
+                onPointerCancel={thumbUp}
+                onClick={() => { if (!suppressClickRef.current) setHero(i) }}
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 style={{
                   width: 48,
                   height: 48,
                   borderRadius: 8,
                   objectFit: 'cover',
-                  cursor: 'pointer',
-                  opacity: i === hero ? 1 : 0.6,
-                  border: `1px solid ${i === hero ? 'rgba(245,214,188,0.8)' : 'rgba(255,255,255,0.14)'}`,
+                  cursor: 'grab',
+                  touchAction: 'none',
+                  opacity: p === dragUrl ? 0.9 : i === hero ? 1 : 0.6,
+                  transform: p === dragUrl ? 'scale(1.12)' : 'none',
+                  boxShadow: p === dragUrl ? 'rgba(0,0,0,0.5) 0 6px 18px' : 'none',
+                  border: `1px solid ${p === dragUrl ? 'rgba(245,214,188,1)' : i === hero && !dragOrder ? 'rgba(245,214,188,0.8)' : 'rgba(255,255,255,0.14)'}`,
+                  transition: 'transform 0.12s',
                 }}
               />
             ))}

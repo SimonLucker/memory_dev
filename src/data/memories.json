@@ -62,7 +62,6 @@
     "importance": 4,
     "photos": [
       "photos/m002_2.jpg",
-      "photos/m002_2.jpg",
       "photos/m002_3.jpg",
       "photos/m002_4.jpg"
     ]
@@ -317,7 +316,6 @@
     "photos": [
       "photos/m010.jpg",
       "photos/m010_3.jpg",
-      "photos/m010_3.jpg",
       "photos/m010_4.jpg"
     ]
   },
@@ -481,7 +479,6 @@
     "importance": 4,
     "photos": [
       "photos/m015.jpg",
-      "photos/m015_3.jpg",
       "photos/m015_3.jpg"
     ]
   },
@@ -577,7 +574,6 @@
     "importance": 4,
     "photos": [
       "photos/m018.jpg",
-      "photos/m018_3.jpg",
       "photos/m018_3.jpg"
     ]
   },
@@ -836,7 +832,6 @@
     "importance": 5,
     "photos": [
       "photos/m026.jpg",
-      "photos/m026_3.jpg",
       "photos/m026_3.jpg"
     ]
   },
@@ -1068,7 +1063,6 @@
     "importance": 4,
     "photos": [
       "photos/m033.jpg",
-      "photos/m033_3.jpg",
       "photos/m033_3.jpg"
     ]
   },
@@ -1212,7 +1206,6 @@
     "photos": [
       "photos/m037.jpg",
       "photos/m037_3.jpg",
-      "photos/m037_3.jpg",
       "photos/m037_4.jpg"
     ]
   },
@@ -1325,10 +1318,10 @@
       "artist": "Against All Logic"
     },
     "class": "Travel",
-    "what": "Climbed the lookout mountain in Ålesund",
+    "what": "Climbed the lookout mountain in \u00c5lesund",
     "when": "17-07-2026 12:00",
-    "where": "Ålesund, Norway",
-    "why": "A visit to Ålesund that brought back memories of the first time there four years ago",
+    "where": "\u00c5lesund, Norway",
+    "why": "A visit to \u00c5lesund that brought back memories of the first time there four years ago",
     "who": [
       {
         "id": "p12",
@@ -1338,7 +1331,7 @@
     "feeling": [
       "Nostalgic"
     ],
-    "summary": "Glenn climbed the lookout mountain in Ålesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago.",
+    "summary": "Glenn climbed the lookout mountain in \u00c5lesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago.",
     "importance": 4
   },
   {
@@ -1351,7 +1344,7 @@
       "artist": "Against All Logic"
     },
     "class": "Travel",
-    "what": "Climbing Alesund’s local mountain",
+    "what": "Climbing Alesund\u2019s local mountain",
     "when": "17-01-2022 12:00",
     "where": "Alesund, Norway",
     "why": "A winter trip with Ben to climb the local mountain and take in the view, made meaningful by the nostalgic feeling and the song playing on the way there.",
