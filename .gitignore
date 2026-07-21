@@ -6,3 +6,4 @@ dist/
 .env
 _to_delete/
 supabase/.temp/
+_sync/
