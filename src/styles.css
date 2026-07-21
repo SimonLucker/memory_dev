@@ -1216,3 +1216,18 @@ html, body, #root {
   border-radius: 999px;
   padding: 4px 12px;
 }
+
+/* Fresh (just-memorialized) card sits on the light dawn gradient — dark text. */
+.vault-card.fresh,
+.vault-card.fresh .vault-title strong { color: var(--ink-deep); }
+.vault-card.fresh .vault-when,
+.vault-card.fresh .vault-meta { color: rgba(31, 41, 55, 0.65); }
+.vault-card.fresh .vault-summary { color: rgba(31, 41, 55, 0.85); }
+.vault-card.fresh .chip {
+  color: var(--ink-deep);
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(31, 41, 55, 0.2);
+}
+.vault-card.fresh .fav-btn { color: rgba(31, 41, 55, 0.35); }
+.vault-card.fresh .fav-btn.on { color: #C2506B; }
+.vault-card.fresh .del-btn { color: rgba(31, 41, 55, 0.4); }

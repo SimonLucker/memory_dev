@@ -104,6 +104,7 @@ export default function GraphView({
   onSelect,
   onEdit,
   onPhotoTap,
+  softCluster,
   gatherActive,
 }) {
   const fgRef = useRef(null);
@@ -203,10 +204,27 @@ export default function GraphView({
       .strength((l) => Math.min(0.5, l.weight / 12)); // weak edges must not drag clusters together
     fg.d3Force('charge').strength(-250);
     fg.d3Force('collide', forceCollide((n) => rOf(n) + 16).iterations(2)); // +16 = label air
-    // Anisotropic gravity (parity with scripts/compute-layout.mjs): keeps disconnected
-    // clusters from repelling into empty gulfs; stronger Y so the layout stays screen-shaped.
-    fg.d3Force('gx', forceX(0).strength(0.06));
-    fg.d3Force('gy', forceY(0).strength(0.13));
+    if (softCluster) {
+      // Organically-grown graphs (no precomputed layout, e.g. a fresh profile) read
+      // as one chaotic blob when only link forces organize them. Soft class anchors
+      // on a ring pull each class toward its own neighbourhood — weaker than strong
+      // links, so shared people/places still bend the shape. Precomputed persons
+      // keep plain center gravity (their layouts were settled without anchors).
+      const order = Object.keys(CLASS_COLORS);
+      const R = 70 + 16 * Math.sqrt(graphData.nodes.length);
+      const anchor = {};
+      order.forEach((c, i) => {
+        const a = (i / order.length) * TAU - TAU / 4;
+        anchor[c] = [R * Math.cos(a), R * 0.75 * Math.sin(a)];
+      });
+      fg.d3Force('gx', forceX((n) => anchor[n.mem.class]?.[0] ?? 0).strength(0.16));
+      fg.d3Force('gy', forceY((n) => anchor[n.mem.class]?.[1] ?? 0).strength(0.24));
+    } else {
+      // Anisotropic gravity (parity with scripts/compute-layout.mjs): keeps disconnected
+      // clusters from repelling into empty gulfs; stronger Y so the layout stays screen-shaped.
+      fg.d3Force('gx', forceX(0).strength(0.06));
+      fg.d3Force('gy', forceY(0).strength(0.13));
+    }
     // Perpetual gentle drift: charge/link forces are scaled by alpha and die as the
     // sim cools, so this custom force ignores alpha — each orb bobs around the home
     // position it settled at (~16s cycle), never faster, never escaping.
@@ -513,7 +531,19 @@ export default function GraphView({
         for (const n of nodes) { n.hx = n.x; n.hy = n.y; sx += n.x; sy += n.y; }
         centroidRef.current = { x: sx / nodes.length, y: sy / nodes.length };
         introStartRef.current = performance.now();
-        fg.zoomToFit(600, 100);
+        // Frame the graph, but never past 1.6× — zoomToFit alone blows a small
+        // young graph (few memories, tight bbox) up to giant orbs.
+        {
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          for (const n of nodes) {
+            if (n.x < minX) minX = n.x; if (n.x > maxX) maxX = n.x;
+            if (n.y < minY) minY = n.y; if (n.y > maxY) maxY = n.y;
+          }
+          const k = Math.max(0.3, Math.min(1.6,
+            0.9 * Math.min(size.w / (maxX - minX + 220), size.h / (maxY - minY + 220))));
+          fg.centerAt((minX + maxX) / 2, (minY + maxY) / 2, 600);
+          fg.zoom(k, 600);
+        }
         didFitRef.current = true;
       }
     }

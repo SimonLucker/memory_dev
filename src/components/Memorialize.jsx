@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { CLASS_COLORS } from '../lib/palette.js'
 import * as api from '../lib/api.js'
+import { encodePhoto } from '../lib/photos.js'
 
 const today = () => {
   const d = new Date()
@@ -124,24 +125,7 @@ export default function Memorialize({ personName, onSave, onPlay }) {
   // small enough to travel as a data URL through the AI chat and the upload endpoint.
   const pickPhoto = e => {
     for (const f of Array.from(e.target.files || [])) {
-      const url = URL.createObjectURL(f)
-      const img = new Image()
-      img.onload = () => {
-        const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight))
-        const c = document.createElement('canvas')
-        c.width = Math.round(img.naturalWidth * scale)
-        c.height = Math.round(img.naturalHeight * scale)
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
-        setPhotos(prev => [...prev, c.toDataURL('image/jpeg', 0.85)])
-        URL.revokeObjectURL(url)
-      }
-      img.onerror = () => { // undecodable format: fall back to the raw file
-        URL.revokeObjectURL(url)
-        const reader = new FileReader()
-        reader.onload = () => setPhotos(prev => [...prev, reader.result])
-        reader.readAsDataURL(f)
-      }
-      img.src = url
+      encodePhoto(f).then(dataUrl => setPhotos(prev => [...prev, dataUrl]))
     }
     e.target.value = ''
   }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CLASS_COLORS, CLASS_FILLS, CLASS_BORDERS, DAWN, PAPER, PEACH } from '../lib/palette.js';
-import { findTrack, appleMusicSearchUrl } from '../lib/api.js';
+import { findTrack, appleMusicSearchUrl, uploadPhoto } from '../lib/api.js';
+import { encodePhoto } from '../lib/photos.js';
 
 // Inline preview player: sits between the photos and the text, scrolls with the
 // card, autoplays on open and stops when the card unmounts (memory closed).
@@ -215,8 +216,26 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
       importance: memory.importance || 3,
       who: (memory.who || []).map((p) => p.name),
       feeling: [...(memory.feeling || [])],
+      photos: [...(memory.photos || [])],
     });
     setEditing(true);
+  };
+
+  // Edit mode: add photos (re-encoded + uploaded immediately) or remove them.
+  const editFileRef = useRef(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const addEditPhotos = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    setUploadingPhoto(true);
+    try {
+      for (const f of files) {
+        const dataUrl = await encodePhoto(f);
+        const blob = await (await fetch(dataUrl)).blob();
+        const src = await uploadPhoto(blob);
+        setDraft((d) => ({ ...d, photos: [...d.photos, src] }));
+      }
+    } finally { setUploadingPhoto(false); }
   };
   const saveEdit = () => {
     const { who, ...rest } = draft;
@@ -376,6 +395,24 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
                 {[1, 2, 3, 4, 5].map((i) => <option key={i} value={i}>{i}</option>)}
               </select>
             </label>
+            <SectionLabel dot={PEACH}>Photos</SectionLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
+              {draft.photos.map((p, i) => (
+                <div key={`${p}-${i}`} style={{ position: 'relative' }}>
+                  <img src={p} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover', display: 'block' }} />
+                  <button
+                    onClick={() => setDraft((d) => ({ ...d, photos: d.photos.filter((_, j) => j !== i) }))}
+                    style={{ position: 'absolute', top: -6, right: -6, width: 18, height: 18, borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.65)', color: PAPER, fontSize: 9, cursor: 'pointer', lineHeight: 1 }}
+                  >✕</button>
+                </div>
+              ))}
+              <input ref={editFileRef} type="file" accept="image/*" multiple hidden onChange={addEditPhotos} />
+              <button
+                onClick={() => editFileRef.current.click()}
+                disabled={uploadingPhoto}
+                style={{ width: 48, height: 48, borderRadius: 8, border: '1px dashed rgba(255,255,255,0.3)', background: 'transparent', color: PAPER, fontSize: 18, cursor: 'pointer', opacity: uploadingPhoto ? 0.5 : 1 }}
+              >{uploadingPhoto ? '…' : '+'}</button>
+            </div>
             <SectionLabel dot={accent}>Who was there</SectionLabel>
             <TagEditor values={draft.who} onChange={(v) => setDraft((d) => ({ ...d, who: v }))} accent={accent} fill={fill} border={border} placeholder="add person…" />
             <SectionLabel dot={DAWN[1]}>Feelings</SectionLabel>

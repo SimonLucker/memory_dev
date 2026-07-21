@@ -318,6 +318,7 @@ export default function App() {
               onSelect={setSelectedId}
               onEdit={saveMemory}
               onPhotoTap={openLightbox}
+              softCluster={Object.keys(person.layout).length === 0}
               gatherActive={Boolean(queryResult?.ids) || activeFilters.length > 0 || !!selectedYear || !!selectedMonth}
             />
           </div>
