@@ -1267,3 +1267,15 @@ html, body, #root {
 .vault-card.fresh .fav-btn { color: rgba(31, 41, 55, 0.35); }
 .vault-card.fresh .fav-btn.on { color: #C2506B; }
 .vault-card.fresh .del-btn { color: rgba(31, 41, 55, 0.4); }
+
+/* Active nav highlights sit on the light dawn gradient — dark ink for contrast
+   (same treatment as .vault-card.fresh). */
+.view-pills button.active,
+.person-chip.is-active,
+.m-menu button.active { color: var(--ink-deep); font-weight: 600; }
+.person-chip.is-active .person-count,
+.m-menu button.active .person-count {
+  color: var(--ink-deep);
+  background: rgba(255, 255, 255, 0.45);
+}
+.pending-dot { border: 1px solid rgba(31, 41, 55, 0.25); }

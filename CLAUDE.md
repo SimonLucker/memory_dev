@@ -14,7 +14,7 @@ Repo: https://github.com/SimonLucker/memory_dev.git (remote `origin`). **After e
 - Stack is fixed: React + Vite + `react-force-graph-2d`. Nothing else unless a skill says so.
 - Read the relevant `.claude/skills/*/SKILL.md` before implementing a feature — they contain the spec, design tokens, and algorithms.
 - All derived data (edges, vocab, years) is computed client-side. Persistence goes through the adapter `src/lib/api.js`, which picks its backend at build time: with `VITE_SUPABASE_URL`+`VITE_SUPABASE_ANON_KEY` set it talks to Supabase (Postgres `memories` table of jsonb rows, Storage bucket `photos`, Edge Functions `ai-chat`/`transcribe` — see `supabase/`, seeded by `scripts/seed-supabase.mjs`, deploy guide in `DEPLOY.md`); without them it uses the dev-only vite middlewares in `vite.config.js` (per-memory JSON upsert/delete, photo serving+upload, AI proxy with mock chat when no key; keys in `.env`, see `.env.example`). New memories carry their graph position as `_pos` on the memory object itself.
-- Personas: p1 Glenn (demo data, ex-"Simon"), p2 Maya (demo), p3 Simon (fresh, real memories).
+- Personas: p1 Glenn (demo data, ex-"Simon"), p2 Maya (demo), p3 Simon Akkerman (real memories), p4 Simon Gullstrøm (co-founder, fresh). People resolve to stable IDs and profile owners can share memories to each other's spaces — see `.claude/skills/identity/SKILL.md` before touching lib/people.js or the share/accept flow.
 
 ## Target file layout
 
