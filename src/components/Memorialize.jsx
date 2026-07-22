@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CLASS_COLORS } from '../lib/palette.js'
+import { resolvePerson } from '../lib/people.js'
 import * as api from '../lib/api.js'
 import { encodePhoto } from '../lib/photos.js'
 
@@ -47,7 +48,7 @@ const dedupeLines = text => text
 
 // The Memorialization chat: photo / voice / text in → clarifying dialogue →
 // a memory JSON out, saved into the vault via onSave (App.addMemory).
-export default function Memorialize({ personName, onSave, onPlay }) {
+export default function Memorialize({ personName, personId, onSave, onPlay }) {
   const [messages, setMessages] = useState([]) // {role, text, image?} — UI shape
   const [input, setInput] = useState('')
   const [photos, setPhotos] = useState([]) // pending attachments, data URLs
@@ -55,6 +56,7 @@ export default function Memorialize({ personName, onSave, onPlay }) {
   const [recording, setRecording] = useState(false)
   const [draft, setDraft] = useState(null) // parsed memory JSON awaiting save
   const [songCheck, setSongCheck] = useState(null) // { status: 'loading'|'found'|'missing', info? }
+  const [resolvedWho, setResolvedWho] = useState(new Set()) // ambiguous names the user said "someone else" to
   const [notice, setNotice] = useState(null)
   const recRef = useRef(null)
   const fileRef = useRef(null)
@@ -174,6 +176,18 @@ export default function Memorialize({ personName, onSave, onPlay }) {
 
   const accent = draft ? (CLASS_COLORS[draft.class] || '#9DB4DE') : null
 
+  // Names matching the first name of 2+ registered people need a pick before save.
+  const ambiguousWho = (draft?.who || [])
+    .map(p => ({ name: p.name || p, r: resolvePerson(p.name || p) }))
+    .filter(x => x.r?.ambiguous && !resolvedWho.has(x.name))
+
+  const pickWho = (name, candidate) => {
+    setDraft(d => ({
+      ...d,
+      who: (d.who || []).map(p => ((p.name || p) === name ? { name: candidate.name } : p)),
+    }))
+  }
+
   return (
     <div className="memorialize">
       <header className="vault-head">
@@ -221,7 +235,22 @@ export default function Memorialize({ personName, onSave, onPlay }) {
                 {songCheck.status === 'missing' && '⚠ Song not found in Apple Music — tell me a correction, or save as is.'}
               </div>
             )}
-            <button className="save-btn" onClick={saveDraft} disabled={busy}>Save to vault</button>
+            {ambiguousWho.map(({ name, r }) => (
+              <div key={name} className="song-check" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6, color: 'var(--muted)' }}>
+                Which {name}?
+                {r.ambiguous.map(c => (
+                  <button key={c.id} className="chip" style={{ borderColor: `${accent}66` }}
+                    onClick={() => pickWho(name, c)}>
+                    {c.name}{c.id === personId ? ' (you)' : ''}
+                  </button>
+                ))}
+                <button className="chip"
+                  onClick={() => setResolvedWho(prev => new Set(prev).add(name))}>
+                  Someone else
+                </button>
+              </div>
+            ))}
+            <button className="save-btn" onClick={saveDraft} disabled={busy || ambiguousWho.length > 0}>Save to vault</button>
           </div>
         )}
 

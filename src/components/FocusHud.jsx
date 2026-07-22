@@ -425,7 +425,7 @@ export default function FocusHud({ memory, onEdit, onClose, onPhotoTap }) {
         ) : (
           <>
             <div style={{ fontSize: 19, fontWeight: 600, margin: '4px 0 2px', lineHeight: 1.2 }}>{memory.what}</div>
-            <div style={{ fontSize: 12.5, color: 'rgba(242,240,236,0.55)' }}>{memory.where}</div>
+            <div style={{ fontSize: 12.5, color: 'rgba(242,240,236,0.55)' }}>{memory.where}{memory._from ? ` · shared by ${memory._from}` : ''}</div>
           </>
         )}
 

@@ -7,6 +7,7 @@ import PersonSwitch from './components/PersonSwitch.jsx'
 import Vault from './components/Vault.jsx'
 import Memorialize from './components/Memorialize.jsx'
 import { PERSONS } from './data/persons.js'
+import { resolvePerson } from './lib/people.js'
 import { deriveEdges, buildVocab, yearsOf } from './lib/edges.js'
 import { parseQuery, filterMemories, memoryMatches } from './lib/search.js'
 import { CLASS_COLORS } from './lib/palette.js'
@@ -35,8 +36,35 @@ const resolveWho = (names, memories) => {
     const n = Number(String(p.id).replace(/\D/g, '')) || 0
     if (n > maxId) maxId = n
   }
-  return names.map(name =>
-    dir.get(name.toLowerCase()) || { id: 'p' + String(++maxId).padStart(2, '0'), name })
+  const seen = new Set()
+  return names.map(name => {
+    // Registered people first: registry id = profile id (the ID-to-ID link).
+    const r = resolvePerson(name)
+    if (r?.match) return { id: r.match.id, name: r.match.name }
+    return dir.get(name.toLowerCase()) || { id: 'p' + String(++maxId).padStart(2, '0'), name }
+  }).filter(p => !seen.has(p.id) && seen.add(p.id)) // "Simon G" + "Simon Gullstrøm" = one person
+}
+
+// Mint the next memory id in a person's space (m### for p1, p{n}m### otherwise).
+const mintId = (pid, list) => {
+  const prefix = pid === 'p1' ? 'm' : pid + 'm'
+  const maxN = list.reduce((a, m) => Math.max(a, Number(m.id.replace(/\D/g, '')) || 0), 0)
+  return prefix + String(maxN + 1).padStart(3, '0')
+}
+
+// Seed a graph position near the strongest connected neighbours so the Cortex
+// doesn't need a full re-layout (GraphView only seeds from the layout map).
+const seedPos = (memory, memories, layout) => {
+  const near = deriveEdges([...memories, memory])
+    .filter(e => e.source === memory.id || e.target === memory.id)
+    .sort((a, b) => b.weight - a.weight)
+    .map(e => layout[e.source === memory.id ? e.target : e.source])
+    .filter(Boolean)
+    .slice(0, 3)
+  const pool = near.length ? near : Object.values(layout)
+  const cx = pool.reduce((a, p) => a + p[0], 0) / (pool.length || 1)
+  const cy = pool.reduce((a, p) => a + p[1], 0) / (pool.length || 1)
+  return [Math.round(cx + (Math.random() - 0.5) * 60), Math.round(cy + (Math.random() - 0.5) * 60)]
 }
 
 export default function App() {
@@ -48,7 +76,10 @@ export default function App() {
   // through lib/api.js: Supabase (deployed) or the vite dev endpoints (local).
   const [memMap, setMemMap] = useState(() => Object.fromEntries(PERSONS.map(p => [p.id, p.memories])))
   const [newId, setNewId] = useState(null) // last memory born in Memorialize, highlighted in Vault
-  const memories = memMap[personId]
+  const all = memMap[personId]
+  // Pending shares live in the same space but never leak into the graph/stats.
+  const memories = useMemo(() => all.filter(m => !m._pending), [all])
+  const pending = useMemo(() => all.filter(m => m._pending), [all])
 
   // Deployed builds load the source of truth from Supabase (bundled JSON is the
   // instant first paint; the DB replaces it as soon as it answers).
@@ -68,14 +99,14 @@ export default function App() {
     ...Object.fromEntries(memories.filter(m => m._pos).map(m => [m.id, m._pos])),
   }), [person, memories])
 
-  const applyUpsert = updated => {
+  const applyUpsert = (updated, pid = personId) => {
     setMemMap(prev => ({
       ...prev,
-      [personId]: prev[personId].some(m => m.id === updated.id)
-        ? prev[personId].map(m => (m.id === updated.id ? updated : m))
-        : [...prev[personId], updated],
+      [pid]: prev[pid].some(m => m.id === updated.id)
+        ? prev[pid].map(m => (m.id === updated.id ? updated : m))
+        : [...prev[pid], updated],
     }))
-    api.upsertMemory(personId, updated).catch(e => console.warn('save failed', e))
+    api.upsertMemory(pid, updated).catch(e => console.warn('save failed', e))
   }
 
   const saveMemory = updated => {
@@ -100,32 +131,43 @@ export default function App() {
 
   // Memorialization → Vault → Cortex pipeline entry point.
   const addMemory = draft => {
-    const prefix = personId === 'p1' ? 'm' : personId + 'm'
-    const maxN = memories.reduce((a, m) => Math.max(a, Number(m.id.replace(/\D/g, '')) || 0), 0)
     const memory = {
-      id: prefix + String(maxN + 1).padStart(3, '0'),
+      id: mintId(personId, all), // mint over ALL memories incl. pending, so ids never collide
       photos: [],
       music: null,
       ...draft,
       who: resolveWho((draft.who || []).map(p => p.name || p), memories),
     }
-    // Seed a graph position near the strongest connected neighbours so the Cortex
-    // doesn't need a full re-layout (GraphView only seeds from the layout map).
-    const near = deriveEdges([...memories, memory])
-      .filter(e => e.source === memory.id || e.target === memory.id)
-      .sort((a, b) => b.weight - a.weight)
-      .map(e => layout[e.source === memory.id ? e.target : e.source])
-      .filter(Boolean)
-      .slice(0, 3)
-    const pool = near.length ? near : Object.values(layout)
-    const cx = pool.reduce((a, p) => a + p[0], 0) / (pool.length || 1)
-    const cy = pool.reduce((a, p) => a + p[1], 0) / (pool.length || 1)
-    memory._pos = [Math.round(cx + (Math.random() - 0.5) * 60), Math.round(cy + (Math.random() - 0.5) * 60)]
+    memory._pos = seedPos(memory, memories, layout)
     applyUpsert(memory)
+    // Share: every registered co-tagged person gets a pending copy in their space.
+    // ponytail: counter-minted ids can collide across concurrent sessions; real per-user id service later.
+    // ponytail: create-only — tagging someone via the edit HUD doesn't share; revisit with real accounts.
+    for (const w of memory.who) {
+      if (w.id !== personId && memMap[w.id]) {
+        // In the recipient's copy they aren't "who was there" — the sharer is.
+        const who = [{ id: personId, name: person.name },
+          ...memory.who.filter(p => p.id !== w.id && p.id !== personId)]
+        const copy = { ...memory, who, id: mintId(w.id, memMap[w.id]), _pending: { from: person.name } }
+        delete copy._pos
+        applyUpsert(copy, w.id)
+      }
+    }
     setNewId(memory.id)
     setView('vault')
     return memory.id
   }
+
+  // Accept a shared memory: it becomes a real one, placed near its neighbours.
+  const acceptShare = id => {
+    const m = all.find(m => m.id === id)
+    if (!m?._pending) return
+    const { _pending, ...accepted } = m
+    accepted._from = _pending.from
+    accepted._pos = seedPos(accepted, memories, layout)
+    applyUpsert(accepted)
+  }
+  const declineShare = deleteMemory
 
   const edges = useMemo(() => deriveEdges(memories), [memories])
   const vocab = useMemo(() => buildVocab(memories), [memories])
@@ -271,7 +313,13 @@ export default function App() {
           </button>
         ))}
       </nav>
-      <PersonSwitch persons={PERSONS.map(p => ({ ...p, memories: memMap[p.id] }))} activeId={personId} onSwitch={switchPerson} />
+      <PersonSwitch
+        persons={PERSONS.map(p => ({
+          ...p,
+          memories: memMap[p.id].filter(m => !m._pending),
+          pendingCount: memMap[p.id].filter(m => m._pending).length,
+        }))}
+        activeId={personId} onSwitch={switchPerson} />
 
       {/* Phone chrome (hidden ≥701px): person fold-out top-left, views fold-out top-right. */}
       {(mobileMenu || legendOpen) && (
@@ -285,12 +333,16 @@ export default function App() {
       </button>
       {mobileMenu === 'person' && (
         <div className="m-menu left">
-          {PERSONS.map(p => (
-            <button key={p.id} className={p.id === personId ? 'active' : ''}
-              onClick={() => { switchPerson(p.id); setMobileMenu(null) }}>
-              {p.name} <span className="person-count">{memMap[p.id].length}</span>
-            </button>
-          ))}
+          {PERSONS.map(p => {
+            const pc = memMap[p.id].filter(m => m._pending).length
+            return (
+              <button key={p.id} className={p.id === personId ? 'active' : ''}
+                onClick={() => { switchPerson(p.id); setMobileMenu(null) }}>
+                {p.short || p.name} <span className="person-count">{memMap[p.id].length - pc}</span>
+                {pc > 0 && <span className="pending-dot">{pc}</span>}
+              </button>
+            )
+          })}
         </div>
       )}
       {mobileMenu === 'views' && (
@@ -374,12 +426,13 @@ export default function App() {
       )}
 
       {view === 'vault' && (
-        <Vault memories={memories} newId={newId} onOpen={openInCortex}
-          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={openLightbox} onPlay={playMusic} />
+        <Vault memories={memories} pending={pending} newId={newId} onOpen={openInCortex}
+          onFav={toggleFavorite} onDelete={deleteMemory} onPhoto={openLightbox} onPlay={playMusic}
+          onAccept={acceptShare} onDecline={declineShare} />
       )}
 
       {view === 'memorialize' && (
-        <Memorialize personName={person.name} onSave={addMemory} onPlay={playMusic} />
+        <Memorialize personName={person.name.split(' ')[0]} personId={personId} onSave={addMemory} onPlay={playMusic} />
       )}
 
       {lightbox && (

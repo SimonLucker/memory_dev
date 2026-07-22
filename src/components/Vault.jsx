@@ -28,7 +28,7 @@ const GROUP_KEYS = {
 
 // The Memory Vault: every memory as a calm, scannable list. Click a card to
 // open that memory in the Cortex; heart to favorite, trash to delete (two-tap).
-export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhoto, onPlay }) {
+export default function Vault({ memories, pending = [], newId, onOpen, onFav, onDelete, onPhoto, onPlay, onAccept, onDecline }) {
   const [q, setQ] = useState('')
   const [favOnly, setFavOnly] = useState(false)
   const [order, setOrder] = useState('new')
@@ -76,6 +76,41 @@ export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhot
 
   const favCount = memories.filter(m => m.favorite).length
 
+  // A memory someone shared: same card, no favorite/delete/open — just accept or decline.
+  const pendingCard = m => {
+    const accent = CLASS_COLORS[m.class] || '#9DB4DE'
+    return (
+      <article key={m.id} className="vault-card pending">
+        {m.photos?.length
+          ? <img className="vault-photo" src={m.photos[0]} alt="" loading="lazy"
+              onClick={() => onPhoto(m.photos, 0)} />
+          : <div className="vault-photo placeholder" style={{ background: `linear-gradient(145deg, ${accent}55, ${accent}22)` }} />}
+        <div className="vault-body">
+          <div className="vault-title">
+            <span className="dot" style={{ background: accent }} />
+            <strong>{m.what}</strong>
+            <span className="vault-when">{prettyWhen(m.when)}</span>
+          </div>
+          <div className="vault-meta">{m.where}{m.feeling.length ? ` · ${m.feeling.join(', ')}` : ''}</div>
+          <p className="vault-summary">{m.summary}</p>
+          <div className="vault-chips">
+            {m.who.map(p => <span key={p.id} className="chip">{p.name}</span>)}
+            {m.music && (
+              <button className="chip music" title="Play preview" onClick={() => onPlay(m.music)}>
+                ▶ {m.music.name}
+              </button>
+            )}
+          </div>
+          <div className="pending-from">from {m._pending.from}</div>
+          <div className="pending-actions">
+            <button className="save-btn" onClick={() => onAccept(m.id)}>Accept</button>
+            <button className="ghost-btn" onClick={() => onDecline(m.id)}>Decline</button>
+          </div>
+        </div>
+      </article>
+    )
+  }
+
   const card = m => {
     const accent = CLASS_COLORS[m.class] || '#9DB4DE'
     return (
@@ -94,7 +129,7 @@ export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhot
             <strong>{m.what}</strong>
             <span className="vault-when">{prettyWhen(m.when)}</span>
           </div>
-          <div className="vault-meta">{m.where}{m.feeling.length ? ` · ${m.feeling.join(', ')}` : ''}</div>
+          <div className="vault-meta">{m.where}{m.feeling.length ? ` · ${m.feeling.join(', ')}` : ''}{m._from ? ` · shared by ${m._from}` : ''}</div>
           <p className="vault-summary">{m.summary}</p>
           <div className="vault-chips">
             {m.who.map(p => <span key={p.id} className="chip">{p.name}</span>)}
@@ -161,6 +196,15 @@ export default function Vault({ memories, newId, onOpen, onFav, onDelete, onPhot
         </div>
       </header>
       <div className="vault-list">
+        {pending.length > 0 && !q.trim() && !favOnly && (
+          <>
+            <div className="vault-group">
+              <span className="eyebrow">Shared with you</span>
+              <span className="vault-group-count">{pending.length}</span>
+            </div>
+            {pending.map(pendingCard)}
+          </>
+        )}
         {groups.map(([label, mems]) => (
           <Fragment key={label ?? 'time'}>
             {label && (
