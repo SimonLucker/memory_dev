@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2">
+<title>Memmory · Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ MODERN PITCH SYSTEM — foundation (locked identity) ============ */
+:root {
+  --dawn-top: #C8D4EC; --dawn-mid: #F5D6BC; --dawn-bot: #E0C5DC;
+  --cream: #FAF7F2; --white: #FFFFFF;
+  --ink: #1F2937; --ink-deep: #111827;
+  --paper: #F2F0EC; --bezel: #050507; --error: #DC6B5E;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --display: clamp(2.5rem, 5.4vw, 4.2rem);
+  --headline: clamp(1.7rem, 3vw, 2.5rem);
+  --body: clamp(1.04rem, 1.25vw, 1.18rem);
+  --label: clamp(0.7rem, 0.82vw, 0.78rem);
+  --g1: linear-gradient(150deg, #C8D4EC, #9DB4DE);
+  --g2: linear-gradient(150deg, #F5D6BC, #ECB890);
+  --g3: linear-gradient(150deg, #E0C5DC, #C79BCB);
+  --g4: linear-gradient(150deg, #E6C9D2, #D29DAE);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; min-height: 100lvh; background: var(--cream); }
+body { font-family: 'Geist', sans-serif; background-color: var(--cream); color: var(--ink); line-height: 1.5; text-wrap: pretty; -webkit-font-smoothing: antialiased; overflow-x: hidden; min-height: 100lvh; }
+em, i, cite { font-style: normal; }
+p, h1, h2, h3, h4 { text-wrap: pretty; }
+img { max-width: 100%; }
+.t-display { font-size: var(--display); font-weight: 600; line-height: 1.06; letter-spacing: -0.02em; }
+.t-headline { font-size: var(--headline); font-weight: 600; line-height: 1.14; letter-spacing: -0.018em; text-wrap: balance; }
+.t-body { font-size: var(--body); font-weight: 400; line-height: 1.62; }
+.t-label { font-size: var(--label); font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+
+.navbar { position: fixed; top: clamp(0.85rem, 1.8vh, 1.4rem); left: 50%; transform: translateX(-50%); z-index: 60; }
+.navpill { display: flex; align-items: center; gap: 0.25rem; padding: 0.35rem; border-radius: 999px; background: rgba(250, 247, 242, 0.7); backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4); box-shadow: 0 10px 34px -10px rgba(17, 24, 39, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.55); }
+.nav-link { font-size: var(--label); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); text-decoration: none; opacity: 0.5; padding: 0.6rem 1.15rem; border-radius: 999px; transition: opacity 0.45s var(--ease), background 0.45s var(--ease), color 0.45s var(--ease); }
+.nav-link:hover { opacity: 0.95; background: rgba(31, 41, 55, 0.06); }
+.nav-link.active { opacity: 1; color: var(--ink-deep); background: linear-gradient(135deg, #F6D7BE 0%, #ECC4CE 52%, #DFC4DC 100%); box-shadow: 0 8px 22px -4px rgba(221, 158, 178, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: 0.12s; } .reveal.d2 { transition-delay: 0.24s; } .reveal.d3 { transition-delay: 0.36s; }
+
+/* ============ Document components ============ */
+.dochero { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 14vh 8vw 8vh; background: linear-gradient(180deg, var(--dawn-top) 0%, var(--dawn-mid) 55%, var(--dawn-bot) 100%); }
+.dochero h1 { max-width: 15ch; }
+.dochero .t-body { max-width: 44ch; margin-top: 2.5vh; text-wrap: balance; }
+.hero-meta { display: flex; gap: 0.6rem; margin-top: 4vh; flex-wrap: wrap; justify-content: center; }
+.chip { display: inline-flex; align-items: center; background: var(--white); border-radius: 999px; padding: 0.5rem 1.05rem; font-size: var(--label); font-weight: 500; letter-spacing: 0.02em; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+
+.sec { padding: clamp(4.5rem, 10vh, 8rem) 6vw; max-width: 1200px; margin: 0 auto; }
+.sec > h2.t-headline { margin-bottom: clamp(2rem, 4vh, 3rem); }
+
+/* System cards */
+.sys { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; }
+.sys-card { background: var(--white); border-radius: 24px; padding: 1.7rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 0.9rem; }
+.sys-card h3 { font-size: var(--headline); font-weight: 600; line-height: 1.12; letter-spacing: -0.018em; }
+.sys-card p { font-size: var(--body); line-height: 1.55; text-wrap: balance; }
+.tscale { display: flex; flex-direction: column; gap: 0.35rem; }
+.tscale div { line-height: 1.15; color: var(--ink); }
+.swrow { display: flex; align-items: center; gap: 0.8rem; }
+.swrow span { font-size: var(--label); font-weight: 500; width: 9.5rem; flex-shrink: 0; }
+.swrow i { display: block; flex: 1; height: 16px; border-radius: 999px; }
+.navmini { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+.navmini span { background: var(--paper); border-radius: 999px; padding: 0.42rem 0.95rem; font-size: var(--label); font-weight: 600; }
+.navmini span.on { background: var(--ink-deep); color: var(--white); }
+
+/* NOW -> TARGET pair */
+.pair { display: grid; grid-template-columns: auto auto auto; gap: clamp(1.2rem, 2.6vw, 2.4rem); justify-content: center; align-items: center; margin-top: clamp(1.8rem, 3.5vh, 2.8rem); }
+.pairitem { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; }
+.pairitem > .t-label { text-align: center; }
+.pairarrow { display: flex; align-items: center; justify-content: center; }
+.pairarrow svg { width: clamp(38px, 4vw, 54px); height: auto; }
+.shotcol { display: flex; flex-direction: column; gap: 1rem; }
+.shot { position: relative; width: min(300px, 82vw); border-radius: 26px; overflow: clip; box-shadow: 0 14px 34px -14px rgba(17,24,39,0.4); }
+.shot.sm { width: min(236px, 74vw); }
+.shot img { width: 100%; display: block; }
+.mk { position: absolute; width: 29px; height: 29px; border-radius: 50%; background: var(--error); color: var(--white); font-size: 0.84rem; font-weight: 600; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); box-shadow: 0 3px 10px rgba(0,0,0,0.35), 0 0 0 3px rgba(255,255,255,0.85); z-index: 3; }
+.mk.keep { background: var(--ink-deep); }
+
+.quick { list-style: none; max-width: 760px; margin: clamp(1.6rem, 3vh, 2.4rem) auto 0; display: flex; flex-direction: column; gap: 0.65rem; }
+.quick li { display: flex; gap: 0.75rem; align-items: baseline; font-size: var(--body); line-height: 1.45; }
+.quick .n { flex-shrink: 0; width: 25px; height: 25px; border-radius: 50%; background: var(--error); color: var(--white); font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; transform: translateY(0.3em); }
+.quick .n.keep { background: var(--ink-deep); }
+
+.qbank { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; max-width: 820px; margin: clamp(1.6rem, 3vh, 2.4rem) auto 0; }
+.qbank span { background: var(--white); border-radius: 18px 18px 18px 6px; padding: 0.7rem 1.05rem; font-size: 0.95rem; font-weight: 400; color: var(--ink); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+
+.viewsec { padding: clamp(4rem, 8vh, 6.5rem) 6vw; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(17,24,39,0.07); }
+.viewhead { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; justify-content: center; text-align: center; }
+.viewhead h2 { font-size: var(--display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; }
+.viewhead h2 .old { font-weight: 400; text-decoration: line-through; text-decoration-thickness: 3px; }
+.viewhead h2 svg { width: 0.62em; height: auto; margin: 0 0.12em; }
+.viewintro { font-size: var(--body); line-height: 1.55; max-width: 52ch; margin: 0.9rem auto 0; text-align: center; text-wrap: balance; }
+
+/* Phone mock */
+.mock { position: relative; width: 300px; aspect-ratio: 9 / 19; background: linear-gradient(180deg, var(--dawn-top) 0%, var(--dawn-mid) 55%, var(--dawn-bot) 100%); border: 8px solid var(--bezel); border-radius: 44px; padding: 2.9rem 0.95rem 0.95rem; display: flex; flex-direction: column; box-shadow: 0 34px 70px -28px rgba(17, 24, 39, 0.5); flex-shrink: 0; overflow: clip; }
+.mock::before { content: ""; position: absolute; top: 0.62rem; left: 50%; transform: translateX(-50%); width: 36%; height: 1.05rem; background: var(--bezel); border-radius: 100px; z-index: 6; }
+.mock.dusk { background: linear-gradient(180deg, #7A85A6 0%, #8D7A93 55%, #6E5F80 100%); }
+.mock.deep { background: linear-gradient(180deg, #58607A 0%, #665869 55%, #4F455C 100%); }
+.mock.creambg { background: var(--cream); }
+.mockcap { max-width: 300px; font-size: var(--label); font-weight: 500; letter-spacing: 0.02em; line-height: 1.5; margin: 0.55rem auto 0; text-align: center; text-wrap: balance; }
+.mtop { position: absolute; top: 2.25rem; left: 0.95rem; right: 0.95rem; display: flex; align-items: center; z-index: 5; }
+.mav { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.78); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: var(--ink); }
+.mdots { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 0.34rem; align-items: center; }
+.mdots i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); display: block; }
+.mdots i.off { opacity: 0.35; width: 5px; height: 5px; }
+.mock.deep .mdots i, .mock.dusk .mdots i { background: #fff; }
+.mbody { display: flex; flex-direction: column; flex: 1; min-height: 0; margin-top: 2.15rem; gap: 0.46rem; }
+.mmsg { background: var(--white); border-radius: 16px; padding: 0.58rem 0.8rem; font-size: 0.79rem; line-height: 1.4; max-width: 86%; align-self: flex-end; box-shadow: 0 4px 12px rgba(0,0,0,0.06); color: var(--ink); }
+.mmsg.ai { align-self: flex-start; background: rgba(255,255,255,0.72); }
+.mdivider { align-self: center; font-size: 0.62rem; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.5); border-radius: 999px; padding: 0.2rem 0.65rem; }
+.mcardmsg { align-self: flex-start; background: var(--white); border-radius: 14px; padding: 0.5rem; display: flex; gap: 0.55rem; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.07); width: 78%; }
+.mcardmsg img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+.mcardmsg h6 { font-size: 0.76rem; font-weight: 600; color: var(--ink); line-height: 1.15; }
+.mcardmsg span { font-size: 0.62rem; font-weight: 500; color: var(--ink); }
+.mphoto { align-self: flex-end; width: 64%; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: clip; }
+.mphoto img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/3; }
+.mvoice { align-self: flex-end; background: var(--white); border-radius: 16px; padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.mplay { width: 22px; height: 22px; border-radius: 50%; background: var(--ink); position: relative; flex-shrink: 0; }
+.mplay::after { content: ""; position: absolute; left: 8px; top: 6px; border-left: 7px solid var(--white); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.mwave { display: flex; align-items: center; gap: 2px; height: 18px; }
+.mwave i { width: 2.5px; border-radius: 2px; background: var(--ink); height: calc(var(--h) * 1%); }
+.mvdur { font-size: 0.66rem; font-weight: 500; color: var(--ink); }
+.mcluster { align-self: stretch; margin-top: 0.2rem; background: rgba(255,255,255,0.72); border-radius: 14px; padding: 0.52rem 0.72rem; display: flex; align-items: center; gap: 0.5rem; }
+.mcl-line { flex: 1; height: 3px; border-radius: 2px; background: rgba(17,24,39,0.15); position: relative; overflow: clip; }
+.mcl-line::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 62%; background: var(--ink); border-radius: 2px; }
+.mcl-txt { font-size: 0.64rem; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.msave { background: var(--white); border-radius: 999px; padding: 0.28rem 0.6rem; font-size: 0.64rem; font-weight: 600; color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08); white-space: nowrap; }
+.minput { margin-top: auto; background: var(--white); border-radius: 999px; padding: 0.56rem 0.7rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.minput .ph { flex: 1; font-size: 0.75rem; color: var(--ink); white-space: nowrap; overflow: hidden; }
+.mic { width: 20px; height: 20px; flex-shrink: 0; }
+.mic svg { width: 100%; height: 100%; display: block; }
+.mmoment { align-self: stretch; background: var(--ink-deep); color: var(--white); border-radius: 14px; padding: 0.5rem 0.78rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.mmoment span { font-size: 0.66rem; font-weight: 500; }
+.mmoment .end { background: rgba(255,255,255,0.16); border-radius: 999px; padding: 0.22rem 0.55rem; font-weight: 600; }
+.nudge { align-self: flex-start; background: rgba(255,255,255,0.72); border-radius: 16px; padding: 0.62rem 0.72rem; width: 84%; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.nudge p { font-size: 0.78rem; line-height: 1.35; color: var(--ink); }
+.nudge .mquick { margin-top: 0.5rem; }
+.mquick { display: flex; gap: 0.4rem; }
+.mquick span { background: var(--white); border-radius: 999px; padding: 0.3rem 0.68rem; font-size: 0.68rem; font-weight: 600; color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+/* Vault mock */
+.mseg { display: flex; background: rgba(255,255,255,0.6); border-radius: 999px; padding: 0.22rem; margin-top: 0.1rem; }
+.mseg span { flex: 1; text-align: center; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0; border-radius: 999px; color: var(--ink); }
+.mseg .on { background: var(--white); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.msearch { background: var(--white); border-radius: 999px; padding: 0.5rem 0.85rem; font-size: 0.74rem; color: var(--ink); margin-top: 0.45rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.mcard { background: var(--white); border-radius: 18px; padding: 0.6rem; display: flex; gap: 0.65rem; align-items: center; box-shadow: 0 6px 16px rgba(0,0,0,0.06); margin-top: 0.48rem; }
+.mth { width: 54px; height: 54px; border-radius: 13px; flex-shrink: 0; overflow: clip; }
+.mth img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mcard h5 { font-size: 0.85rem; font-weight: 600; line-height: 1.2; color: var(--ink); }
+.mcard .meta { font-size: 0.67rem; font-weight: 500; color: var(--ink); margin-top: 0.15rem; }
+
+/* Cortex mocks */
+.mheat { margin-top: 0.1rem; height: 12px; border-radius: 999px; background: linear-gradient(90deg, #C8D4EC 0%, #E8CFC4 14%, #DC8C5E 26%, #ECB890 38%, #F5D6BC 50%, #C8D4EC 60%, #ECB890 72%, #DC8C5E 84%, #E5A87E 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); }
+.myears { display: flex; justify-content: space-between; margin-top: 0.3rem; }
+.myears span { font-size: 0.6rem; font-weight: 600; color: #fff; }
+.msearch.ondark { background: rgba(255,255,255,0.9); margin-top: 0.42rem; }
+.mcortex { position: relative; flex: 1; margin-top: 0.35rem; }
+.mcortex svg.web { position: absolute; inset: 0; width: 100%; height: 100%; }
+.node { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 12px 26px rgba(0,0,0,0.5); }
+.node::after { content: ""; position: absolute; left: 24%; top: 14%; width: 22%; height: 16%; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%); }
+.node.c1 { background: radial-gradient(circle at 33% 27%, #DCE6F7 0%, #8FA9D6 38%, #3A4E74 100%); }
+.node.c2 { background: radial-gradient(circle at 33% 27%, #F7DCC2 0%, #D99B62 38%, #7A4E28 100%); }
+.node.c3 { background: radial-gradient(circle at 33% 27%, #F0DCEE 0%, #B98CC0 38%, #5C3F66 100%); }
+.node.c4 { background: radial-gradient(circle at 33% 27%, #F3D9DE 0%, #C793A2 38%, #6B4550 100%); }
+.nodeimg { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); overflow: clip; border: 1.5px solid rgba(255,255,255,0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 10px 24px rgba(0,0,0,0.5); z-index: 2; }
+.nodeimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nlabel { position: absolute; transform: translate(-50%, -50%); font-size: 0.62rem; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.88); border-radius: 999px; padding: 0.2rem 0.55rem; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.2); z-index: 4; }
+.nlabel.big { font-size: 0.7rem; padding: 0.26rem 0.7rem; }
+.mfilters { align-self: center; margin-top: auto; background: rgba(255,255,255,0.14); border-radius: 999px; padding: 0.42rem 0.95rem; font-size: 0.68rem; font-weight: 500; color: #fff; }
+.trio3 { display: flex; gap: clamp(1.2rem, 2.6vw, 2.2rem); justify-content: center; align-items: flex-start; margin-top: clamp(1.8rem, 3.5vh, 2.8rem); flex-wrap: wrap; }
+.trio3 .mock { width: 272px; }
+
+/* Memory detail mock */
+.dhero { margin-top: 0.15rem; border-radius: 15px; overflow: clip; box-shadow: 0 8px 20px -8px rgba(0,0,0,0.35); position: relative; }
+.dhero img { display: block; width: 100%; aspect-ratio: 4/2.15; object-fit: cover; }
+.dgrid { display: flex; gap: 0.35rem; margin-top: 0.35rem; }
+.dthumb { flex: 1; border-radius: 11px; overflow: clip; position: relative; }
+.dthumb img { display: block; width: 100%; aspect-ratio: 4/2.6; object-fit: cover; }
+.dthumb .vid { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10,10,15,0.25); }
+.dthumb .vid i { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.9); position: relative; display: block; }
+.dthumb .vid i::after { content: ""; position: absolute; left: 7.5px; top: 5px; border-left: 7px solid #4F455C; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.dthumb .dur { position: absolute; right: 0.3rem; bottom: 0.25rem; font-size: 0.56rem; font-weight: 600; color: #fff; }
+.dtitle { color: #fff; font-size: 1.12rem; font-weight: 600; line-height: 1.1; margin-top: 0.5rem; }
+.dsec { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #fff; margin: 0.5rem 0 0.25rem 0.1rem; }
+.drow { background: rgba(255,255,255,0.14); border-radius: 13px; padding: 0.44rem 0.66rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; }
+.drow svg { width: 15px; height: 15px; flex-shrink: 0; }
+.drow span { font-size: 0.68rem; font-weight: 500; color: #fff; }
+.drow .lnk { margin-left: auto; font-weight: 600; }
+.drow .mplay { width: 19px; height: 19px; background: #fff; }
+.drow .mplay::after { left: 7px; top: 4.5px; border-left-color: #6E5F80; border-top-width: 5px; border-bottom-width: 5px; }
+.drow .mwave i { background: #fff; }
+.dchips { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.dchips span { background: rgba(255,255,255,0.14); color: #fff; border-radius: 999px; padding: 0.24rem 0.58rem; font-size: 0.63rem; font-weight: 500; }
+.dwhy { color: #fff; font-size: 0.7rem; line-height: 1.42; }
+.dactions { display: flex; gap: 0.4rem; margin-top: auto; justify-content: center; align-items: center; flex-wrap: wrap; }
+.dactions .prim { background: var(--white); color: var(--ink); border-radius: 999px; padding: 0.44rem 0.8rem; font-size: 0.66rem; font-weight: 600; }
+.dactions .quietbtn { background: rgba(255,255,255,0.16); color: #fff; border-radius: 999px; padding: 0.44rem 0.75rem; font-size: 0.66rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.28rem; }
+.dactions .quietbtn svg { width: 11px; height: 11px; }
+
+/* Profile mock (cream) */
+.pport { width: 72px; height: 72px; border-radius: 50%; overflow: clip; margin: 0.4rem auto 0; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.pport img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pname { text-align: center; font-size: 1rem; font-weight: 600; color: var(--ink); margin-top: 0.45rem; }
+.pborn { text-align: center; font-size: 0.66rem; font-weight: 500; color: var(--ink); margin-top: 0.12rem; }
+.pcount { background: var(--white); border-radius: 15px; padding: 0.6rem 0.75rem; display: flex; margin-top: 0.65rem; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+.pcount div { flex: 1; text-align: center; }
+.pcount strong { display: block; font-size: 1.18rem; font-weight: 600; color: var(--ink); line-height: 1; }
+.pcount span { display: block; font-size: 0.62rem; font-weight: 500; color: var(--ink); margin-top: 0.2rem; }
+.plabel { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); margin: 0.7rem 0 0.3rem 0.2rem; }
+.prow { background: var(--white); border-radius: 13px; padding: 0.48rem 0.7rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+.pdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.prow span { font-size: 0.72rem; font-weight: 500; color: var(--ink); }
+.prow strong { font-size: 0.7rem; font-weight: 600; color: var(--ink); margin-left: auto; }
+.prow svg { width: 13px; height: 13px; flex-shrink: 0; }
+.prow .chev { margin-left: auto; }
+.plink { text-align: center; font-size: 0.66rem; font-weight: 600; color: var(--ink); margin-top: 0.35rem; }
+.gauge { background: var(--white); border-radius: 15px; margin-top: 0.3rem; padding: 0.55rem 0.7rem 0.5rem; box-shadow: 0 3px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+.gauge svg { width: 116px; height: 64px; display: block; }
+.gval { font-size: 0.76rem; font-weight: 600; color: var(--ink); margin-top: 0.05rem; }
+.gsub { font-size: 0.62rem; font-weight: 500; color: var(--ink); }
+
+/* Cards mock bits */
+.ccover { margin-top: 0.15rem; border-radius: 18px; overflow: clip; position: relative; box-shadow: 0 10px 24px -8px rgba(0,0,0,0.3); }
+.ccover img { display: block; width: 100%; aspect-ratio: 4/4.4; object-fit: cover; }
+.ccover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(10,10,15,0.6) 100%); }
+.ccover .ct { position: absolute; left: 0.85rem; bottom: 0.7rem; z-index: 2; color: #fff; }
+.ccover .ct h5 { font-size: 1rem; font-weight: 600; }
+.ccover .ct div { font-size: 0.66rem; font-weight: 500; margin-top: 0.15rem; }
+.cweave { background: rgba(255,255,255,0.14); border-radius: 13px; padding: 0.52rem 0.8rem; margin-top: 0.5rem; font-size: 0.7rem; font-weight: 500; color: #fff; text-align: center; }
+
+.duo { display: flex; gap: clamp(1.5rem, 3.5vw, 3rem); justify-content: center; align-items: flex-start; margin-top: clamp(1.8rem, 3.5vh, 2.8rem); flex-wrap: wrap; }
+
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.85rem; max-width: 1000px; margin: clamp(1.8rem, 3.5vh, 2.6rem) auto 0; counter-reset: step; }
+.fstep { background: var(--white); border-radius: 18px; padding: 1.05rem 1.15rem; box-shadow: 0 6px 16px rgba(0,0,0,0.05); counter-increment: step; }
+.fstep::before { content: counter(step); display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--ink-deep); color: var(--white); font-size: 0.76rem; font-weight: 600; align-items: center; justify-content: center; margin-bottom: 0.55rem; }
+.fstep h5 { font-size: 0.98rem; font-weight: 600; line-height: 1.25; }
+.fstep p { font-size: 0.85rem; line-height: 1.5; margin-top: 0.3rem; text-wrap: balance; }
+
+.loop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.rulegrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; }
+.rule { background: var(--white); border-radius: 24px; padding: 1.7rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 0.8rem; }
+.rule h3 { font-size: var(--headline); font-weight: 600; line-height: 1.12; letter-spacing: -0.018em; }
+.rule p { font-size: var(--body); line-height: 1.5; }
+
+.prio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.pcol { border-radius: 24px; padding: 1.6rem 1.4rem; }
+.pcol.p0 { background: var(--ink-deep); color: var(--white); }
+.pcol.p1 { background: var(--white); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.pcol.p2 { background: var(--paper); }
+.pcol h3 { font-size: clamp(1.3rem, 1.9vw, 1.7rem); font-weight: 600; letter-spacing: -0.018em; margin-bottom: 1rem; white-space: nowrap; }
+.pcol ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.pcol li { font-size: var(--body); line-height: 1.4; padding-left: 1.45rem; position: relative; }
+.pcol li::before { content: ""; position: absolute; left: 0; top: 0.48em; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: currentColor; }
+
+@media (max-width: 1100px) { .loop { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 980px) {
+  .pair { grid-template-columns: 1fr; justify-items: center; }
+  .pairarrow { transform: rotate(90deg); padding: 0.4rem 0; }
+}
+@media (max-width: 900px) { .sys, .rulegrid, .prio { grid-template-columns: 1fr; } .pcol h3 { white-space: normal; } .navbar { display: none; } }
+@media (max-width: 600px) { .loop { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<nav class="navbar"><div class="navpill">
+  <a class="nav-link" href="#system">System</a>
+  <a class="nav-link" href="#map">Map</a>
+  <a class="nav-link" href="#v-capture">Views</a>
+  <a class="nav-link" href="#magic">Magic</a>
+  <a class="nav-link" href="#order">Build order</a>
+</div></nav>
+
+<!-- ================= HERO ================= -->
+<header class="dochero">
+  <h1 class="t-display reveal in">Memmory Design System</h1>
+  <p class="t-body reveal in">Per view: how it looks today and how it should look. Exact values in design-foundation.md.</p>
+  <div class="hero-meta reveal in">
+    <span class="chip">8 screenshots annotated</span>
+    <span class="chip">10 target mockups</span>
+    <span class="chip">July 2026 · v2.3</span>
+  </div>
+</header>
+
+<!-- ================= THE SYSTEM ================= -->
+<section class="sec" id="system">
+  <h2 class="t-headline reveal">The system</h2>
+  <div class="sys">
+    <div class="sys-card reveal">
+      <h3>Typeface and sizes</h3>
+      <div class="tscale">
+        <div style="font-size:2.1rem; font-weight:600;">Display 36</div>
+        <div style="font-size:1.45rem; font-weight:600;">Headline 22</div>
+        <div style="font-size:1.05rem; font-weight:400;">Body 16</div>
+        <div style="font-size:0.84rem; font-weight:500;">Label 13</div>
+      </div>
+      <p>Geist, weights 400/500/600. These four sizes only. Nothing below 13. A crowded screen loses elements, not font size.</p>
+    </div>
+    <div class="sys-card reveal d1">
+      <h3>Colors</h3>
+      <div style="display:flex; flex-direction:column; gap:0.55rem;">
+        <div class="swrow"><span>App background</span><i style="background:linear-gradient(90deg,#C8D4EC,#F5D6BC,#E0C5DC)"></i></div>
+        <div class="swrow"><span>Opened memory</span><i style="background:linear-gradient(90deg,#7A85A6,#8D7A93,#6E5F80)"></i></div>
+        <div class="swrow"><span>Cortex</span><i style="background:linear-gradient(90deg,#58607A,#665869,#4F455C)"></i></div>
+        <div class="swrow"><span>Profile</span><i style="background:#FAF7F2; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.07);"></i></div>
+        <div class="swrow"><span>Data heat scale</span><i style="background:linear-gradient(90deg,#C8D4EC,#F5D6BC,#DC8C5E)"></i></div>
+      </div>
+      <p>No accent color. The heat scale colors data only: timeline, gauge, person dots. The purple theme is replaced by these.</p>
+    </div>
+    <div class="sys-card reveal">
+      <h3>Navigation</h3>
+      <div class="navmini"><span>Vault</span><span class="on">Capture</span><span>Cards</span></div>
+      <p>Three horizontal panes. Swipe, or tap the dots at the top. The app opens in Capture. Profile opens from the avatar. No dropdown menus.</p>
+      <p>View names: Capture (was Memorialize), Vault, Cortex, Cards, Profile.</p>
+    </div>
+    <div class="sys-card reveal d1">
+      <h3>Thread history</h3>
+      <p>Everything sent stays in the thread. A saved memory becomes a card inside it. Older months load from cache as you scroll up, under sticky month headers.</p>
+      <p>Today the chat empties after a save. That changes in pass one.</p>
+    </div>
+    <div class="sys-card reveal">
+      <h3>Photos and icons</h3>
+      <p>Photos straight, full width, rounded corners. Never tilted, never half screen. No floating background particles.</p>
+      <p>Icons are 1.5px line drawings on a 24px grid, ink colored. No emoji in the interface.</p>
+    </div>
+    <div class="sys-card reveal d1">
+      <h3>Voice notes</h3>
+      <p>Holding the mic records a voice note. It lands in the thread as a playable message: waveform, duration, play button.</p>
+      <p>Transcription runs in the background and makes the note searchable. It never replaces the audio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APP MAP ================= -->
+<section class="viewsec" id="map">
+  <div class="viewhead reveal"><h2>The app map</h2></div>
+  <p class="viewintro reveal">Left holds what you kept. Center is capture. Right holds what Memmory made.</p>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shot">
+        <img src="screenshots/now-menu.jpg" alt="Current dropdown navigation">
+        <span class="mk" style="left:78%; top:20%;">1</span>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it works</div>
+      <div class="mock">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i class="off"></i><i></i><i class="off"></i></div></div>
+        <div class="mbody" style="justify-content:center; gap:0.7rem;">
+          <div class="mmsg ai" style="align-self:center; text-align:center; max-width:92%;">Vault ← swipe → Cards<br>Capture is home.</div>
+          <div class="mquick" style="align-self:center;"><span>● Vault</span><span>● Capture</span><span>● Cards</span></div>
+          <div class="mmsg ai" style="align-self:center; text-align:center; max-width:92%;">Avatar opens Profile.<br>Dots show where you are.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n">1</span>The dropdown is removed. Swiping and the dots replace it.</li>
+  </ul>
+</section>
+
+<!-- ---------- CAPTURE ---------- -->
+<section class="viewsec" id="v-capture">
+  <div class="viewhead reveal"><h2><span class="old">Memorialize</span><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg>Capture</h2></div>
+  <p class="viewintro reveal">One thread. Everything is captured inside it and stays there.</p>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shot">
+        <img src="screenshots/now-chat.jpg" alt="Current capture view">
+        <span class="mk" style="left:50%; top:52%;">1</span>
+        <span class="mk" style="left:83%; top:9%;">2</span>
+        <span class="mk" style="left:22%; top:13.5%;">3</span>
+        <span class="mk" style="left:44%; top:27%;">4</span>
+        <span class="mk" style="left:16%; top:91%;">5</span>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it should look</div>
+      <div class="mock">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i class="off"></i><i></i><i class="off"></i></div></div>
+        <div class="mbody">
+          <div class="mdivider">Earlier this month</div>
+          <div class="mcardmsg"><img src="assets/th-couple.jpg" alt=""><div><h6>Film night</h6><span>Dec 18 · Lake Bled</span></div></div>
+          <div class="mdivider">Today</div>
+          <div class="mmsg ai">Keep a moment, Simon.</div>
+          <div class="mphoto"><img src="assets/boat.jpg" alt="Photo message"></div>
+          <div class="mvoice"><div class="mplay"></div><div class="mwave"><i style="--h:30"></i><i style="--h:70"></i><i style="--h:45"></i><i style="--h:90"></i><i style="--h:55"></i><i style="--h:75"></i><i style="--h:35"></i><i style="--h:60"></i></div><span class="mvdur">0:31</span></div>
+          <div class="mcluster"><span class="mcl-txt">Keeping this together</span><div class="mcl-line"></div><span class="msave">Save now</span></div>
+          <div class="minput">
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.8c0-1 .8-1.8 1.8-1.8h1.9l1.3-1.7c.2-.25.5-.4.8-.4h5.4c.3 0 .6.15.8.4L16.8 7h1.9c1 0 1.8.8 1.8 1.8v7.4c0 1-.8 1.8-1.8 1.8H5.3c-1 0-1.8-.8-1.8-1.8Z"/><circle cx="12" cy="12.4" r="3.2"/></svg></span>
+            <span class="ph">What do you want to keep?</span>
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9.2" y="3" width="5.6" height="11" rx="2.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n">1</span>Dawn gradient replaces the purple background.</li>
+    <li><span class="n">2</span>Pane dots replace the dropdown. The avatar keeps clear air from the content below.</li>
+    <li><span class="n">3</span>The permanent header is removed. The greeting is the keeper's first message of the day.</li>
+    <li><span class="n">4</span>Keeper messages are one short line.</li>
+    <li><span class="n">5</span>Line icons replace the emoji. Camera: tap for photo, hold for video. Mic: hold for a voice note.</li>
+    <li><span class="n keep">✓</span>Saved memories become cards in the thread. Month dividers mark time. History loads on scroll.</li>
+  </ul>
+  <div class="flow reveal">
+    <div class="fstep"><h5>Send anything</h5><p>Photo, voice note, video, text.</p></div>
+    <div class="fstep"><h5>Memmory holds it</h5><p>The bar fills over 30 seconds of quiet. Save now closes early.</p></div>
+    <div class="fstep"><h5>It becomes a memory</h5><p>A card lands in the thread and stays. Tap to open.</p></div>
+    <div class="fstep"><h5>Scroll back</h5><p>Old months load in from cache.</p></div>
+  </div>
+</section>
+
+<!-- ---------- MOMENT + PROACTIVE ---------- -->
+<section class="viewsec" id="v-keeper">
+  <div class="viewhead reveal"><h2>Moment mode and the proactive keeper</h2></div>
+  <div class="duo reveal">
+    <div>
+      <div class="mock">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i class="off"></i><i></i><i class="off"></i></div></div>
+        <div class="mbody">
+          <div class="mmoment"><span>Moment · Hike in the dunes · 14 kept</span><span class="end">End</span></div>
+          <div class="mphoto"><img src="assets/hike.jpg" alt="Hiking photo"></div>
+          <div class="mphoto"><img src="assets/warm.jpg" alt="Evening photo"></div>
+          <div class="mmsg">The light up here right now.</div>
+          <div class="minput">
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.8c0-1 .8-1.8 1.8-1.8h1.9l1.3-1.7c.2-.25.5-.4.8-.4h5.4c.3 0 .6.15.8.4L16.8 7h1.9c1 0 1.8.8 1.8 1.8v7.4c0 1-.8 1.8-1.8 1.8H5.3c-1 0-1.8-.8-1.8-1.8Z"/><circle cx="12" cy="12.4" r="3.2"/></svg></span>
+            <span class="ph">What do you want to keep?</span>
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9.2" y="3" width="5.6" height="11" rx="2.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg></span>
+          </div>
+        </div>
+      </div>
+      <p class="mockcap">Moment mode: everything sent while it runs becomes one memory. Ends by hand or after two quiet hours.</p>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i class="off"></i><i></i><i class="off"></i></div></div>
+        <div class="mbody">
+          <div class="mdivider">Tuesday morning</div>
+          <div class="nudge"><p>You were here last week. What brings you back today?</p><div class="mquick"><span>Keep this</span><span>Later</span></div></div>
+          <div class="mdivider">Tuesday evening</div>
+          <div class="nudge"><p>What is something you have been thinking about lately?</p><div class="mquick"><span>Answer</span><span>Later</span></div></div>
+          <div class="minput">
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.8c0-1 .8-1.8 1.8-1.8h1.9l1.3-1.7c.2-.25.5-.4.8-.4h5.4c.3 0 .6.15.8.4L16.8 7h1.9c1 0 1.8.8 1.8 1.8v7.4c0 1-.8 1.8-1.8 1.8H5.3c-1 0-1.8-.8-1.8-1.8Z"/><circle cx="12" cy="12.4" r="3.2"/></svg></span>
+            <span class="ph">What do you want to keep?</span>
+            <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9.2" y="3" width="5.6" height="11" rx="2.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg></span>
+          </div>
+        </div>
+      </div>
+      <p class="mockcap">The keeper asks first. A question card with quick replies, swipe to dismiss.</p>
+    </div>
+  </div>
+  <div class="qbank reveal">
+    <span>How do you feel today?</span>
+    <span>What are you doing right now?</span>
+    <span>Want to take a picture?</span>
+    <span>Want to remember this moment forever?</span>
+    <span>What is something you have been thinking about lately?</span>
+    <span>What did you do today?</span>
+    <span>How was the workout?</span>
+    <span>You were here last week. What brings you back?</span>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n keep">✓</span>Triggers: back at a known place, staying long somewhere new, a quiet evening, photos without voice.</li>
+    <li><span class="n keep">✓</span>Caps: max two questions a day in the thread, max one push, quiet hours 22 to 08. Location stays on the device.</li>
+  </ul>
+</section>
+
+<!-- ---------- VAULT ---------- -->
+<section class="viewsec" id="v-vault">
+  <div class="viewhead reveal"><h2>Vault</h2></div>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shot">
+        <img src="screenshots/now-vault.jpg" alt="Current vault list">
+        <span class="mk keep" style="left:25%; top:22.5%;">1</span>
+        <span class="mk" style="left:60%; top:43%;">2</span>
+        <span class="mk" style="left:87%; top:31%;">3</span>
+        <span class="mk" style="left:35%; top:31%;">4</span>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it should look</div>
+      <div class="mock">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i></i><i class="off"></i><i class="off"></i></div></div>
+        <div class="mbody">
+          <div class="mseg"><span class="on">List</span><span>Cortex</span></div>
+          <div class="msearch">Find a memory</div>
+          <div class="mcard"><div class="mth"><img src="assets/th-beers.jpg" alt=""></div><div><h5>Feast at a night market</h5><div class="meta">Dec 27 · Luang Prabang</div></div></div>
+          <div class="mcard"><div class="mth"><img src="assets/th-couple.jpg" alt=""></div><div><h5>Film night</h5><div class="meta">Dec 18 · Lake Bled</div></div></div>
+          <div class="mcard"><div class="mth"><img src="assets/th-nyc.jpg" alt=""></div><div><h5>New beginning</h5><div class="meta">Oct 23 · New York</div></div></div>
+          <div class="mcard"><div class="mth"><img src="assets/th-puddle.jpg" alt=""></div><div><h5>Rain walk</h5><div class="meta">Oct 7 · Amsterdam</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n keep">1</span>Search, sort and favorites stay at the top.</li>
+    <li><span class="n">2</span>A row shows four things: photo, title, date · place, heart if favorited. The rest lives inside the memory.</li>
+    <li><span class="n">3</span>Trash leaves the list. Delete moves to long press, with a confirm.</li>
+    <li><span class="n">4</span>Titles 16 weight 600, metadata 13. Around four rows per screen.</li>
+  </ul>
+</section>
+
+<!-- ---------- CORTEX ---------- -->
+<section class="viewsec" id="v-cortex">
+  <div class="viewhead reveal"><h2>Cortex</h2></div>
+  <p class="viewintro reveal">Dark glass nodes, lines with a stated logic, photos up close, search at the bottom.</p>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shot">
+        <img src="screenshots/now-cortex-near.jpg" alt="Cortex zoomed in">
+        <span class="mk" style="left:52%; top:30%;">1</span>
+        <span class="mk" style="left:50%; top:14%;">2</span>
+        <span class="mk keep" style="left:25%; top:70%;">3</span>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it should look</div>
+      <div class="mock deep" style="width:300px;">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i></i><i class="off"></i><i class="off"></i></div></div>
+        <div class="mbody">
+          <div class="mheat"></div>
+          <div class="myears"><span>2016</span><span>2019</span><span>2022</span><span>2026</span></div>
+          <div class="mcortex">
+            <svg class="web" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke-width="1">
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.5)" d="M23 17 L58 27 L77 57 L54 80"/>
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.34)" d="M58 27 L31 53 L54 80"/>
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.24)" d="M31 53 L15 77"/>
+            </svg>
+            <span class="node c1" style="left:23%; top:17%; width:34px; height:34px;"></span>
+            <span class="node c2" style="left:58%; top:27%; width:48px; height:48px;"></span>
+            <span class="nlabel" style="left:58%; top:44%;">Lake Bled week</span>
+            <span class="node c3" style="left:31%; top:53%; width:40px; height:40px;"></span>
+            <span class="nlabel" style="left:31%; top:68%;">Coffee sessions</span>
+            <span class="node c1" style="left:77%; top:57%; width:26px; height:26px;"></span>
+            <span class="node c2" style="left:54%; top:80%; width:36px; height:36px;"></span>
+            <span class="node c4" style="left:15%; top:77%; width:20px; height:20px;"></span>
+            <span class="node c3" style="left:86%; top:14%; width:16px; height:16px;"></span>
+          </div>
+          <div class="msearch ondark">Search your memories</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="trio3 reveal">
+    <div>
+      <div class="mock deep">
+        <div class="mtop"><div class="mav">S</div></div>
+        <div class="mbody">
+          <div class="mheat"></div>
+          <div class="mcortex">
+            <span class="node c2" style="left:30%; top:22%; width:58px; height:58px;"></span>
+            <span class="nlabel big" style="left:30%; top:38%;">Travel</span>
+            <span class="node c1" style="left:70%; top:44%; width:66px; height:66px;"></span>
+            <span class="nlabel big" style="left:70%; top:62%;">People</span>
+            <span class="node c3" style="left:32%; top:70%; width:48px; height:48px;"></span>
+            <span class="nlabel big" style="left:32%; top:84%;">Work</span>
+          </div>
+          <div class="mfilters">People · Places · Feelings · Years</div>
+        </div>
+      </div>
+      <p class="mockcap">Zoomed out: constellations with theme names. No lines.</p>
+    </div>
+    <div>
+      <div class="mock deep">
+        <div class="mtop"><div class="mav">S</div></div>
+        <div class="mbody">
+          <div class="mheat"></div>
+          <div class="mcortex">
+            <svg class="web" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke-width="1">
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.5)" d="M19 18 L54 12 L81 33 L65 67"/>
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.34)" d="M54 12 L35 45 L65 67 L46 88"/>
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.24)" d="M35 45 L15 73"/>
+            </svg>
+            <span class="node c1" style="left:19%; top:18%; width:30px; height:30px;"></span>
+            <span class="node c2" style="left:54%; top:12%; width:42px; height:42px;"></span>
+            <span class="node c1" style="left:81%; top:33%; width:34px; height:34px;"></span>
+            <span class="nlabel" style="left:54%; top:29%;">Lake Bled week</span>
+            <span class="node c3" style="left:35%; top:45%; width:46px; height:46px;"></span>
+            <span class="nlabel" style="left:35%; top:60%;">Coffee sessions</span>
+            <span class="node c2" style="left:65%; top:67%; width:38px; height:38px;"></span>
+            <span class="node c4" style="left:15%; top:73%; width:22px; height:22px;"></span>
+            <span class="node c1" style="left:46%; top:88%; width:30px; height:30px;"></span>
+          </div>
+        </div>
+      </div>
+      <p class="mockcap">Mid zoom: clusters, the lines appear, biggest nodes labeled.</p>
+    </div>
+    <div>
+      <div class="mock deep">
+        <div class="mtop"><div class="mav">S</div></div>
+        <div class="mbody">
+          <div class="mheat"></div>
+          <div class="mcortex">
+            <svg class="web" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke-width="1">
+              <path vector-effect="non-scaling-stroke" stroke="rgba(255,255,255,0.45)" d="M50 20 L30 57 L73 76 Z"/>
+            </svg>
+            <span class="nodeimg" style="left:50%; top:20%; width:74px; height:74px;"><img src="assets/th-couple.jpg" alt=""></span>
+            <span class="nlabel" style="left:50%; top:34%;">Film night</span>
+            <span class="nodeimg" style="left:30%; top:57%; width:62px; height:62px;"><img src="assets/th-beers.jpg" alt=""></span>
+            <span class="nlabel" style="left:30%; top:69%;">Night market</span>
+            <span class="nodeimg" style="left:73%; top:76%; width:56px; height:56px;"><img src="assets/th-puddle.jpg" alt=""></span>
+            <span class="nlabel" style="left:73%; top:87%;">Rain walk</span>
+          </div>
+        </div>
+      </div>
+      <p class="mockcap">Close: memories show their photos. Tap one to open it.</p>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n">1</span>Nodes are dark glass spheres: muted color, one light point, a thin ring. Technical, not playful. Up close they carry the photo.</li>
+    <li><span class="n">2</span>The timeline becomes one continuous gradient pill. Drag it to travel in time.</li>
+    <li><span class="n keep">3</span>A line has a reason: two memories connect when they share a person, a place or a theme. Line strength follows the number of shared links. Max three lines per node, and a line always ends exactly at a node.</li>
+    <li><span class="n keep">✓</span>Lines are solid and appear from mid zoom in. Max seven labels, never overlapping, never cut.</li>
+    <li><span class="n keep">✓</span>Search sits at the bottom of the view and finds any memory in the map.</li>
+  </ul>
+</section>
+
+<!-- ---------- MEMORY DETAIL ---------- -->
+<section class="viewsec" id="v-memory">
+  <div class="viewhead reveal"><h2>A memory, opened</h2></div>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shotcol">
+        <div class="shot sm">
+          <img src="screenshots/now-memory-1.jpg" alt="Memory detail, top">
+          <span class="mk" style="left:50%; top:44%;">1</span>
+          <span class="mk" style="left:84%; top:36%;">2</span>
+          <span class="mk keep" style="left:76%; top:59%;">3</span>
+        </div>
+        <div class="shot sm">
+          <img src="screenshots/now-memory-2.jpg" alt="Memory detail, scrolled">
+          <span class="mk" style="left:60%; top:47%;">4</span>
+          <span class="mk" style="left:20%; top:70%;">5</span>
+          <span class="mk keep" style="left:50%; top:88%;">6</span>
+        </div>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it should look</div>
+      <div class="mock dusk">
+        <div class="mtop"><div class="mav">S</div></div>
+        <div class="mbody" style="gap:0;">
+          <div class="dhero"><img src="assets/hero-memory.jpg" alt="Memory hero"></div>
+          <div class="dgrid">
+            <div class="dthumb"><img src="assets/th-couple.jpg" alt=""><div class="vid"><i></i></div><span class="dur">0:12</span></div>
+            <div class="dthumb"><img src="assets/th-beers.jpg" alt=""></div>
+          </div>
+          <div class="dtitle">Last night in Vernazza</div>
+          <div class="drow" style="margin-top:0.45rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.1-6-9.6a6 6 0 1 1 12 0C18 15.9 12 21 12 21Z"/><circle cx="12" cy="11" r="2.3"/></svg>
+            <span>Vernazza, Italy · June 2026</span><span class="lnk">Maps</span>
+          </div>
+          <div class="drow"><div class="mplay"></div><div class="mwave"><i style="--h:40"></i><i style="--h:80"></i><i style="--h:55"></i><i style="--h:95"></i><i style="--h:60"></i><i style="--h:30"></i></div><span class="mvdur" style="color:#fff">0:42</span>
+            <svg style="margin-left:auto" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#1DB954"/><path d="M6.8 9.6c3.4-1 7.3-.6 10.2 1.2" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M7.3 12.4c2.9-.8 6-.4 8.5 1.1" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><path d="M7.8 15.1c2.3-.6 4.7-.3 6.8.9" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>
+            <span>Fields of Gold</span>
+          </div>
+          <div class="dsec">Feelings</div>
+          <div class="dchips"><span>Calm</span><span>Grateful</span></div>
+          <div class="dsec">People</div>
+          <div class="dchips"><span>Isabel</span></div>
+          <div class="dsec">About</div>
+          <div class="dwhy">Last evening of the trip. Isabel found the pasta place by the harbor. We stayed until the light was gone.</div>
+          <div class="dactions"><span class="prim">Slideshow</span><span class="quietbtn"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add</span><span class="quietbtn"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg>Tag people</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n">1</span>The tilted photo becomes a media grid: hero on top, photos and videos beneath. A memory can mix both.</li>
+    <li><span class="n">2</span>Controls leave the photo. Close sits in the chrome.</li>
+    <li><span class="n keep">3</span>The song row stays: play, title, Spotify logo, open link.</li>
+    <li><span class="n">4</span>The map never shows through. An opened memory owns the screen.</li>
+    <li><span class="n">5</span>Content is categorized under clear labels: Feelings, People, About. Location is a tappable row that opens Maps.</li>
+    <li><span class="n keep">6</span>About carries the story and the details worth knowing: what was said, what you ate, why it mattered.</li>
+    <li><span class="n keep">✓</span>Actions: Slideshow, Add, Tag people.</li>
+  </ul>
+</section>
+
+<!-- ---------- PROFILE ---------- -->
+<section class="viewsec" id="v-profile">
+  <div class="viewhead reveal"><h2>Profile</h2></div>
+  <div class="pair reveal">
+    <div class="pairitem">
+      <div class="t-label">Now</div>
+      <div class="shot">
+        <img src="screenshots/now-people.jpg" alt="Person switcher dropdown">
+        <span class="mk keep" style="left:22%; top:22%;">1</span>
+      </div>
+    </div>
+    <div class="pairarrow"><svg viewBox="0 0 54 24" fill="none" stroke="#1F2937" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h46"/><path d="M40 4l8 8-8 8"/></svg></div>
+    <div class="pairitem">
+      <div class="t-label">This is how it should look</div>
+      <div class="mock creambg">
+        <div class="mtop"><div class="mav" style="background:var(--paper)">✕</div></div>
+        <div class="mbody" style="gap:0; margin-top:1.7rem;">
+          <div class="pport"><img src="assets/portrait.jpg" alt="Profile portrait"></div>
+          <div class="pname">Simon Gullström</div>
+          <div class="pborn">Born July 1992 · Amsterdam</div>
+          <div class="pcount"><div><strong>247</strong><span>memories</span></div><div><strong>12</strong><span>memory cards</span></div></div>
+          <div class="plabel">Top people</div>
+          <div class="prow"><span class="pdot" style="background:#ECB890"></span><span>Isabel</span><strong>84</strong></div>
+          <div class="prow"><span class="pdot" style="background:#C8D4EC"></span><span>Siv</span><strong>61</strong></div>
+          <div class="plink">View all people</div>
+          <div class="prow"><svg viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M18.5 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9Z"/></svg><span>AI Insights</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="prow"><span>Viewing as</span><strong>Simon G ▾</strong></div>
+          <div class="gauge">
+            <svg viewBox="0 0 140 78">
+              <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C8D4EC"/><stop offset="0.55" stop-color="#F5D6BC"/><stop offset="1" stop-color="#DC8C5E"/></linearGradient></defs>
+              <path d="M14 70 A56 56 0 0 1 126 70" fill="none" stroke="#EFE9E0" stroke-width="10" stroke-linecap="round"/>
+              <path d="M14 70 A56 56 0 0 1 108 30" fill="none" stroke="url(#gg)" stroke-width="10" stroke-linecap="round"/>
+              <circle cx="70" cy="70" r="4" fill="#1F2937"/>
+              <path d="M70 70 L94 44" stroke="#1F2937" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <div class="gval">Warm week</div>
+            <div class="gsub">Kept something 5 days in a row</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="quick reveal">
+    <li><span class="n keep">1</span>The profile switcher is temporary. It stays during the test phase, moves in here as the "Viewing as" row, and every profile gets this same view. Removed in production.</li>
+    <li><span class="n keep">✓</span>Portrait, name, born, city. Memories and memory cards as their own row.</li>
+    <li><span class="n keep">✓</span>Top people with their colors. "View all people" opens the full catalogue.</li>
+    <li><span class="n keep">✓</span>AI Insights opens the future insights view: patterns from travels, people and thoughts, printable and copyable.</li>
+    <li><span class="n keep">✓</span>The gauge: needle floats free of the arc. Value word plus the streak line.</li>
+  </ul>
+</section>
+
+<!-- ---------- CARDS ---------- -->
+<section class="viewsec" id="v-cards">
+  <div class="viewhead reveal"><h2>Cards</h2></div>
+  <p class="viewintro reveal">Collections woven from many memories. Later, Gifts: photo books and prints.</p>
+  <div class="duo reveal">
+    <div>
+      <div class="mock dusk">
+        <div class="mtop"><div class="mav">S</div><div class="mdots"><i class="off"></i><i class="off"></i><i></i></div></div>
+        <div class="mbody" style="gap:0;">
+          <div class="ccover"><img src="assets/card-cover.jpg" alt="Memory card cover"><div class="ct"><h5>Six days in Italy</h5><div>June 2026 · with Isabel</div></div></div>
+          <div class="cweave">Weaving this together.</div>
+          <div class="cweave" style="margin-top:auto;">Photo books and prints, later.</div>
+        </div>
+      </div>
+      <p class="mockcap">Covers on the deep gradient. One generated card carries the investor demo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAGIC ================= -->
+<section class="sec" id="magic">
+  <h2 class="t-headline reveal">Why people come back</h2>
+  <div class="loop">
+    <div class="fstep reveal"><h5>Cue</h5><p>One daily resurfacing, plus the keeper's questions when place and time are right.</p></div>
+    <div class="fstep reveal d1"><h5>Action</h5><p>Capture in two taps.</p></div>
+    <div class="fstep reveal d2"><h5>Reward</h5><p>What the keeper made of it: a memory, a connection, a resurfaced gem.</p></div>
+    <div class="fstep reveal d3"><h5>Investment</h5><p>Every message makes the vault more valuable.</p></div>
+  </div>
+  <div class="rulegrid" style="margin-top: clamp(2rem, 4vh, 3rem);">
+    <div class="rule reveal">
+      <h3>On this day</h3>
+      <p>One small card at the top of Capture each morning: "A year ago today." Gone by noon.</p>
+    </div>
+    <div class="rule reveal d1">
+      <h3>Golden moment coaching</h3>
+      <p>Photos without voice: the keeper asks once, "Want to say what this was?" Voice plus photo makes cards and slideshows work.</p>
+    </div>
+    <div class="rule reveal">
+      <h3>Capture from anywhere</h3>
+      <p>Lock screen widget and iOS share sheet. Phase two.</p>
+    </div>
+    <div class="rule reveal d1">
+      <h3>Attachment, not addiction</h3>
+      <p>No streak guilt, no red badges. Questions, never demands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BUILD ORDER ================= -->
+<section class="sec" id="order" style="padding-bottom: clamp(6rem, 12vh, 9rem);">
+  <h2 class="t-headline reveal">Build order</h2>
+  <div class="prio">
+    <div class="pcol p0 reveal">
+      <h3>1 · The reset</h3>
+      <ul>
+        <li>Dawn palette replaces purple</li>
+        <li>Type scale 36/22/16/13</li>
+        <li>Three panes + dots, dropdown removed</li>
+        <li>Line icons replace emoji</li>
+        <li>Photos straight, full width</li>
+        <li>Background dust removed</li>
+        <li>Names: Capture, Vault, Cortex, Cards</li>
+        <li>Voice notes playable, transcript silent</li>
+        <li>The thread keeps its history</li>
+      </ul>
+    </div>
+    <div class="pcol p1 reveal d1">
+      <h3>2 · The mechanics</h3>
+      <ul>
+        <li>Forming bar + Save now, card stays in thread</li>
+        <li>Infinite scroll with cached months</li>
+        <li>Memory detail: media grid, Maps row, Spotify row, labeled sections, Add, Tag people</li>
+        <li>Long press menus</li>
+        <li>Vault rows to four elements</li>
+        <li>Cortex: 3D nodes, photo nodes up close, search, gradient heat pill, three zoom levels</li>
+      </ul>
+    </div>
+    <div class="pcol p2 reveal d2">
+      <h3>3 · The magic</h3>
+      <ul>
+        <li>Moment mode + auto suggest</li>
+        <li>The proactive keeper</li>
+        <li>Slideshow</li>
+        <li>On this day</li>
+        <li>Profile: counts, top people, gauge, AI Insights</li>
+        <li>Cards pane + first woven card</li>
+        <li>Widget + share sheet capture</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+const io = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+if (location.hash.startsWith('#qa')) { document.querySelectorAll('.reveal').forEach(el => el.classList.add('in')); }
+const qm = location.hash.match(/^#qa:(.+)$/);
+if (qm) { document.querySelectorAll('body > *').forEach(el => { if (el.id !== qm[1] && el.tagName !== 'SCRIPT') el.style.display = 'none'; }); }
+const links = document.querySelectorAll('.nav-link');
+const secs = [...links].map(l => document.querySelector(l.getAttribute('href')));
+addEventListener('scroll', () => {
+  let i = 0;
+  secs.forEach((s, idx) => { if (s && s.getBoundingClientRect().top < innerHeight * 0.4) i = idx; });
+  links.forEach((l, idx) => l.classList.toggle('active', idx === i));
+}, { passive: true });
+</script>
+</body>
+</html>

@@ -1,223 +1,207 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { CLASS_COLORS } from '../lib/palette.js'
+import { useMemo, useRef, useState } from 'react'
+import { whenToTs, monthKey } from '../lib/thread.js'
+import { EMPTY_VAULT, SEARCH_PLACEHOLDER, SEARCH_NO_RESULT, DELETE_CONFIRM } from '../lib/copy.js'
+import { Search, Heart, HeartFilled, Plus, Share, Trash } from './Icons.jsx'
+import '../styles/vault.css'
 
-// DD-MM-YYYY HH:mm → sortable string (no date library, per memory-schema skill).
-const sortKey = w => w.slice(6, 10) + w.slice(3, 5) + w.slice(0, 2) + w.slice(11)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-const prettyWhen = w => `${MONTHS[Number(w.slice(3, 5)) - 1]} ${Number(w.slice(0, 2))}, ${w.slice(6, 10)}`
+const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+  'August', 'September', 'October', 'November', 'December']
 
-const ORDERS = [
-  ['new', 'Newest first'],
-  ['old', 'Oldest first'],
-  ['class', 'Category'],
-  ['people', 'People'],
-  ['feeling', 'Feelings'],
-  ['music', 'Music'],
-  ['place', 'Places'],
-]
-
-// Which group(s) a memory belongs to per order. Multi-value orders (people,
-// feelings) list the memory under EVERY value it carries.
-const GROUP_KEYS = {
-  class: m => [m.class || 'No category'],
-  people: m => (m.who.length ? m.who.map(p => p.name) : ['No one tagged']),
-  feeling: m => (m.feeling.length ? m.feeling : ['No feeling']),
-  music: m => [m.music?.artist || m.music?.name || 'No music'],
-  place: m => [m.where || 'No place'],
+// "Dec 27 · Luang Prabang" — the one metadata line a row gets.
+const metaLine = m => {
+  const d = new Date(whenToTs(m.when))
+  const date = `${MONTHS[d.getMonth()]} ${d.getDate()}`
+  return m.where ? `${date} · ${m.where}` : date
 }
 
-// The Memory Vault: every memory as a calm, scannable list. Click a card to
-// open that memory in the Cortex; heart to favorite, trash to delete (two-tap).
-export default function Vault({ memories, pending = [], newId, onOpen, onFav, onDelete, onPhoto, onPlay, onAccept, onDecline }) {
-  const [q, setQ] = useState('')
+const thumbSrc = m => m.photos?.[0] || m.videos?.[0]?.poster || null
+
+const matches = (m, q) =>
+  [m.what, m.where, ...(m.who || []).map(p => p.name), ...(m.voice || []).map(v => v.transcript)]
+    .some(s => s && s.toLowerCase().includes(q))
+
+export default function Vault({ memories, pending, mode, setMode, openMemory, toggleFavorite,
+  deleteMemory, acceptShare, declineShare, cortexSlot }) {
+  const [query, setQuery] = useState('')
   const [favOnly, setFavOnly] = useState(false)
-  const [order, setOrder] = useState('new')
-  const [confirmId, setConfirmId] = useState(null) // trash tapped once on this card
-  const newRef = useRef(null)
+  const [newestFirst, setNewestFirst] = useState(true)
+  const [menu, setMenu] = useState(null) // { memory, confirm: bool }
+  const [monthsShown, setMonthsShown] = useState(3)
+  const [loadingMore, setLoadingMore] = useState(false)
 
-  // search + favorites filter, newest-first as the base ordering
-  const found = useMemo(() => {
-    const sorted = [...memories].sort((a, b) => sortKey(b.when).localeCompare(sortKey(a.when)))
-    const pool = favOnly ? sorted.filter(m => m.favorite) : sorted
-    if (!q.trim()) return pool
-    const needle = q.toLowerCase()
-    return pool.filter(m =>
-      [m.what, m.where, m.why, m.summary, m.class, ...m.feeling, ...m.who.map(p => p.name),
-        m.music?.name, m.music?.artist].filter(Boolean).join(' ').toLowerCase().includes(needle))
-  }, [memories, q, favOnly])
+  const sorted = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return memories
+      .filter(m => (!favOnly || m.favorite) && (!q || matches(m, q)))
+      .sort((a, b) => (whenToTs(b.when) - whenToTs(a.when)) * (newestFirst ? 1 : -1))
+  }, [memories, query, favOnly, newestFirst])
 
-  // → [[groupLabel|null, memories[]], ...]; time orders are one unlabelled group,
-  // attribute orders become alphabetical sections ("No …" fallbacks sink last).
+  // Month pages: browse view loads history a month at a time (shimmer while
+  // "fetching"); an active search or favorites filter shows everything at once.
+  const filtering = query.trim() !== '' || favOnly
   const groups = useMemo(() => {
-    if (order === 'new') return [[null, found]]
-    if (order === 'old') return [[null, [...found].reverse()]]
-    const keyOf = GROUP_KEYS[order]
-    const map = new Map()
-    for (const m of found) for (const k of keyOf(m)) {
-      if (!map.has(k)) map.set(k, [])
-      map.get(k).push(m)
+    const out = []
+    for (const m of sorted) {
+      const key = monthKey(whenToTs(m.when))
+      if (out[out.length - 1]?.key !== key) out.push({ key, items: [] })
+      out[out.length - 1].items.push(m)
     }
-    return [...map.entries()].sort((a, b) => {
-      const an = a[0].startsWith('No '), bn = b[0].startsWith('No ')
-      return an !== bn ? an - bn : a[0].localeCompare(b[0])
-    })
-  }, [found, order])
+    return out
+  }, [sorted])
+  const visible = filtering ? groups : groups.slice(0, monthsShown)
+  const hasMore = !filtering && groups.length > monthsShown
 
-  useEffect(() => {
-    if (newId && newRef.current) newRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [newId])
-
-  // "Delete?" reverts on its own — mouseleave is unreliable on touch screens.
-  useEffect(() => {
-    if (!confirmId) return
-    const t = setTimeout(() => setConfirmId(null), 3000)
-    return () => clearTimeout(t)
-  }, [confirmId])
-
-  const favCount = memories.filter(m => m.favorite).length
-
-  // A memory someone shared: same card, no favorite/delete/open — just accept or decline.
-  const pendingCard = m => {
-    const accent = CLASS_COLORS[m.class] || '#9DB4DE'
-    return (
-      <article key={m.id} className="vault-card pending">
-        {m.photos?.length
-          ? <img className="vault-photo" src={m.photos[0]} alt="" loading="lazy"
-              onClick={() => onPhoto(m.photos, 0)} />
-          : <div className="vault-photo placeholder" style={{ background: `linear-gradient(145deg, ${accent}55, ${accent}22)` }} />}
-        <div className="vault-body">
-          <div className="vault-title">
-            <span className="dot" style={{ background: accent }} />
-            <strong>{m.what}</strong>
-            <span className="vault-when">{prettyWhen(m.when)}</span>
-          </div>
-          <div className="vault-meta">{m.where}{m.feeling.length ? ` · ${m.feeling.join(', ')}` : ''}</div>
-          <p className="vault-summary">{m.summary}</p>
-          <div className="vault-chips">
-            {m.who.map(p => <span key={p.id} className="chip">{p.name}</span>)}
-            {m.music && (
-              <button className="chip music" title="Play preview" onClick={() => onPlay(m.music)}>
-                ▶ {m.music.name}
-              </button>
-            )}
-          </div>
-          <div className="pending-from">from {m._pending.from}</div>
-          <div className="pending-actions">
-            <button className="save-btn" onClick={() => onAccept(m.id)}>Accept</button>
-            <button className="ghost-btn" onClick={() => onDecline(m.id)}>Decline</button>
-          </div>
-        </div>
-      </article>
-    )
+  const onScroll = e => {
+    if (!hasMore || loadingMore) return
+    const el = e.currentTarget
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 200) {
+      setLoadingMore(true)
+      setTimeout(() => { setMonthsShown(n => n + 1); setLoadingMore(false) }, 400)
+    }
   }
 
-  const card = m => {
-    const accent = CLASS_COLORS[m.class] || '#9DB4DE'
-    return (
-      <article
-        ref={m.id === newId ? newRef : null}
-        className={'vault-card' + (m.id === newId ? ' fresh' : '')}
-        onClick={() => onOpen(m.id)}
-      >
-        {m.photos?.length
-          ? <img className="vault-photo" src={m.photos[0]} alt="" loading="lazy"
-              onClick={e => { e.stopPropagation(); onPhoto(m.photos, 0) }} />
-          : <div className="vault-photo placeholder" style={{ background: `linear-gradient(145deg, ${accent}55, ${accent}22)` }} />}
-        <div className="vault-body">
-          <div className="vault-title">
-            <span className="dot" style={{ background: accent }} />
-            <strong>{m.what}</strong>
-            <span className="vault-when">{prettyWhen(m.when)}</span>
-          </div>
-          <div className="vault-meta">{m.where}{m.feeling.length ? ` · ${m.feeling.join(', ')}` : ''}{m._from ? ` · shared by ${m._from}` : ''}</div>
-          <p className="vault-summary">{m.summary}</p>
-          <div className="vault-chips">
-            {m.who.map(p => <span key={p.id} className="chip">{p.name}</span>)}
-            {m.music && (
-              <button className="chip music" title="Play preview"
-                onClick={e => { e.stopPropagation(); onPlay(m.music) }}>
-                ▶ {m.music.name}
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="vault-side">
-          <button
-            className={'fav-btn' + (m.favorite ? ' on' : '')}
-            title={m.favorite ? 'Unfavorite' : 'Favorite'}
-            onClick={e => { e.stopPropagation(); onFav(m.id) }}
-          >♥</button>
-          <div className="vault-imp" title={`importance ${m.importance}/5`}>
-            {Array.from({ length: 5 }, (_, i) => (
-              <i key={i} style={{ opacity: i < m.importance ? 0.9 : 0.18, background: accent }} />
-            ))}
-          </div>
-          {confirmId === m.id ? (
-            <button className="del-btn confirm"
-              onClick={e => { e.stopPropagation(); setConfirmId(null); onDelete(m.id) }}
-            >Delete?</button>
-          ) : (
-            <button className="del-btn" title="Delete memory"
-              onClick={e => { e.stopPropagation(); setConfirmId(m.id) }}
-            >🗑</button>
-          )}
-        </div>
-      </article>
-    )
+  // Long press (500ms) or right-click opens the row menu; the click that
+  // follows a long press must not open the memory.
+  const pressRef = useRef({ timer: null, fired: false })
+  const startPress = m => e => {
+    if (e.button === 2) return
+    pressRef.current.fired = false
+    pressRef.current.timer = setTimeout(() => {
+      pressRef.current.fired = true
+      setMenu({ memory: m, confirm: false })
+    }, 500)
+  }
+  const cancelPress = () => clearTimeout(pressRef.current.timer)
+  const onRowClick = m => () => {
+    if (pressRef.current.fired) { pressRef.current.fired = false; return }
+    openMemory(m.id)
+  }
+
+  const closeMenu = () => setMenu(null)
+  const menuAction = fn => () => { fn(); closeMenu() }
+
+  const monthLabel = key => {
+    const [y, mo] = key.split('-')
+    return `${MONTHS_FULL[Number(mo) - 1]} ${y}`
   }
 
   return (
     <div className="vault">
-      <header className="vault-head">
-        <div className="eyebrow">Memory vault</div>
-        <h1>{memories.length} memories kept</h1>
-        <div className="vault-tools">
-          <input
-            className="vault-search"
-            placeholder="Find a memory — a person, a place, a feeling…"
-            value={q}
-            onChange={e => setQ(e.target.value)}
-          />
-          <select
-            className="order-select"
-            value={order}
-            onChange={e => setOrder(e.target.value)}
-            title="Order by"
-          >
-            {ORDERS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
-          </select>
-          <button
-            className={'fav-filter' + (favOnly ? ' on' : '')}
-            title="Show favorites"
-            onClick={() => setFavOnly(o => !o)}
-          >
-            ♥{favCount ? ` ${favCount}` : ''}
-          </button>
+      <div className="vault-top">
+        <div className="vault-seg">
+          {['list', 'cortex'].map(m => (
+            <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>
+              {m === 'list' ? 'List' : 'Cortex'}
+            </button>
+          ))}
         </div>
-      </header>
-      <div className="vault-list">
-        {pending.length > 0 && !q.trim() && !favOnly && (
-          <>
-            <div className="vault-group">
-              <span className="eyebrow">Shared with you</span>
-              <span className="vault-group-count">{pending.length}</span>
-            </div>
-            {pending.map(pendingCard)}
-          </>
+        {mode === 'list' && (
+          <div className="vault-tools">
+            <label className="vault-search">
+              <Search size={18} />
+              <input value={query} placeholder={SEARCH_PLACEHOLDER}
+                onChange={e => setQuery(e.target.value)} />
+            </label>
+            <button className={favOnly ? 'vault-fav on' : 'vault-fav'} aria-label="Favorites"
+              onClick={() => setFavOnly(v => !v)}>
+              {favOnly ? <HeartFilled size={18} /> : <Heart size={18} />}
+            </button>
+            <button className="vault-sort" onClick={() => setNewestFirst(v => !v)}>
+              {newestFirst ? 'Newest' : 'Oldest'}
+            </button>
+          </div>
         )}
-        {groups.map(([label, mems]) => (
-          <Fragment key={label ?? 'time'}>
-            {label && (
-              <div className="vault-group">
-                <span className="eyebrow">{label}</span>
-                <span className="vault-group-count">{mems.length}</span>
-              </div>
-            )}
-            {mems.map(m => <Fragment key={`${label ?? ''}|${m.id}`}>{card(m)}</Fragment>)}
-          </Fragment>
-        ))}
-        {!found.length && <div className="vault-empty">{favOnly ? 'No favorites yet — tap ♥ on a memory.' : 'Nothing matches — try another word.'}</div>}
       </div>
+
+      {mode === 'cortex' ? (
+        <div className="vault-cortex">{cortexSlot}</div>
+      ) : (
+        <div className="vault-list" onScroll={onScroll}>
+          {pending.map(m => (
+            <div key={m.id} className="vault-pending">
+              <div className="vault-pending-body">
+                <span className="type-body vault-title">{m.what}</span>
+                <span className="type-label vault-meta">From {m._pending.from}</span>
+              </div>
+              <button className="vault-pending-btn" onClick={() => acceptShare(m.id)}>Accept</button>
+              <button className="vault-pending-btn quiet" onClick={() => declineShare(m.id)}>Decline</button>
+            </div>
+          ))}
+
+          {memories.length === 0 && pending.length === 0 && (
+            <p className="type-body vault-empty">{EMPTY_VAULT}</p>
+          )}
+          {memories.length > 0 && sorted.length === 0 && (
+            <p className="type-body vault-empty">{SEARCH_NO_RESULT}</p>
+          )}
+
+          {visible.map(g => (
+            <div key={g.key}>
+              <div className="type-label vault-month">{monthLabel(g.key)}</div>
+              {g.items.map(m => (
+                <button key={m.id} className="vault-row" onClick={onRowClick(m)}
+                  onPointerDown={startPress(m)} onPointerUp={cancelPress}
+                  onPointerLeave={cancelPress} onPointerCancel={cancelPress}
+                  onContextMenu={e => { e.preventDefault(); setMenu({ memory: m, confirm: false }) }}>
+                  <span className="vault-thumb">
+                    {thumbSrc(m) && <img src={thumbSrc(m)} alt="" />}
+                  </span>
+                  <span className="vault-row-text">
+                    <span className="type-body vault-title">{m.what}</span>
+                    <span className="type-label vault-meta">{metaLine(m)}</span>
+                  </span>
+                  {m.favorite && <HeartFilled size={18} className="vault-heart" />}
+                </button>
+              ))}
+            </div>
+          ))}
+
+          {loadingMore && [0, 1, 2].map(i => (
+            <div key={i} className="vault-skel">
+              <span className="vault-thumb" />
+              <span className="vault-skel-lines"><span /><span /></span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {menu && (
+        <div className="vault-menu-veil" onClick={closeMenu}>
+          <div className="vault-menu" onClick={e => e.stopPropagation()}>
+            {menu.confirm ? (
+              <>
+                <p className="type-body vault-confirm-text">{DELETE_CONFIRM}</p>
+                <div className="vault-confirm-actions">
+                  <button className="vault-menu-item" onClick={closeMenu}>Cancel</button>
+                  <button className="vault-menu-item danger"
+                    onClick={menuAction(() => deleteMemory(menu.memory.id))}>
+                    Delete
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <button className="vault-menu-item"
+                  onClick={menuAction(() => toggleFavorite(menu.memory.id))}>
+                  {menu.memory.favorite ? <HeartFilled size={18} /> : <Heart size={18} />}
+                  {menu.memory.favorite ? 'Unfavorite' : 'Favorite'}
+                </button>
+                <button className="vault-menu-item" onClick={closeMenu}>
+                  <Plus size={18} />Add to a Card
+                </button>
+                <button className="vault-menu-item" onClick={closeMenu}>
+                  <Share size={18} />Share
+                </button>
+                <button className="vault-menu-item danger"
+                  onClick={() => setMenu({ ...menu, confirm: true })}>
+                  <Trash size={18} />Delete
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

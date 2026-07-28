@@ -32,6 +32,15 @@
     "photos": [
       "photos/m001.jpg",
       "photos/m001_2.jpg"
+    ],
+    "about": "A slow Easter afternoon in the backyard, everyone home for once. Easter lunch together.",
+    "voice": [
+      {
+        "src": "voice/m001-demo.webm",
+        "duration": 19,
+        "demo": true,
+        "transcript": "Everyone made it home for Easter this year. Mom did the lamb and Dad kept sneaking Emma dessert early. We sat in the backyard until the sun went down."
+      }
     ]
   },
   {
@@ -64,6 +73,15 @@
       "photos/m002_2.jpg",
       "photos/m002_3.jpg",
       "photos/m002_4.jpg"
+    ],
+    "about": "Nick's last cookout before the move to Chicago, the whole crew crammed onto one picnic blanket. Sending Nick off before his move to Chicago.",
+    "videos": [
+      {
+        "src": "videos/m002-demo.mp4",
+        "duration": 18,
+        "demo": true,
+        "poster": "photos/m002_4.jpg"
+      }
     ]
   },
   {
@@ -90,7 +108,8 @@
     "importance": 2,
     "photos": [
       "photos/m003.jpg"
-    ]
+    ],
+    "about": "A ridiculous game night that ended with Maya flipping the Monopoly board. Weekly game night."
   },
   {
     "id": "m004",
@@ -124,7 +143,8 @@
     "importance": 4,
     "photos": [
       "photos/m004.jpg"
-    ]
+    ],
+    "about": "A whole week unplugged at Grandma's cabin, cards on the porch every night. Annual family cabin week."
   },
   {
     "id": "m005",
@@ -156,6 +176,15 @@
       "photos/m005.jpg",
       "photos/m005_3.jpg",
       "photos/m005_4.jpg"
+    ],
+    "about": "Three days of hiking and lake swimming with the old college crew. Summer road trip with the old college crew.",
+    "videos": [
+      {
+        "src": "videos/m005-demo.mp4",
+        "duration": 24,
+        "demo": true,
+        "poster": "photos/m005_4.jpg"
+      }
     ]
   },
   {
@@ -187,6 +216,15 @@
     "photos": [
       "photos/m006.jpg",
       "photos/m006_2.jpg"
+    ],
+    "about": "Lisa's birthday dinner turned into a dance party that spilled into the kitchen.",
+    "voice": [
+      {
+        "src": "voice/m006-demo.webm",
+        "duration": 14,
+        "demo": true,
+        "transcript": "Lisa swore she did not want a fuss, and then she was the first one dancing. The kitchen turned into the dance floor around midnight."
+      }
     ]
   },
   {
@@ -221,7 +259,8 @@
     "importance": 5,
     "photos": [
       "photos/m007.jpg"
-    ]
+    ],
+    "about": "The team watched the launch numbers climb from the office rooftop at midnight. Shipping the big product launch."
   },
   {
     "id": "m008",
@@ -255,7 +294,8 @@
     "importance": 5,
     "photos": [
       "photos/m008.jpg"
-    ]
+    ],
+    "about": "Dad's coworkers packed the backyard to send him off after thirty years. Dad's retirement after thirty years."
   },
   {
     "id": "m009",
@@ -285,7 +325,8 @@
     "importance": 3,
     "photos": [
       "photos/m009.jpg"
-    ]
+    ],
+    "about": "A spontaneous long weekend in Portland, mostly spent in bookshops and rain. Spontaneous long weekend getaway."
   },
   {
     "id": "m010",
@@ -317,6 +358,15 @@
       "photos/m010.jpg",
       "photos/m010_3.jpg",
       "photos/m010_4.jpg"
+    ],
+    "about": "Two weeks in Tokyo that Emma still brings up at every dinner. Emma's first trip to Japan.",
+    "videos": [
+      {
+        "src": "videos/m010-demo.mp4",
+        "duration": 15,
+        "demo": true,
+        "poster": "photos/m010_4.jpg"
+      }
     ]
   },
   {
@@ -352,6 +402,23 @@
     "photos": [
       "photos/m011.jpg",
       "photos/m011_3.jpg"
+    ],
+    "about": "The whole family drove up for Grandpa Joe's 80th, cake on the dock at sunset. Celebrating Grandpa Joe turning 80.",
+    "videos": [
+      {
+        "src": "videos/m011-demo.mp4",
+        "duration": 21,
+        "demo": true,
+        "poster": "photos/m011_3.jpg"
+      }
+    ],
+    "voice": [
+      {
+        "src": "voice/m011-demo.webm",
+        "duration": 16,
+        "demo": true,
+        "transcript": "Grandpa Joe blew out all eighty candles on the dock. He said the lake looked the same as it did when he was a boy."
+      }
     ]
   },
   {
@@ -383,7 +450,8 @@
     "photos": [
       "photos/m012.jpg",
       "photos/m012_2.jpg"
-    ]
+    ],
+    "about": "Keys in hand, the first place that was truly mine. Moving into my first apartment."
   },
   {
     "id": "m013",
@@ -410,7 +478,8 @@
     "photos": [
       "photos/m013.jpg",
       "photos/m013_3.jpg"
-    ]
+    ],
+    "about": "A rare, careful hangout in the park during the strange spring of lockdown, six feet apart on picnic blankets. First careful hangout during lockdown."
   },
   {
     "id": "m014",
@@ -441,7 +510,8 @@
     "photos": [
       "photos/m014.jpg",
       "photos/m014_3.jpg"
-    ]
+    ],
+    "about": "Sunday dinners on the porch became the anchor of a strange year. Weekly quarantine dinners."
   },
   {
     "id": "m015",
@@ -480,7 +550,8 @@
     "photos": [
       "photos/m015.jpg",
       "photos/m015_3.jpg"
-    ]
+    ],
+    "about": "The first time the whole group was back together, crammed into a rental house in Portland, and nobody wanted to leave. Everyone back together for the first time."
   },
   {
     "id": "m016",
@@ -516,7 +587,8 @@
       "photos/m016.jpg",
       "photos/m016_2.jpg",
       "photos/m016_3.jpg"
-    ]
+    ],
+    "about": "Awkward but glad to see actual faces again at the rooftop welcome-back lunch. Welcome-back lunch after the remote year."
   },
   {
     "id": "m017",
@@ -544,7 +616,8 @@
       "photos/m017.jpg",
       "photos/m017_3.jpg",
       "photos/m017_4.jpg"
-    ]
+    ],
+    "about": "Late nights on Barcelona rooftops after two years of not going anywhere. Delayed trip with friends after two years of nowhere."
   },
   {
     "id": "m018",
@@ -575,7 +648,8 @@
     "photos": [
       "photos/m018.jpg",
       "photos/m018_3.jpg"
-    ]
+    ],
+    "about": "Thanksgiving pushed back to November at the cabin, snow on the porch rail. Thanksgiving pushed to the cabin."
   },
   {
     "id": "m019",
@@ -611,7 +685,8 @@
       "photos/m019.jpg",
       "photos/m019_3.jpg",
       "photos/m019_4.jpg"
-    ]
+    ],
+    "about": "Lisa announced the engagement over dessert and the whole table lost it. Celebrating Lisa's engagement."
   },
   {
     "id": "m020",
@@ -637,7 +712,8 @@
     "importance": 5,
     "photos": [
       "photos/m020.jpg"
-    ]
+    ],
+    "about": "Printed the last page at 2am and called Nick before anyone else. Finishing the book I'd been writing for years."
   },
   {
     "id": "m021",
@@ -668,7 +744,8 @@
     "photos": [
       "photos/m021.jpg",
       "photos/m021_3.jpg"
-    ]
+    ],
+    "about": "A lazy Sunday picnic that stretched three hours past when anyone planned to leave."
   },
   {
     "id": "m022",
@@ -698,7 +775,8 @@
     "importance": 3,
     "photos": [
       "photos/m022.jpg"
-    ]
+    ],
+    "about": "First ski trip of the season, most of it spent falling more than skiing."
   },
   {
     "id": "m023",
@@ -732,7 +810,8 @@
     "importance": 4,
     "photos": [
       "photos/m023.jpg"
-    ]
+    ],
+    "about": "A quiet afternoon helping Grandpa Joe settle into the guest room. Helping Grandpa Joe settle in with Mom and Dad."
   },
   {
     "id": "m024",
@@ -767,7 +846,8 @@
     "photos": [
       "photos/m024.jpg",
       "photos/m024_2.jpg"
-    ]
+    ],
+    "about": "The offsite ended with everyone still arguing about the roadmap on the rooftop. Closing out the annual team offsite."
   },
   {
     "id": "m025",
@@ -802,7 +882,8 @@
     "photos": [
       "photos/m025.jpg",
       "photos/m025_3.jpg"
-    ]
+    ],
+    "about": "Champagne on the roof at midnight, the same crew as always. Ringing in the new year together."
   },
   {
     "id": "m026",
@@ -833,7 +914,8 @@
     "photos": [
       "photos/m026.jpg",
       "photos/m026_3.jpg"
-    ]
+    ],
+    "about": "Lisa and I chased cherry blossoms across three parks in one afternoon. Chasing cherry blossom season with Lisa."
   },
   {
     "id": "m027",
@@ -869,7 +951,8 @@
       "photos/m027.jpg",
       "photos/m027_2.jpg",
       "photos/m027_3.jpg"
-    ]
+    ],
+    "about": "The cabin never changes, and this year that felt like the whole point. Another summer week at the cabin."
   },
   {
     "id": "m028",
@@ -902,7 +985,8 @@
       "photos/m028_2.jpg",
       "photos/m028_3.jpg",
       "photos/m028_4.jpg"
-    ]
+    ],
+    "about": "Priya handed me the promotion letter over coffee on the rooftop, no ceremony needed. Getting promoted to team lead."
   },
   {
     "id": "m029",
@@ -939,7 +1023,8 @@
       "photos/m029_2.jpg",
       "photos/m029_3.jpg",
       "photos/m029_4.jpg"
-    ]
+    ],
+    "about": "Everyone made it for once, blankets spread out until the fog rolled in. Getting the whole group together again."
   },
   {
     "id": "m030",
@@ -972,7 +1057,8 @@
       "photos/m030_2.jpg",
       "photos/m030_3.jpg",
       "photos/m030_4.jpg"
-    ]
+    ],
+    "about": "We watched the new dashboard go live from the rooftop with warm beers. Launching the dashboard redesign."
   },
   {
     "id": "m031",
@@ -1002,7 +1088,8 @@
     "importance": 3,
     "photos": [
       "photos/m031.jpg"
-    ]
+    ],
+    "about": "Sarah's new place got its first proper party, boxes still stacked in the hallway. Celebrating Sarah's new place."
   },
   {
     "id": "m032",
@@ -1033,7 +1120,8 @@
     "photos": [
       "photos/m032.jpg",
       "photos/m032_2.jpg"
-    ]
+    ],
+    "about": "A wild, sun-drunk long weekend before Lisa's wedding. Sending Lisa off before the wedding."
   },
   {
     "id": "m033",
@@ -1064,7 +1152,8 @@
     "photos": [
       "photos/m033.jpg",
       "photos/m033_3.jpg"
-    ]
+    ],
+    "about": "Thirty-five years, and Dad still can't make a toast without crying. Celebrating 35 years of marriage."
   },
   {
     "id": "m034",
@@ -1103,7 +1192,8 @@
     "photos": [
       "photos/m034.jpg",
       "photos/m034_3.jpg"
-    ]
+    ],
+    "about": "Lisa's wedding after-party spilled onto Sarah's porch until sunrise. Celebrating Lisa's wedding."
   },
   {
     "id": "m035",
@@ -1135,7 +1225,8 @@
       "photos/m035.jpg",
       "photos/m035_2.jpg",
       "photos/m035_3.jpg"
-    ]
+    ],
+    "about": "Showing the new hires the rooftop view felt like an unofficial rite of passage. Welcoming the new hires."
   },
   {
     "id": "m036",
@@ -1167,7 +1258,8 @@
       "photos/m036.jpg",
       "photos/m036_2.jpg",
       "photos/m036_3.jpg"
-    ]
+    ],
+    "about": "Same lake, ten years later, somehow still the same jokes. Ten-year reunion trip back to the lake."
   },
   {
     "id": "m037",
@@ -1207,7 +1299,8 @@
       "photos/m037.jpg",
       "photos/m037_3.jpg",
       "photos/m037_4.jpg"
-    ]
+    ],
+    "about": "Grandpa Joe asked to see the lake one more time before the season ended. One more summer at the cabin with Grandpa Joe."
   },
   {
     "id": "m038",
@@ -1244,7 +1337,8 @@
       "photos/m038_2.jpg",
       "photos/m038_3.jpg",
       "photos/m038_4.jpg"
-    ]
+    ],
+    "about": "Closed on the house today, then spent one last night in the old apartment with pizza and half-packed boxes. Closing on my first house, last night in the old place."
   },
   {
     "id": "m039",
@@ -1270,7 +1364,8 @@
     "importance": 3,
     "photos": [
       "photos/m039.jpg"
-    ]
+    ],
+    "about": "Turned a work trip into five extra days of ramen and quiet temples. Turning a conference trip into a vacation."
   },
   {
     "id": "m040",
@@ -1306,7 +1401,8 @@
       "photos/m040.jpg",
       "photos/m040_2.jpg",
       "photos/m040_3.jpg"
-    ]
+    ],
+    "about": "Ten years at the same company, marked with cake on the same rooftop. Marking ten years at the company."
   },
   {
     "id": "m041",
@@ -1318,10 +1414,10 @@
       "artist": "Against All Logic"
     },
     "class": "Travel",
-    "what": "Climbed the lookout mountain in \u00c5lesund",
+    "what": "Climbed the lookout mountain in Ålesund",
     "when": "17-07-2026 12:00",
-    "where": "\u00c5lesund, Norway",
-    "why": "A visit to \u00c5lesund that brought back memories of the first time there four years ago",
+    "where": "Ålesund, Norway",
+    "why": "A visit to Ålesund that brought back memories of the first time there four years ago",
     "who": [
       {
         "id": "p12",
@@ -1331,8 +1427,9 @@
     "feeling": [
       "Nostalgic"
     ],
-    "summary": "Glenn climbed the lookout mountain in \u00c5lesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago.",
-    "importance": 4
+    "summary": "Glenn climbed the lookout mountain in Ålesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago.",
+    "importance": 4,
+    "about": "Glenn climbed the lookout mountain in Ålesund with Ben and felt warmly nostalgic, carried back to the first time he was there four years ago. A visit to Ålesund that brought back memories of the first time there four years ago."
   },
   {
     "id": "m042",
@@ -1344,7 +1441,7 @@
       "artist": "Against All Logic"
     },
     "class": "Travel",
-    "what": "Climbing Alesund\u2019s local mountain",
+    "what": "Climbing Alesund’s local mountain",
     "when": "17-01-2022 12:00",
     "where": "Alesund, Norway",
     "why": "A winter trip with Ben to climb the local mountain and take in the view, made meaningful by the nostalgic feeling and the song playing on the way there.",
@@ -1358,7 +1455,8 @@
       "Nostalgic"
     ],
     "summary": "A winter climb in Alesund with Ben, with music on the way and a nostalgic feeling in the air as you looked out over the view.",
-    "importance": 4
+    "importance": 4,
+    "about": "A winter climb in Alesund with Ben, with music on the way and a nostalgic feeling in the air as you looked out over the view. A winter trip with Ben to climb the local mountain and take in the view, made meaningful by the nostalgic feeling and the song playing on the way there."
   },
   {
     "id": "m043",
@@ -1382,6 +1480,24 @@
       "Free"
     ],
     "summary": "Glenn and Amber bought their first car in Geldermalsen, a small but exciting step that gives them more freedom to explore and handle everyday errands together.",
-    "importance": 5
+    "importance": 5,
+    "about": "Glenn and Amber bought their first car in Geldermalsen, a small but exciting step that gives them more freedom to explore and handle everyday errands together. It gives us more freedom to explore and makes it easier to do groceries together."
+  },
+  {
+    "id": "m044",
+    "photos": [],
+    "music": null,
+    "what": "Golden light on the canal tonight",
+    "when": "28-07-2026 10:40",
+    "where": "",
+    "who": [],
+    "feeling": [],
+    "videos": [],
+    "voice": [],
+    "about": "Golden light on the canal tonight",
+    "_pos": [
+      -43,
+      3
+    ]
   }
 ]

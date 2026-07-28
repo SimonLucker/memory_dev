@@ -1,0 +1,259 @@
+/* Memory detail + slideshow — dusk scene (design-foundation.md 6.4).
+   Tokens from tokens.css only. */
+
+.memory-detail {
+  background: linear-gradient(180deg, var(--dusk-top), var(--dusk-mid), var(--dusk-bot));
+  color: #FFFFFF;
+  overflow: hidden;
+  transition: transform var(--motion-slow) var(--ease), opacity var(--motion-slow) var(--ease);
+}
+.memory-detail a { color: #FFFFFF; text-decoration: none; }
+.memory-detail button { color: #FFFFFF; }
+
+.md-close {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 72px var(--space-md) var(--space-xl);
+}
+
+/* 1. Media grid: hero full width + thumbnail row (mockup ratios). */
+.md-hero {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-card);
+}
+.md-hero img,
+.md-vfill {
+  width: 100%;
+  aspect-ratio: 4 / 2.15;
+  object-fit: cover;
+}
+.md-thumbs { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
+.md-thumb {
+  flex: 1;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+.md-thumb img,
+.md-thumb .md-vfill {
+  width: 100%;
+  aspect-ratio: 4 / 2.6;
+  object-fit: cover;
+}
+.md-vfill { background: rgba(0, 0, 0, 0.25); display: block; }
+.md-vplay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.2);
+}
+.md-vdur {
+  position: absolute;
+  right: var(--space-sm);
+  bottom: var(--space-xs);
+  color: #FFFFFF;
+}
+
+/* 2. Title */
+.md-title { margin-top: var(--space-lg); }
+
+/* 3-5. Rows: location, voice, music. glassOnDusk. */
+.md-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface-glass-dusk);
+  border-radius: var(--radius-sm);
+  padding: 8px var(--space-md);
+  margin-top: var(--space-sm);
+}
+.md-grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.md-lnk { font-weight: 600; }
+.md-play {
+  width: 44px;
+  height: 44px;
+  margin: -8px 0 -8px -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.md-wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 18px; }
+.md-wave i { width: 2.5px; border-radius: 2px; background: #FFFFFF; }
+.md-quiet { display: block; padding: var(--space-xs) var(--space-xs); }
+.md-transcript { padding: 0 var(--space-xs); max-width: 70ch; }
+
+/* 6-7. Labeled sections + chips + About */
+.md-sec {
+  font: var(--type-label);
+  font-family: var(--font);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: var(--space-lg) 0 var(--space-sm);
+}
+.md-chips { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.md-chip {
+  background: var(--surface-glass-dusk);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font: var(--type-label);
+  font-family: var(--font);
+  color: #FFFFFF;
+}
+.md-about { max-width: 70ch; white-space: pre-line; }
+
+/* 8. Actions: three centered pills */
+.md-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+}
+.md-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-pill);
+  padding: 12px 20px;
+  font: var(--type-label);
+  font-family: var(--font);
+  font-weight: 600;
+  transition: transform var(--motion-fast) var(--ease);
+}
+.md-pill:active { transform: scale(0.97); }
+.md-pill.prim { background: var(--surface-white); color: var(--text-primary); box-shadow: var(--shadow-raised); }
+.md-pill.quiet { background: var(--surface-glass-dusk); color: #FFFFFF; }
+
+/* Edge-to-edge viewer */
+.md-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(180deg, var(--dusk-top), var(--dusk-mid), var(--dusk-bot));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.md-viewer img, .md-viewer video { max-width: 100%; max-height: 100%; }
+
+/* Sheets: long-press menu, add, tag people. White surface on the overlay scrim. */
+.md-scrim { position: absolute; inset: 0; z-index: 5; background: rgba(0, 0, 0, 0.4); }
+.md-sheet {
+  position: absolute;
+  left: var(--space-md);
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 6;
+  background: var(--surface-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm);
+  box-shadow: var(--shadow-card);
+  color: var(--text-primary);
+}
+.md-sheet button { color: var(--text-primary); }
+.md-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px var(--space-md);
+  font: var(--type-body);
+  font-family: var(--font);
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+.md-opt.danger { color: var(--error); }
+.md-line {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: var(--surface-cream);
+  border-radius: var(--radius-sm);
+  padding: 12px var(--space-md);
+}
+.md-sheet .md-done {
+  display: block;
+  margin: var(--space-sm) auto 0;
+  border-radius: var(--radius-pill);
+  padding: 10px 24px;
+  font: var(--type-label);
+  font-family: var(--font);
+  font-weight: 600;
+  box-shadow: var(--shadow-raised);
+  background: var(--surface-white);
+}
+.md-names { display: flex; flex-wrap: wrap; gap: var(--space-sm); padding: var(--space-sm); }
+.md-name {
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  font: var(--type-label);
+  font-family: var(--font);
+  background: var(--surface-cream);
+  border: 1px solid var(--border-soft);
+}
+.md-name.sel { background: var(--text-primary); color: #FFFFFF; }
+
+/* New content enters with a 600ms rise. */
+@keyframes md-rise { from { opacity: 0; transform: translateY(8px); } }
+.rise { animation: md-rise var(--motion-normal) var(--ease); }
+
+/* ---- Slideshow (6.4): dusk, Ken Burns, 900ms crossfades, ends on About. ---- */
+.slideshow {
+  background: linear-gradient(180deg, var(--dusk-top), var(--dusk-mid), var(--dusk-bot));
+  color: #FFFFFF;
+  overflow: hidden;
+}
+.ss-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--motion-slow) var(--ease);
+}
+.ss-slide.on { opacity: 1; }
+.ss-slide img { width: 100%; height: 100%; object-fit: cover; }
+.ss-slide.on img { animation: kb-a 8s var(--ease) both; }
+.ss-slide.on.alt img { animation-name: kb-b; }
+@keyframes kb-a {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.14) translate(-2%, -1.5%); }
+}
+@keyframes kb-b {
+  from { transform: scale(1.14); }
+  to { transform: scale(1.04) translate(2%, 1.5%); }
+}
+.ss-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  text-align: center;
+}
+.ss-text { max-width: 70ch; }

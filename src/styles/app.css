@@ -1,0 +1,193 @@
+/* App shell: phone column, three-pane pager, chrome (avatar + pane dots), Profile sheet mount. */
+
+/* Phone column: full viewport on phones, centered phone-proportioned column on desktop. */
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  background: var(--surface-cream);
+}
+.phone {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100%;
+  overflow: hidden;
+}
+@media (min-width: 431px) {
+  .phone { box-shadow: var(--shadow-card); }
+}
+
+/* Chrome: avatar top left, pane dots top center. Nothing else. */
+.chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 56px;
+  padding-top: env(safe-area-inset-top);
+  pointer-events: none;
+}
+.avatar {
+  pointer-events: auto;
+  position: absolute;
+  left: var(--space-md);
+  top: var(--space-md);
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.pane-dots {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  top: var(--space-md);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 30px;
+}
+.pane-dots button {
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pane-dots button::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  opacity: 0.35;
+  transition: all var(--motion-fast) var(--ease);
+}
+.pane-dots button.active::before {
+  width: 9px;
+  height: 9px;
+  opacity: 1;
+}
+
+/* Three-pane horizontal pager. Panes track the finger 1:1 (JS sets transform),
+   settle in 200ms after a swipe, 600ms after a dot tap. */
+.pager {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  will-change: transform;
+}
+.pane {
+  flex: 0 0 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Profile sheet: slides up over the current pane, xl top radius, 600ms. */
+.profile-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: var(--space-xxl);
+  z-index: 20;
+  background: var(--surface-cream);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-card);
+  transform: translateY(105%);
+  transition: transform var(--motion-normal) var(--ease);
+  overflow-y: auto;
+}
+.profile-sheet.open { transform: none; }
+
+/* Full-screen overlays (memory detail, slideshow) mount above the pager. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+}
+
+/* Lightbox: edge-to-edge photo viewer. */
+.lightbox {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: linear-gradient(180deg, var(--dusk-top), var(--dusk-mid), var(--dusk-bot));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox img { max-width: 100%; max-height: 100%; }
+.lb-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  background: var(--surface-glass-dusk);
+  border-radius: var(--radius-pill);
+}
+.lb-arrow.left { left: var(--space-sm); }
+.lb-arrow.right { right: var(--space-sm); }
+.lb-count {
+  position: absolute;
+  bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  font: var(--type-label);
+  color: #FFFFFF;
+}
+
+/* Mini music player: quiet pill above the bottom edge. */
+.music-player {
+  position: absolute;
+  left: var(--space-md);
+  right: var(--space-md);
+  bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface-white);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-bubble);
+}
+.music-player .mp-art { width: 32px; height: 32px; border-radius: var(--radius-sm); }
+.music-player .mp-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.music-player .mp-body strong {
+  font: var(--type-label);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.music-player .mp-body span { font: var(--type-label); font-weight: 400; color: var(--text-secondary); }
+.music-player .mp-btn {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+.music-player a.mp-link { font: var(--type-label); color: var(--text-secondary); text-decoration: none; width: auto; }

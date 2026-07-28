@@ -31,7 +31,8 @@
       "photos/p2m001.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed so hard my cheeks hurt under the stars. Birthday trip."
   },
   {
     "id": "p2m002",
@@ -66,7 +67,8 @@
       "photos/p2m002.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Long day paid off."
   },
   {
     "id": "p2m003",
@@ -92,7 +94,8 @@
       "photos/p2m003.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 2
+    "importance": 2,
+    "about": "Got the feedback that made it all click. Project launch."
   },
   {
     "id": "p2m004",
@@ -126,7 +129,8 @@
       "photos/p2m004.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found exactly what I didn't know I was looking for. With the crew."
   },
   {
     "id": "p2m005",
@@ -160,7 +164,8 @@
       "photos/p2m005.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Mentor moment."
   },
   {
     "id": "p2m006",
@@ -187,7 +192,8 @@
       "photos/p2m006.jpg"
     ],
     "summary": "Felt the weight of their love in the smallest gestures.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the weight of their love in the smallest gestures. Sunday dinner."
   },
   {
     "id": "p2m007",
@@ -213,7 +219,8 @@
       "photos/p2m007.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 3
+    "importance": 3,
+    "about": "Stayed late with the team and it finally worked. Team win."
   },
   {
     "id": "p2m008",
@@ -248,7 +255,8 @@
       "photos/p2m008.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. Following a map."
   },
   {
     "id": "p2m009",
@@ -282,7 +290,8 @@
       "photos/p2m009.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Coffee date."
   },
   {
     "id": "p2m010",
@@ -313,7 +322,8 @@
       "photos/p2m010.jpg"
     ],
     "summary": "Knew I wouldn't be the same person on the other side.",
-    "importance": 3
+    "importance": 3,
+    "about": "Knew I wouldn't be the same person on the other side. Turning point."
   },
   {
     "id": "p2m011",
@@ -347,7 +357,8 @@
       "photos/p2m011.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Late-night talk."
   },
   {
     "id": "p2m012",
@@ -374,7 +385,8 @@
       "photos/p2m012.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 3
+    "importance": 3,
+    "about": "The rooftops turned gold as the call to prayer echoed. Finding myself."
   },
   {
     "id": "p2m013",
@@ -408,7 +420,8 @@
       "photos/p2m013.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 4
+    "importance": 4,
+    "about": "Mama's hand on my shoulder felt like home. Just because."
   },
   {
     "id": "p2m014",
@@ -443,7 +456,8 @@
       "photos/p2m014.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found myself in the reflection of their eyes. Reconnection."
   },
   {
     "id": "p2m015",
@@ -478,7 +492,8 @@
       "photos/p2m015.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found exactly what I didn't know I was looking for. Backpacking adventure."
   },
   {
     "id": "p2m016",
@@ -513,7 +528,8 @@
       "photos/p2m016.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mama's hand on my shoulder felt like home. Oma called."
   },
   {
     "id": "p2m017",
@@ -547,7 +563,8 @@
       "photos/p2m017.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Finding myself."
   },
   {
     "id": "p2m018",
@@ -577,7 +594,8 @@
       "photos/p2m018.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 3
+    "importance": 3,
+    "about": "Lost time in a maze of narrow streets and spice vendors. On a whim."
   },
   {
     "id": "p2m019",
@@ -607,7 +625,8 @@
       "photos/p2m019.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 5
+    "importance": 5,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Finding myself."
   },
   {
     "id": "p2m020",
@@ -637,7 +656,8 @@
       "photos/p2m020.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Tasted colors and felt music in every moment. Backpacking adventure."
   },
   {
     "id": "p2m021",
@@ -668,7 +688,8 @@
       "photos/p2m021.jpg"
     ],
     "summary": "Papa told the story again, and we laughed like children.",
-    "importance": 3
+    "importance": 3,
+    "about": "Papa told the story again, and we laughed like children. Sunday ritual."
   },
   {
     "id": "p2m022",
@@ -694,7 +715,8 @@
       "photos/p2m022.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 2
+    "importance": 2,
+    "about": "Strangers became friends over shared plates and stories. Following a map."
   },
   {
     "id": "p2m023",
@@ -729,7 +751,8 @@
       "photos/p2m023.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found myself in the reflection of their eyes. Late-night talk."
   },
   {
     "id": "p2m024",
@@ -763,7 +786,8 @@
       "photos/p2m024.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 3
+    "importance": 3,
+    "about": "The rooftops turned gold as the call to prayer echoed. Birthday trip."
   },
   {
     "id": "p2m025",
@@ -793,7 +817,8 @@
       "photos/p2m025.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 4
+    "importance": 4,
+    "about": "The kind of night that becomes a story we retell forever. Birthday bash."
   },
   {
     "id": "p2m026",
@@ -824,7 +849,8 @@
       "photos/p2m026.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 2
+    "importance": 2,
+    "about": "Oma's kitchen smelled like my childhood. Sunday dinner."
   },
   {
     "id": "p2m027",
@@ -855,7 +881,8 @@
       "photos/p2m027.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 4
+    "importance": 4,
+    "about": "Felt the ground shift beneath me. Finally."
   },
   {
     "id": "p2m028",
@@ -881,7 +908,8 @@
       "photos/p2m028.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Finding myself."
   },
   {
     "id": "p2m029",
@@ -916,7 +944,8 @@
       "photos/p2m029.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Reconnection."
   },
   {
     "id": "p2m030",
@@ -950,7 +979,8 @@
       "photos/p2m030.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 3
+    "importance": 3,
+    "about": "Time dissolved and it felt like we'd never been apart. Coffee date."
   },
   {
     "id": "p2m031",
@@ -985,7 +1015,8 @@
       "photos/p2m031.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet morning with coffee and no need to talk. Holiday tradition."
   },
   {
     "id": "p2m032",
@@ -1012,7 +1043,8 @@
       "photos/p2m032.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Long day paid off."
   },
   {
     "id": "p2m033",
@@ -1042,7 +1074,8 @@
       "photos/p2m033.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 3
+    "importance": 3,
+    "about": "Watched the sun sink into the ocean with arms around friends. With the crew."
   },
   {
     "id": "p2m034",
@@ -1073,7 +1106,8 @@
       "photos/p2m034.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 3
+    "importance": 3,
+    "about": "The kind of night that becomes a story we retell forever. Coffee date."
   },
   {
     "id": "p2m035",
@@ -1104,7 +1138,8 @@
       "photos/p2m035.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Coffee date."
   },
   {
     "id": "p2m036",
@@ -1138,7 +1173,8 @@
       "photos/p2m036.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. First solo trip."
   },
   {
     "id": "p2m037",
@@ -1169,7 +1205,8 @@
       "photos/p2m037.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 4
+    "importance": 4,
+    "about": "Got the feedback that made it all click. Project launch."
   },
   {
     "id": "p2m038",
@@ -1203,7 +1240,8 @@
       "photos/p2m038.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 5
+    "importance": 5,
+    "about": "Quiet presence felt louder than words. Late-night talk."
   },
   {
     "id": "p2m039",
@@ -1229,7 +1267,8 @@
       "photos/p2m039.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed so hard my cheeks hurt under the stars. On a whim."
   },
   {
     "id": "p2m040",
@@ -1256,7 +1295,8 @@
       "photos/p2m040.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Film night."
   },
   {
     "id": "p2m041",
@@ -1290,7 +1330,8 @@
       "photos/p2m041.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Following a map."
   },
   {
     "id": "p2m042",
@@ -1321,7 +1362,8 @@
       "photos/p2m042.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found exactly what I didn't know I was looking for. Chasing sunsets."
   },
   {
     "id": "p2m043",
@@ -1347,7 +1389,8 @@
       "photos/p2m043.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 4
+    "importance": 4,
+    "about": "Stayed late with the team and it finally worked. Proud presentation."
   },
   {
     "id": "p2m044",
@@ -1382,7 +1425,8 @@
       "photos/p2m044.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 4
+    "importance": 4,
+    "about": "The kind of night that becomes a story we retell forever. Coffee date."
   },
   {
     "id": "p2m045",
@@ -1409,7 +1453,8 @@
       "photos/p2m045.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Birthday bash."
   },
   {
     "id": "p2m046",
@@ -1436,7 +1481,8 @@
       "photos/p2m046.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet morning with coffee and no need to talk. Sunday ritual."
   },
   {
     "id": "p2m047",
@@ -1470,7 +1516,8 @@
       "photos/p2m047.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 3
+    "importance": 3,
+    "about": "Watched the sun sink into the ocean with arms around friends. Following a map."
   },
   {
     "id": "p2m048",
@@ -1497,7 +1544,8 @@
       "photos/p2m048.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Tasted colors and felt music in every moment. On a whim."
   },
   {
     "id": "p2m049",
@@ -1531,7 +1579,8 @@
       "photos/p2m049.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 2
+    "importance": 2,
+    "about": "The rooftops turned gold as the call to prayer echoed. First solo trip."
   },
   {
     "id": "p2m050",
@@ -1561,7 +1610,8 @@
       "photos/p2m050.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 2
+    "importance": 2,
+    "about": "Felt the ground shift beneath me. Turning point."
   },
   {
     "id": "p2m051",
@@ -1592,7 +1642,8 @@
       "photos/p2m051.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 3
+    "importance": 3,
+    "about": "Oma's kitchen smelled like my childhood. Holiday tradition."
   },
   {
     "id": "p2m052",
@@ -1619,7 +1670,8 @@
       "photos/p2m052.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed so hard my cheeks hurt under the stars. With the crew."
   },
   {
     "id": "p2m053",
@@ -1646,7 +1698,8 @@
       "photos/p2m053.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. First solo trip."
   },
   {
     "id": "p2m054",
@@ -1681,7 +1734,8 @@
       "photos/p2m054.jpg"
     ],
     "summary": "Watched the data tell the story we hoped for.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the data tell the story we hoped for. Mentor moment."
   },
   {
     "id": "p2m055",
@@ -1707,7 +1761,8 @@
       "photos/p2m055.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mama's hand on my shoulder felt like home. Oma called."
   },
   {
     "id": "p2m056",
@@ -1734,7 +1789,8 @@
       "photos/p2m056.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 5
+    "importance": 5,
+    "about": "Found myself in the reflection of their eyes. Late-night talk."
   },
   {
     "id": "p2m057",
@@ -1760,7 +1816,8 @@
       "photos/p2m057.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 3
+    "importance": 3,
+    "about": "The kind of night that becomes a story we retell forever. Random Tuesday."
   },
   {
     "id": "p2m058",
@@ -1786,7 +1843,8 @@
       "photos/p2m058.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Birthday bash."
   },
   {
     "id": "p2m059",
@@ -1816,7 +1874,8 @@
       "photos/p2m059.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 2
+    "importance": 2,
+    "about": "Stayed late with the team and it finally worked. Team win."
   },
   {
     "id": "p2m060",
@@ -1846,7 +1905,8 @@
       "photos/p2m060.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Breakthrough."
   },
   {
     "id": "p2m061",
@@ -1881,7 +1941,8 @@
       "photos/p2m061.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 5
+    "importance": 5,
+    "about": "Found myself in the reflection of their eyes. Random Tuesday."
   },
   {
     "id": "p2m062",
@@ -1908,7 +1969,8 @@
       "photos/p2m062.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found exactly what I didn't know I was looking for. With the crew."
   },
   {
     "id": "p2m063",
@@ -1939,7 +2001,8 @@
       "photos/p2m063.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found myself in the reflection of their eyes. Coffee date."
   },
   {
     "id": "p2m064",
@@ -1973,7 +2036,8 @@
       "photos/p2m064.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 5
+    "importance": 5,
+    "about": "Mama's hand on my shoulder felt like home. Sunday dinner."
   },
   {
     "id": "p2m065",
@@ -2008,7 +2072,8 @@
       "photos/p2m065.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 4
+    "importance": 4,
+    "about": "Lost time in a maze of narrow streets and spice vendors. With the crew."
   },
   {
     "id": "p2m066",
@@ -2039,7 +2104,8 @@
       "photos/p2m066.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 4
+    "importance": 4,
+    "about": "Watched the sun sink into the ocean with arms around friends. First solo trip."
   },
   {
     "id": "p2m067",
@@ -2073,7 +2139,8 @@
       "photos/p2m067.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 2
+    "importance": 2,
+    "about": "The presentation landed exactly right. Mentor moment."
   },
   {
     "id": "p2m068",
@@ -2103,7 +2170,8 @@
       "photos/p2m068.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found exactly what I didn't know I was looking for. Birthday trip."
   },
   {
     "id": "p2m069",
@@ -2130,7 +2198,8 @@
       "photos/p2m069.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Long day paid off."
   },
   {
     "id": "p2m070",
@@ -2164,7 +2233,8 @@
       "photos/p2m070.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet morning with coffee and no need to talk. Papa made it special."
   },
   {
     "id": "p2m071",
@@ -2194,7 +2264,8 @@
       "photos/p2m071.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. On a whim."
   },
   {
     "id": "p2m072",
@@ -2225,7 +2296,8 @@
       "photos/p2m072.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 3
+    "importance": 3,
+    "about": "Watched the sun sink into the ocean with arms around friends. Birthday trip."
   },
   {
     "id": "p2m073",
@@ -2256,7 +2328,8 @@
       "photos/p2m073.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m074",
@@ -2291,7 +2364,8 @@
       "photos/p2m074.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 2
+    "importance": 2,
+    "about": "The presentation landed exactly right. Breakthrough."
   },
   {
     "id": "p2m075",
@@ -2325,7 +2399,8 @@
       "photos/p2m075.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Chasing sunsets."
   },
   {
     "id": "p2m076",
@@ -2352,7 +2427,8 @@
       "photos/p2m076.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 5
+    "importance": 5,
+    "about": "The rooftops turned gold as the call to prayer echoed. Finding myself."
   },
   {
     "id": "p2m077",
@@ -2387,7 +2463,8 @@
       "photos/p2m077.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 4
+    "importance": 4,
+    "about": "Quiet presence felt louder than words. Film night."
   },
   {
     "id": "p2m078",
@@ -2422,7 +2499,8 @@
       "photos/p2m078.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed so hard my cheeks hurt under the stars. With the crew."
   },
   {
     "id": "p2m079",
@@ -2449,7 +2527,8 @@
       "photos/p2m079.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed so hard my cheeks hurt under the stars. With the crew."
   },
   {
     "id": "p2m080",
@@ -2483,7 +2562,8 @@
       "photos/p2m080.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 2
+    "importance": 2,
+    "about": "Strangers became friends over shared plates and stories. Finding myself."
   },
   {
     "id": "p2m081",
@@ -2518,7 +2598,8 @@
       "photos/p2m081.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 3
+    "importance": 3,
+    "about": "Oma's kitchen smelled like my childhood. Sunday dinner."
   },
   {
     "id": "p2m082",
@@ -2549,7 +2630,8 @@
       "photos/p2m082.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 4
+    "importance": 4,
+    "about": "Strangers became friends over shared plates and stories. Birthday trip."
   },
   {
     "id": "p2m083",
@@ -2575,7 +2657,8 @@
       "photos/p2m083.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 3
+    "importance": 3,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m084",
@@ -2609,7 +2692,8 @@
       "photos/p2m084.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 4
+    "importance": 4,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Breakthrough."
   },
   {
     "id": "p2m085",
@@ -2635,7 +2719,8 @@
       "photos/p2m085.jpg"
     ],
     "summary": "Everything before and after divides at this moment.",
-    "importance": 4
+    "importance": 4,
+    "about": "Everything before and after divides at this moment. Turning point."
   },
   {
     "id": "p2m086",
@@ -2662,7 +2747,8 @@
       "photos/p2m086.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Birthday bash."
   },
   {
     "id": "p2m087",
@@ -2696,7 +2782,8 @@
       "photos/p2m087.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 3
+    "importance": 3,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m088",
@@ -2726,7 +2813,8 @@
       "photos/p2m088.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Film night."
   },
   {
     "id": "p2m089",
@@ -2760,7 +2848,8 @@
       "photos/p2m089.jpg"
     ],
     "summary": "Papa told the story again, and we laughed like children.",
-    "importance": 2
+    "importance": 2,
+    "about": "Papa told the story again, and we laughed like children. Sunday dinner."
   },
   {
     "id": "p2m090",
@@ -2791,7 +2880,8 @@
       "photos/p2m090.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 3
+    "importance": 3,
+    "about": "Time dissolved and it felt like we'd never been apart. Late-night talk."
   },
   {
     "id": "p2m091",
@@ -2821,7 +2911,8 @@
       "photos/p2m091.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m092",
@@ -2855,7 +2946,8 @@
       "photos/p2m092.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 4
+    "importance": 4,
+    "about": "Laughed so hard my cheeks hurt under the stars. With the crew."
   },
   {
     "id": "p2m093",
@@ -2881,7 +2973,8 @@
       "photos/p2m093.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Film night."
   },
   {
     "id": "p2m094",
@@ -2907,7 +3000,8 @@
       "photos/p2m094.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 3
+    "importance": 3,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m095",
@@ -2934,7 +3028,8 @@
       "photos/p2m095.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 4
+    "importance": 4,
+    "about": "Felt the ground shift beneath me. Turning point."
   },
   {
     "id": "p2m096",
@@ -2965,7 +3060,8 @@
       "photos/p2m096.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 2
+    "importance": 2,
+    "about": "Time dissolved and it felt like we'd never been apart. Reconnection."
   },
   {
     "id": "p2m097",
@@ -2991,7 +3087,8 @@
       "photos/p2m097.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Breakthrough."
   },
   {
     "id": "p2m098",
@@ -3025,7 +3122,8 @@
       "photos/p2m098.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet morning with coffee and no need to talk. Papa made it special."
   },
   {
     "id": "p2m099",
@@ -3052,7 +3150,8 @@
       "photos/p2m099.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Proud presentation."
   },
   {
     "id": "p2m100",
@@ -3087,7 +3186,8 @@
       "photos/p2m100.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 4
+    "importance": 4,
+    "about": "Mama's hand on my shoulder felt like home. Holiday tradition."
   },
   {
     "id": "p2m101",
@@ -3114,7 +3214,8 @@
       "photos/p2m101.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Breakthrough."
   },
   {
     "id": "p2m102",
@@ -3140,7 +3241,8 @@
       "photos/p2m102.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Random Tuesday."
   },
   {
     "id": "p2m103",
@@ -3175,7 +3277,8 @@
       "photos/p2m103.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Late-night talk."
   },
   {
     "id": "p2m104",
@@ -3205,7 +3308,8 @@
       "photos/p2m104.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 3
+    "importance": 3,
+    "about": "The rooftops turned gold as the call to prayer echoed. With the crew."
   },
   {
     "id": "p2m105",
@@ -3239,7 +3343,8 @@
       "photos/p2m105.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 2
+    "importance": 2,
+    "about": "Oma's kitchen smelled like my childhood. Mama's birthday."
   },
   {
     "id": "p2m106",
@@ -3269,7 +3374,8 @@
       "photos/p2m106.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mama's hand on my shoulder felt like home. Oma called."
   },
   {
     "id": "p2m107",
@@ -3300,7 +3406,8 @@
       "photos/p2m107.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Reconnection."
   },
   {
     "id": "p2m108",
@@ -3335,7 +3442,8 @@
       "photos/p2m108.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 4
+    "importance": 4,
+    "about": "Got the feedback that made it all click. Mentor moment."
   },
   {
     "id": "p2m109",
@@ -3366,7 +3474,8 @@
       "photos/p2m109.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Film night."
   },
   {
     "id": "p2m110",
@@ -3392,7 +3501,8 @@
       "photos/p2m110.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 5
+    "importance": 5,
+    "about": "Quiet presence felt louder than words. Coffee date."
   },
   {
     "id": "p2m111",
@@ -3423,7 +3533,8 @@
       "photos/p2m111.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 2
+    "importance": 2,
+    "about": "Time dissolved and it felt like we'd never been apart. Coffee date."
   },
   {
     "id": "p2m112",
@@ -3450,7 +3561,8 @@
       "photos/p2m112.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 4
+    "importance": 4,
+    "about": "Watched the sun sink into the ocean with arms around friends. Chasing sunsets."
   },
   {
     "id": "p2m113",
@@ -3484,7 +3596,8 @@
       "photos/p2m113.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 2
+    "importance": 2,
+    "about": "Strangers became friends over shared plates and stories. Birthday trip."
   },
   {
     "id": "p2m114",
@@ -3519,7 +3632,8 @@
       "photos/p2m114.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mama's hand on my shoulder felt like home. Sunday ritual."
   },
   {
     "id": "p2m115",
@@ -3550,7 +3664,8 @@
       "photos/p2m115.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed so hard my cheeks hurt under the stars. Following a map."
   },
   {
     "id": "p2m116",
@@ -3580,7 +3695,8 @@
       "photos/p2m116.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 5
+    "importance": 5,
+    "about": "Quiet morning with coffee and no need to talk. Sunday ritual."
   },
   {
     "id": "p2m117",
@@ -3607,7 +3723,8 @@
       "photos/p2m117.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. With the crew."
   },
   {
     "id": "p2m118",
@@ -3633,7 +3750,8 @@
       "photos/p2m118.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 5
+    "importance": 5,
+    "about": "Time dissolved and it felt like we'd never been apart. Late-night talk."
   },
   {
     "id": "p2m119",
@@ -3667,7 +3785,8 @@
       "photos/p2m119.jpg"
     ],
     "summary": "Felt the weight of their love in the smallest gestures.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the weight of their love in the smallest gestures. Mama's birthday."
   },
   {
     "id": "p2m120",
@@ -3701,7 +3820,8 @@
       "photos/p2m120.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found myself in the reflection of their eyes. Coffee date."
   },
   {
     "id": "p2m121",
@@ -3736,7 +3856,8 @@
       "photos/p2m121.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 3
+    "importance": 3,
+    "about": "Stayed late with the team and it finally worked. Project launch."
   },
   {
     "id": "p2m122",
@@ -3771,7 +3892,8 @@
       "photos/p2m122.jpg"
     ],
     "summary": "Papa told the story again, and we laughed like children.",
-    "importance": 2
+    "importance": 2,
+    "about": "Papa told the story again, and we laughed like children. Oma called."
   },
   {
     "id": "p2m123",
@@ -3805,7 +3927,8 @@
       "photos/p2m123.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Birthday bash."
   },
   {
     "id": "p2m124",
@@ -3831,7 +3954,8 @@
       "photos/p2m124.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Proud presentation."
   },
   {
     "id": "p2m125",
@@ -3862,7 +3986,8 @@
       "photos/p2m125.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found myself in the reflection of their eyes. Reconnection."
   },
   {
     "id": "p2m126",
@@ -3889,7 +4014,8 @@
       "photos/p2m126.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 3
+    "importance": 3,
+    "about": "Time dissolved and it felt like we'd never been apart. Birthday bash."
   },
   {
     "id": "p2m127",
@@ -3924,7 +4050,8 @@
       "photos/p2m127.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. First solo trip."
   },
   {
     "id": "p2m128",
@@ -3951,7 +4078,8 @@
       "photos/p2m128.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found myself in the reflection of their eyes. Birthday bash."
   },
   {
     "id": "p2m129",
@@ -3986,7 +4114,8 @@
       "photos/p2m129.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 5
+    "importance": 5,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Long day paid off."
   },
   {
     "id": "p2m130",
@@ -4013,7 +4142,8 @@
       "photos/p2m130.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 4
+    "importance": 4,
+    "about": "Felt the ground shift beneath me. Changed everything."
   },
   {
     "id": "p2m131",
@@ -4040,7 +4170,8 @@
       "photos/p2m131.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet morning with coffee and no need to talk. Holiday tradition."
   },
   {
     "id": "p2m132",
@@ -4066,7 +4197,8 @@
       "photos/p2m132.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 3
+    "importance": 3,
+    "about": "Oma's kitchen smelled like my childhood. Sunday ritual."
   },
   {
     "id": "p2m133",
@@ -4097,7 +4229,8 @@
       "photos/p2m133.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 3
+    "importance": 3,
+    "about": "The rooftops turned gold as the call to prayer echoed. First solo trip."
   },
   {
     "id": "p2m134",
@@ -4131,7 +4264,8 @@
       "photos/p2m134.jpg"
     ],
     "summary": "Felt the weight of their love in the smallest gestures.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the weight of their love in the smallest gestures. Just because."
   },
   {
     "id": "p2m135",
@@ -4162,7 +4296,8 @@
       "photos/p2m135.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. Following a map."
   },
   {
     "id": "p2m136",
@@ -4193,7 +4328,8 @@
       "photos/p2m136.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 2
+    "importance": 2,
+    "about": "Stayed late with the team and it finally worked. Long day paid off."
   },
   {
     "id": "p2m137",
@@ -4228,7 +4364,8 @@
       "photos/p2m137.jpg"
     ],
     "summary": "Knew I wouldn't be the same person on the other side.",
-    "importance": 2
+    "importance": 2,
+    "about": "Knew I wouldn't be the same person on the other side. Finally."
   },
   {
     "id": "p2m138",
@@ -4262,7 +4399,8 @@
       "photos/p2m138.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Birthday trip."
   },
   {
     "id": "p2m139",
@@ -4289,7 +4427,8 @@
       "photos/p2m139.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 5
+    "importance": 5,
+    "about": "Got the feedback that made it all click. Project launch."
   },
   {
     "id": "p2m140",
@@ -4320,7 +4459,8 @@
       "photos/p2m140.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Late-night talk."
   },
   {
     "id": "p2m141",
@@ -4355,7 +4495,8 @@
       "photos/p2m141.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Tasted colors and felt music in every moment. Finding myself."
   },
   {
     "id": "p2m142",
@@ -4382,7 +4523,8 @@
       "photos/p2m142.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 2
+    "importance": 2,
+    "about": "The rooftops turned gold as the call to prayer echoed. Finding myself."
   },
   {
     "id": "p2m143",
@@ -4409,7 +4551,8 @@
       "photos/p2m143.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Birthday bash."
   },
   {
     "id": "p2m144",
@@ -4443,7 +4586,8 @@
       "photos/p2m144.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 5
+    "importance": 5,
+    "about": "Found myself in the reflection of their eyes. Birthday bash."
   },
   {
     "id": "p2m145",
@@ -4477,7 +4621,8 @@
       "photos/p2m145.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 2
+    "importance": 2,
+    "about": "Tasted colors and felt music in every moment. On a whim."
   },
   {
     "id": "p2m146",
@@ -4503,7 +4648,8 @@
       "photos/p2m146.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Birthday bash."
   },
   {
     "id": "p2m147",
@@ -4537,7 +4683,8 @@
       "photos/p2m147.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 3
+    "importance": 3,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Birthday trip."
   },
   {
     "id": "p2m148",
@@ -4571,7 +4718,8 @@
       "photos/p2m148.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Birthday trip."
   },
   {
     "id": "p2m149",
@@ -4605,7 +4753,8 @@
       "photos/p2m149.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 3
+    "importance": 3,
+    "about": "Stayed late with the team and it finally worked. Proud presentation."
   },
   {
     "id": "p2m150",
@@ -4635,7 +4784,8 @@
       "photos/p2m150.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 3
+    "importance": 3,
+    "about": "The presentation landed exactly right. Long day paid off."
   },
   {
     "id": "p2m151",
@@ -4666,7 +4816,8 @@
       "photos/p2m151.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 3
+    "importance": 3,
+    "about": "Got the feedback that made it all click. Breakthrough."
   },
   {
     "id": "p2m152",
@@ -4701,7 +4852,8 @@
       "photos/p2m152.jpg"
     ],
     "summary": "Knew I wouldn't be the same person on the other side.",
-    "importance": 2
+    "importance": 2,
+    "about": "Knew I wouldn't be the same person on the other side. New chapter."
   },
   {
     "id": "p2m153",
@@ -4727,7 +4879,8 @@
       "photos/p2m153.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 2
+    "importance": 2,
+    "about": "Strangers became friends over shared plates and stories. Backpacking adventure."
   },
   {
     "id": "p2m154",
@@ -4762,7 +4915,8 @@
       "photos/p2m154.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Film night."
   },
   {
     "id": "p2m155",
@@ -4792,7 +4946,8 @@
       "photos/p2m155.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. Following a map."
   },
   {
     "id": "p2m156",
@@ -4827,7 +4982,8 @@
       "photos/p2m156.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 5
+    "importance": 5,
+    "about": "Tasted colors and felt music in every moment. With the crew."
   },
   {
     "id": "p2m157",
@@ -4861,7 +5017,8 @@
       "photos/p2m157.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Film night."
   },
   {
     "id": "p2m158",
@@ -4896,7 +5053,8 @@
       "photos/p2m158.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found myself in the reflection of their eyes. Film night."
   },
   {
     "id": "p2m159",
@@ -4927,7 +5085,8 @@
       "photos/p2m159.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. On a whim."
   },
   {
     "id": "p2m160",
@@ -4962,7 +5121,8 @@
       "photos/p2m160.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mama's hand on my shoulder felt like home. Mama's birthday."
   },
   {
     "id": "p2m161",
@@ -4988,7 +5148,8 @@
       "photos/p2m161.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 4
+    "importance": 4,
+    "about": "Time dissolved and it felt like we'd never been apart. Reconnection."
   },
   {
     "id": "p2m162",
@@ -5015,7 +5176,8 @@
       "photos/p2m162.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 4
+    "importance": 4,
+    "about": "Stayed late with the team and it finally worked. Team win."
   },
   {
     "id": "p2m163",
@@ -5046,7 +5208,8 @@
       "photos/p2m163.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 4
+    "importance": 4,
+    "about": "Oma's kitchen smelled like my childhood. Mama's birthday."
   },
   {
     "id": "p2m164",
@@ -5073,7 +5236,8 @@
       "photos/p2m164.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Tasted colors and felt music in every moment. Following a map."
   },
   {
     "id": "p2m165",
@@ -5104,7 +5268,8 @@
       "photos/p2m165.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 4
+    "importance": 4,
+    "about": "Laughed until we couldn't breathe. Late-night talk."
   },
   {
     "id": "p2m166",
@@ -5139,7 +5304,8 @@
       "photos/p2m166.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 3
+    "importance": 3,
+    "about": "Time dissolved and it felt like we'd never been apart. Film night."
   },
   {
     "id": "p2m167",
@@ -5173,7 +5339,8 @@
       "photos/p2m167.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 2
+    "importance": 2,
+    "about": "Time dissolved and it felt like we'd never been apart. Film night."
   },
   {
     "id": "p2m168",
@@ -5204,7 +5371,8 @@
       "photos/p2m168.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 2
+    "importance": 2,
+    "about": "Mama's hand on my shoulder felt like home. Holiday tradition."
   },
   {
     "id": "p2m169",
@@ -5234,7 +5402,8 @@
       "photos/p2m169.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 2
+    "importance": 2,
+    "about": "Tasted colors and felt music in every moment. First solo trip."
   },
   {
     "id": "p2m170",
@@ -5269,7 +5438,8 @@
       "photos/p2m170.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Reconnection."
   },
   {
     "id": "p2m171",
@@ -5296,7 +5466,8 @@
       "photos/p2m171.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 2
+    "importance": 2,
+    "about": "Strangers became friends over shared plates and stories. Birthday trip."
   },
   {
     "id": "p2m172",
@@ -5323,7 +5494,8 @@
       "photos/p2m172.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed so hard my cheeks hurt under the stars. Finding myself."
   },
   {
     "id": "p2m173",
@@ -5358,7 +5530,8 @@
       "photos/p2m173.jpg"
     ],
     "summary": "Quiet morning with coffee and no need to talk.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet morning with coffee and no need to talk. Papa made it special."
   },
   {
     "id": "p2m174",
@@ -5389,7 +5562,8 @@
       "photos/p2m174.jpg"
     ],
     "summary": "Mama's hand on my shoulder felt like home.",
-    "importance": 4
+    "importance": 4,
+    "about": "Mama's hand on my shoulder felt like home. Sunday ritual."
   },
   {
     "id": "p2m175",
@@ -5419,7 +5593,8 @@
       "photos/p2m175.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. First solo trip."
   },
   {
     "id": "p2m176",
@@ -5446,7 +5621,8 @@
       "photos/p2m176.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 3
+    "importance": 3,
+    "about": "Got the feedback that made it all click. Mentor moment."
   },
   {
     "id": "p2m177",
@@ -5481,7 +5657,8 @@
       "photos/p2m177.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 2
+    "importance": 2,
+    "about": "The presentation landed exactly right. Breakthrough."
   },
   {
     "id": "p2m178",
@@ -5516,7 +5693,8 @@
       "photos/p2m178.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. First solo trip."
   },
   {
     "id": "p2m179",
@@ -5546,7 +5724,8 @@
       "photos/p2m179.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found myself in the reflection of their eyes. Reconnection."
   },
   {
     "id": "p2m180",
@@ -5573,7 +5752,8 @@
       "photos/p2m180.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. On a whim."
   },
   {
     "id": "p2m181",
@@ -5603,7 +5783,8 @@
       "photos/p2m181.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 3
+    "importance": 3,
+    "about": "The rooftops turned gold as the call to prayer echoed. Finding myself."
   },
   {
     "id": "p2m182",
@@ -5637,7 +5818,8 @@
       "photos/p2m182.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. Chasing sunsets."
   },
   {
     "id": "p2m183",
@@ -5663,7 +5845,8 @@
       "photos/p2m183.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 3
+    "importance": 3,
+    "about": "The presentation landed exactly right. Team win."
   },
   {
     "id": "p2m184",
@@ -5689,7 +5872,8 @@
       "photos/p2m184.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. Birthday trip."
   },
   {
     "id": "p2m185",
@@ -5715,7 +5899,8 @@
       "photos/p2m185.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 4
+    "importance": 4,
+    "about": "Felt the ground shift beneath me. Finally."
   },
   {
     "id": "p2m186",
@@ -5749,7 +5934,8 @@
       "photos/p2m186.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found myself in the reflection of their eyes. Random Tuesday."
   },
   {
     "id": "p2m187",
@@ -5775,7 +5961,8 @@
       "photos/p2m187.jpg"
     ],
     "summary": "Knew I wouldn't be the same person on the other side.",
-    "importance": 3
+    "importance": 3,
+    "about": "Knew I wouldn't be the same person on the other side. New chapter."
   },
   {
     "id": "p2m188",
@@ -5806,7 +5993,8 @@
       "photos/p2m188.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Following a map."
   },
   {
     "id": "p2m189",
@@ -5837,7 +6025,8 @@
       "photos/p2m189.jpg"
     ],
     "summary": "Papa told the story again, and we laughed like children.",
-    "importance": 3
+    "importance": 3,
+    "about": "Papa told the story again, and we laughed like children. Just because."
   },
   {
     "id": "p2m190",
@@ -5871,7 +6060,8 @@
       "photos/p2m190.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 5
+    "importance": 5,
+    "about": "Stayed late with the team and it finally worked. Mentor moment."
   },
   {
     "id": "p2m191",
@@ -5905,7 +6095,8 @@
       "photos/p2m191.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 2
+    "importance": 2,
+    "about": "Tasted colors and felt music in every moment. On a whim."
   },
   {
     "id": "p2m192",
@@ -5932,7 +6123,8 @@
       "photos/p2m192.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found exactly what I didn't know I was looking for. With the crew."
   },
   {
     "id": "p2m193",
@@ -5958,7 +6150,8 @@
       "photos/p2m193.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found myself in the reflection of their eyes. Coffee date."
   },
   {
     "id": "p2m194",
@@ -5993,7 +6186,8 @@
       "photos/p2m194.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 3
+    "importance": 3,
+    "about": "Watched the sun sink into the ocean with arms around friends. On a whim."
   },
   {
     "id": "p2m195",
@@ -6020,7 +6214,8 @@
       "photos/p2m195.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found myself in the reflection of their eyes. Coffee date."
   },
   {
     "id": "p2m196",
@@ -6047,7 +6242,8 @@
       "photos/p2m196.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 3
+    "importance": 3,
+    "about": "Quiet presence felt louder than words. Coffee date."
   },
   {
     "id": "p2m197",
@@ -6081,7 +6277,8 @@
       "photos/p2m197.jpg"
     ],
     "summary": "Mentor's advice unlocked something I'd been stuck on.",
-    "importance": 3
+    "importance": 3,
+    "about": "Mentor's advice unlocked something I'd been stuck on. Team win."
   },
   {
     "id": "p2m198",
@@ -6115,7 +6312,8 @@
       "photos/p2m198.jpg"
     ],
     "summary": "Stayed late with the team and it finally worked.",
-    "importance": 2
+    "importance": 2,
+    "about": "Stayed late with the team and it finally worked. Mentor moment."
   },
   {
     "id": "p2m199",
@@ -6150,7 +6348,8 @@
       "photos/p2m199.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Backpacking adventure."
   },
   {
     "id": "p2m200",
@@ -6181,7 +6380,8 @@
       "photos/p2m200.jpg"
     ],
     "summary": "The presentation landed exactly right.",
-    "importance": 3
+    "importance": 3,
+    "about": "The presentation landed exactly right. Project launch."
   },
   {
     "id": "p2m201",
@@ -6211,7 +6411,8 @@
       "photos/p2m201.jpg"
     ],
     "summary": "Time dissolved and it felt like we'd never been apart.",
-    "importance": 2
+    "importance": 2,
+    "about": "Time dissolved and it felt like we'd never been apart. Coffee date."
   },
   {
     "id": "p2m202",
@@ -6246,7 +6447,8 @@
       "photos/p2m202.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 4
+    "importance": 4,
+    "about": "Quiet presence felt louder than words. Birthday bash."
   },
   {
     "id": "p2m203",
@@ -6281,7 +6483,8 @@
       "photos/p2m203.jpg"
     ],
     "summary": "Got the feedback that made it all click.",
-    "importance": 3
+    "importance": 3,
+    "about": "Got the feedback that made it all click. Breakthrough."
   },
   {
     "id": "p2m204",
@@ -6316,7 +6519,8 @@
       "photos/p2m204.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 3
+    "importance": 3,
+    "about": "Found exactly what I didn't know I was looking for. On a whim."
   },
   {
     "id": "p2m205",
@@ -6351,7 +6555,8 @@
       "photos/p2m205.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 2
+    "importance": 2,
+    "about": "Oma's kitchen smelled like my childhood. Holiday tradition."
   },
   {
     "id": "p2m206",
@@ -6386,7 +6591,8 @@
       "photos/p2m206.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 4
+    "importance": 4,
+    "about": "Watched the sun sink into the ocean with arms around friends. Birthday trip."
   },
   {
     "id": "p2m207",
@@ -6416,7 +6622,8 @@
       "photos/p2m207.jpg"
     ],
     "summary": "Felt the weight of their love in the smallest gestures.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the weight of their love in the smallest gestures. Sunday dinner."
   },
   {
     "id": "p2m208",
@@ -6447,7 +6654,8 @@
       "photos/p2m208.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Film night."
   },
   {
     "id": "p2m209",
@@ -6474,7 +6682,8 @@
       "photos/p2m209.jpg"
     ],
     "summary": "Quiet presence felt louder than words.",
-    "importance": 2
+    "importance": 2,
+    "about": "Quiet presence felt louder than words. Coffee date."
   },
   {
     "id": "p2m210",
@@ -6505,7 +6714,8 @@
       "photos/p2m210.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed so hard my cheeks hurt under the stars. Backpacking adventure."
   },
   {
     "id": "p2m211",
@@ -6532,7 +6742,8 @@
       "photos/p2m211.jpg"
     ],
     "summary": "Oma's kitchen smelled like my childhood.",
-    "importance": 4
+    "importance": 4,
+    "about": "Oma's kitchen smelled like my childhood. Oma called."
   },
   {
     "id": "p2m212",
@@ -6558,7 +6769,8 @@
       "photos/p2m212.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. Following a map."
   },
   {
     "id": "p2m213",
@@ -6592,7 +6804,8 @@
       "photos/p2m213.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 4
+    "importance": 4,
+    "about": "Lost time in a maze of narrow streets and spice vendors. First solo trip."
   },
   {
     "id": "p2m214",
@@ -6623,7 +6836,8 @@
       "photos/p2m214.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 2
+    "importance": 2,
+    "about": "Lost time in a maze of narrow streets and spice vendors. First solo trip."
   },
   {
     "id": "p2m215",
@@ -6657,7 +6871,8 @@
       "photos/p2m215.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found myself in the reflection of their eyes. Film night."
   },
   {
     "id": "p2m216",
@@ -6688,7 +6903,8 @@
       "photos/p2m216.jpg"
     ],
     "summary": "The kind of night that becomes a story we retell forever.",
-    "importance": 2
+    "importance": 2,
+    "about": "The kind of night that becomes a story we retell forever. Coffee date."
   },
   {
     "id": "p2m217",
@@ -6719,7 +6935,8 @@
       "photos/p2m217.jpg"
     ],
     "summary": "Papa told the story again, and we laughed like children.",
-    "importance": 3
+    "importance": 3,
+    "about": "Papa told the story again, and we laughed like children. Just because."
   },
   {
     "id": "p2m218",
@@ -6746,7 +6963,8 @@
       "photos/p2m218.jpg"
     ],
     "summary": "Felt the weight of their love in the smallest gestures.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the weight of their love in the smallest gestures. Sunday ritual."
   },
   {
     "id": "p2m219",
@@ -6781,7 +6999,8 @@
       "photos/p2m219.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Late-night talk."
   },
   {
     "id": "p2m220",
@@ -6816,7 +7035,8 @@
       "photos/p2m220.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 3
+    "importance": 3,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Birthday trip."
   },
   {
     "id": "p2m221",
@@ -6843,7 +7063,8 @@
       "photos/p2m221.jpg"
     ],
     "summary": "The fear and thrill mixed into something pure.",
-    "importance": 3
+    "importance": 3,
+    "about": "The fear and thrill mixed into something pure. New chapter."
   },
   {
     "id": "p2m222",
@@ -6873,7 +7094,8 @@
       "photos/p2m222.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. With the crew."
   },
   {
     "id": "p2m223",
@@ -6899,7 +7121,8 @@
       "photos/p2m223.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 4
+    "importance": 4,
+    "about": "The rooftops turned gold as the call to prayer echoed. Birthday trip."
   },
   {
     "id": "p2m224",
@@ -6933,7 +7156,8 @@
       "photos/p2m224.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Tasted colors and felt music in every moment. Birthday trip."
   },
   {
     "id": "p2m225",
@@ -6960,7 +7184,8 @@
       "photos/p2m225.jpg"
     ],
     "summary": "Everything before and after divides at this moment.",
-    "importance": 3
+    "importance": 3,
+    "about": "Everything before and after divides at this moment. Finally."
   },
   {
     "id": "p2m226",
@@ -6990,7 +7215,8 @@
       "photos/p2m226.jpg"
     ],
     "summary": "The rooftops turned gold as the call to prayer echoed.",
-    "importance": 4
+    "importance": 4,
+    "about": "The rooftops turned gold as the call to prayer echoed. On a whim."
   },
   {
     "id": "p2m227",
@@ -7020,7 +7246,8 @@
       "photos/p2m227.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Random Tuesday."
   },
   {
     "id": "p2m228",
@@ -7047,7 +7274,8 @@
       "photos/p2m228.jpg"
     ],
     "summary": "Tasted colors and felt music in every moment.",
-    "importance": 4
+    "importance": 4,
+    "about": "Tasted colors and felt music in every moment. Birthday trip."
   },
   {
     "id": "p2m229",
@@ -7078,7 +7306,8 @@
       "photos/p2m229.jpg"
     ],
     "summary": "Knew I wouldn't be the same person on the other side.",
-    "importance": 2
+    "importance": 2,
+    "about": "Knew I wouldn't be the same person on the other side. New chapter."
   },
   {
     "id": "p2m230",
@@ -7105,7 +7334,8 @@
       "photos/p2m230.jpg"
     ],
     "summary": "Found exactly what I didn't know I was looking for.",
-    "importance": 4
+    "importance": 4,
+    "about": "Found exactly what I didn't know I was looking for. With the crew."
   },
   {
     "id": "p2m231",
@@ -7131,7 +7361,8 @@
       "photos/p2m231.jpg"
     ],
     "summary": "Strangers became friends over shared plates and stories.",
-    "importance": 3
+    "importance": 3,
+    "about": "Strangers became friends over shared plates and stories. Finding myself."
   },
   {
     "id": "p2m232",
@@ -7166,7 +7397,8 @@
       "photos/p2m232.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the ground shift beneath me. Finally."
   },
   {
     "id": "p2m233",
@@ -7201,7 +7433,8 @@
       "photos/p2m233.jpg"
     ],
     "summary": "Watched the sun sink into the ocean with arms around friends.",
-    "importance": 2
+    "importance": 2,
+    "about": "Watched the sun sink into the ocean with arms around friends. First solo trip."
   },
   {
     "id": "p2m234",
@@ -7236,7 +7469,8 @@
       "photos/p2m234.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Random Tuesday."
   },
   {
     "id": "p2m235",
@@ -7262,7 +7496,8 @@
       "photos/p2m235.jpg"
     ],
     "summary": "Lost time in a maze of narrow streets and spice vendors.",
-    "importance": 3
+    "importance": 3,
+    "about": "Lost time in a maze of narrow streets and spice vendors. Backpacking adventure."
   },
   {
     "id": "p2m236",
@@ -7292,7 +7527,8 @@
       "photos/p2m236.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed until we couldn't breathe. Coffee date."
   },
   {
     "id": "p2m237",
@@ -7318,7 +7554,8 @@
       "photos/p2m237.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 2
+    "importance": 2,
+    "about": "Felt the ground shift beneath me. Changed everything."
   },
   {
     "id": "p2m238",
@@ -7352,7 +7589,8 @@
       "photos/p2m238.jpg"
     ],
     "summary": "Found myself in the reflection of their eyes.",
-    "importance": 2
+    "importance": 2,
+    "about": "Found myself in the reflection of their eyes. Random Tuesday."
   },
   {
     "id": "p2m239",
@@ -7379,7 +7617,8 @@
       "photos/p2m239.jpg"
     ],
     "summary": "Felt the ground shift beneath me.",
-    "importance": 3
+    "importance": 3,
+    "about": "Felt the ground shift beneath me. Changed everything."
   },
   {
     "id": "p2m240",
@@ -7413,7 +7652,8 @@
       "photos/p2m240.jpg"
     ],
     "summary": "Laughed until we couldn't breathe.",
-    "importance": 2
+    "importance": 2,
+    "about": "Laughed until we couldn't breathe. Birthday bash."
   },
   {
     "id": "p2m241",
@@ -7439,6 +7679,7 @@
       "photos/p2m241.jpg"
     ],
     "summary": "Laughed so hard my cheeks hurt under the stars.",
-    "importance": 3
+    "importance": 3,
+    "about": "Laughed so hard my cheeks hurt under the stars. Chasing sunsets."
   }
 ]

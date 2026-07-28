@@ -1,0 +1,258 @@
+/* Vault pane (list view) — spec 6.2, mockup v-vault. Tokens only. */
+
+.vault {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top block sits below the chrome (avatar + pane dots). */
+.vault-top {
+  padding: calc(56px + env(safe-area-inset-top)) var(--space-md) var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* Segmented control [ List | Cortex ]: pill, white active segment. */
+.vault-seg {
+  display: flex;
+  background: var(--surface-glass);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs);
+}
+.vault-seg button {
+  flex: 1;
+  padding: var(--space-sm) 0;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  transition: background var(--motion-fast) var(--ease);
+}
+.vault-seg button.on {
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Search field + heart filter + sort toggle. */
+.vault-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+.vault-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface-white);
+  border-radius: var(--radius-pill);
+  padding: var(--space-sm) var(--space-md);
+  box-shadow: var(--shadow-raised);
+  color: var(--text-secondary);
+}
+.vault-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
+}
+.vault-search input::placeholder { color: var(--text-secondary); }
+.vault-fav {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  transition: all var(--motion-fast) var(--ease);
+}
+.vault-fav.on {
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+  color: var(--text-primary);
+}
+.vault-sort {
+  flex-shrink: 0;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+}
+
+/* The list scrolls on its own so the month headers can stick under the tools. */
+.vault-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--space-md) var(--space-lg);
+}
+.vault-cortex {
+  flex: 1;
+  min-height: 0;
+}
+
+.vault-month {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  color: var(--text-secondary);
+  padding: var(--space-sm) var(--space-xs);
+}
+
+/* A row is exactly four elements: thumb, title, one metadata line, heart. */
+.vault-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: left;
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-bubble);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.vault-thumb {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-cream);
+}
+.vault-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vault-row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.vault-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vault-meta {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vault-heart {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.vault-empty {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--space-xxl) var(--space-lg);
+}
+
+/* Pending shares: quiet accept/decline rows at the top. */
+.vault-pending {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface-glass);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.vault-pending-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.vault-pending-btn {
+  flex-shrink: 0;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+}
+.vault-pending-btn.quiet {
+  background: none;
+  box-shadow: none;
+  color: var(--text-secondary);
+}
+
+/* Loading shimmer: cream skeleton rows, 900ms cycle, no spinners. */
+.vault-skel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  background: var(--surface-cream);
+  animation: vault-shimmer var(--motion-slow) var(--ease) infinite;
+}
+.vault-skel-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.vault-skel-lines span {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.05);
+}
+.vault-skel-lines span:last-child { width: 55%; }
+@keyframes vault-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Long press context menu. */
+.vault-menu-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(31, 41, 55, 0.2);
+}
+.vault-menu {
+  width: 260px;
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-sm);
+  animation: vault-menu-in var(--motion-fast) var(--ease);
+}
+@keyframes vault-menu-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.vault-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+}
+.vault-menu-item.danger { color: var(--error); }
+.vault-confirm-text { padding: var(--space-md); }
+.vault-confirm-actions { display: flex; }
+.vault-confirm-actions .vault-menu-item { flex: 1; }

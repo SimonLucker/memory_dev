@@ -1,0 +1,129 @@
+/* Cards pane — spec 6.5. Dusk gradient ground, one woven demo card, Gifts row. */
+
+.cd {
+  position: relative;
+  min-height: 100%;
+  background: linear-gradient(180deg, var(--dusk-top), var(--dusk-mid), var(--dusk-bot));
+  padding: 72px var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  color: #FFFFFF;
+}
+.cd .type-body, .cd .type-headline, .cd .type-label { color: #FFFFFF; }
+.cd-quiet { margin: var(--space-md) 0 var(--space-xs) var(--space-xs); }
+
+/* Empty state */
+.cd-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+.cd .cd-weave {
+  background: var(--surface-white);
+  color: var(--text-primary);
+  border-radius: var(--radius-pill);
+  padding: 12px var(--space-lg);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Cover: radius lg, photo straight and full width, title + date on a scrim */
+.cd-cover {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+}
+.cd-cover img {
+  width: 100%;
+  aspect-ratio: 4 / 4.4;
+  object-fit: cover;
+}
+.cd-tap { cursor: pointer; }
+.cd-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-xl) var(--space-md) var(--space-md);
+  background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.6));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  text-align: left;
+}
+
+/* Weaving: calm cream skeletons, never a percent bar */
+.cd-skel {
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-cream);
+  margin-top: var(--space-md);
+  animation: cd-breathe 900ms var(--ease) infinite alternate;
+}
+.cd-skel-short { width: 60%; margin-top: var(--space-sm); }
+@keyframes cd-breathe {
+  from { opacity: 0.4; }
+  to { opacity: 0.75; }
+}
+.cd-weavelabel { text-align: center; margin-top: var(--space-md); }
+
+/* Opened card */
+.cd-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass-dusk);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cd-summary { margin-top: var(--space-md); }
+
+.cd-masonry {
+  columns: 2;
+  column-gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+.cd-masonry img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.cd-glass {
+  background: var(--surface-glass-dusk);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+}
+.cd-mrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  margin-top: var(--space-sm);
+  text-align: left;
+}
+.cd-mrow:first-of-type { margin-top: 0; }
+.cd-mtitle {
+  flex: 1;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cd-mdate { flex-shrink: 0; }
+
+/* Gifts: one labeled quiet row */
+.cd-gifts { margin-top: auto; padding-top: var(--space-lg); }
+.cd-gifts .cd-glass { text-align: center; }
+.cd-gifts .cd-quiet { margin-top: 0; }
