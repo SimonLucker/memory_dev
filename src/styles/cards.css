@@ -1,4 +1,4 @@
-/* Cards pane — spec 6.5. Dusk gradient ground, one woven demo card, Gifts row. */
+/* Cards pane — spec 6.5. Dusk gradient ground, woven Memory Cards, Gifts row. */
 
 .cd {
   position: relative;
@@ -22,7 +22,9 @@
   gap: var(--space-md);
   text-align: center;
 }
-.cd .cd-weave {
+/* Both selectors on purpose: inside .cd the .cd .type-label white would win
+   over a bare class, and the config sheet lives outside .cd (portaled). */
+.cd .cd-weave, .cd-veil .cd-weave {
   background: var(--surface-white);
   color: var(--text-primary);
   border-radius: var(--radius-pill);
@@ -43,7 +45,33 @@
   aspect-ratio: 4 / 4.4;
   object-fit: cover;
 }
-.cd-tap { cursor: pointer; }
+.cd-blank {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--surface-glass-dusk);
+}
+.cd-cover .cd-blank { aspect-ratio: 4 / 4.4; }
+
+/* Grid: big covers, radius lg, newest first, one per row on the phone column */
+.cd-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.cd-tile {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.cd-tile img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.cd-weave-more { align-self: center; margin-top: var(--space-lg); }
 .cd-scrim {
   position: absolute;
   left: 0;
@@ -122,6 +150,105 @@
   text-overflow: ellipsis;
 }
 .cd-mdate { flex-shrink: 0; }
+
+.cd-insight { margin-top: var(--space-sm); }
+
+/* Veil for the config sheet (bottom) and the card menu (centered).
+   Portaled into .phone (see Cards.jsx), so absolute covers exactly the pane. */
+.cd-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(31, 41, 55, 0.25);
+}
+.cd-veil-center { align-items: center; justify-content: center; }
+
+/* Weave config sheet: dusk glass, xl top radius, rises 600ms */
+.cd-sheet {
+  width: 100%;
+  max-height: 85%;
+  overflow-y: auto;
+  background: linear-gradient(180deg, var(--dusk-mid), var(--dusk-bot));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-card);
+  padding: var(--space-lg) var(--space-md);
+  color: #FFFFFF;
+  animation: cd-sheet-in var(--motion-normal) var(--ease);
+}
+@keyframes cd-sheet-in {
+  from { transform: translateY(40%); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.cd-fldlabel { display: block; margin-top: var(--space-md); opacity: 0.85; }
+.cd-fld {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-xs);
+  background: var(--surface-glass-dusk);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px var(--space-md);
+  color: #FFFFFF;
+  color-scheme: dark;
+}
+.cd-fld::placeholder { color: rgba(255, 255, 255, 0.5); }
+.cd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+.cd-chip {
+  background: var(--surface-glass-dusk);
+  color: #FFFFFF;
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  transition: background var(--motion-fast) var(--ease), color var(--motion-fast) var(--ease);
+}
+.cd-chip.on { background: var(--surface-white); color: var(--text-primary); }
+.cd-dates { display: flex; gap: var(--space-sm); }
+.cd-dates label { flex: 1; }
+.cd-sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+.cd-sheet-cancel { color: #FFFFFF; opacity: 0.85; padding: 12px; }
+
+/* Long-press card menu: white, like the vault row menu */
+.cd-menu {
+  width: 260px;
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-sm);
+  animation: cd-menu-in var(--motion-fast) var(--ease);
+}
+@keyframes cd-menu-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.cd-menu .type-body { color: var(--text-primary); }
+.cd-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-sm);
+  font: var(--type-body);
+  font-family: var(--font);
+  color: var(--text-primary);
+}
+.cd-menu-item.danger { color: var(--error); }
+.cd-menu-text { padding: var(--space-sm); }
+.cd-menu-actions { display: flex; justify-content: flex-end; }
+.cd-menu-actions .cd-menu-item { width: auto; padding: 0 var(--space-md); }
 
 /* Gifts: one labeled quiet row */
 .cd-gifts { margin-top: auto; padding-top: var(--space-lg); }

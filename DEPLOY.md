@@ -153,6 +153,9 @@ anywhere — home, work, on the train.
 
 ## Good to know
 
+- **Upgrading a project made before the Cards update:** open the SQL Editor,
+  paste the whole `supabase/schema.sql` again and Run — it is safe to re-run
+  and only adds the new `cards` table.
 - **Making changes later:** any time we improve the app, just `git push` —
   Vercel rebuilds the site by itself within a minute or two.
 - **Keep the link private.** There's no login yet, so anyone who has the

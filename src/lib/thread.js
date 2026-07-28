@@ -74,6 +74,25 @@ export function updateMessage(personId, id, patch) {
   return msgs[i]
 }
 
+// --- The open capture window, derived from the persisted thread (5.4-5.6). ---
+// A memory-card or moment-end message is a boundary: everything captured after
+// the last one is the still-open bundle, so a reload mid-forming (iOS kills
+// tabs freely) loses nothing. Texts flagged `meta` (questions to the keeper,
+// enrichment replies) never join a bundle. momentMsg is the open moment-start
+// marker (no boundary after it), or null.
+const BOUNDARY_KINDS = ['memory-card', 'moment-end']
+const CAPTURE_KINDS = ['user-text', 'user-photo', 'user-video', 'user-voice']
+export function deriveOpenWindow(msgs) {
+  let start = 0
+  let momentMsg = null
+  for (let i = 0; i < msgs.length; i++) {
+    if (BOUNDARY_KINDS.includes(msgs[i].kind)) { start = i + 1; momentMsg = null }
+    else if (msgs[i].kind === 'moment-start') momentMsg = msgs[i]
+  }
+  const bundle = msgs.slice(start).filter((m) => CAPTURE_KINDS.includes(m.kind) && !m.meta)
+  return { bundle, momentMsg }
+}
+
 // Build a plausible historical thread from existing memories: one memory-card
 // message at each memory's own date, so the thread scrolls through months of
 // history with sticky month groups. No-op when a thread already exists.

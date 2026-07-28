@@ -181,9 +181,17 @@ export default function App() {
   const onPointerDown = e => {
     if (profileOpen || openMemoryId || slideshowId) return
     if (!e.isPrimary || dragRef.current || Date.now() < settleUntil.current) return
-    // Children that pan horizontally themselves (Cortex canvas, heat pill,
-    // chip row) own their gesture — never turn those into pane swipes.
-    if (e.target.closest?.('canvas, [data-no-pane-swipe], .cortex-values')) return
+    // Regions marked data-no-pane-swipe (the whole Cortex map) own ALL their
+    // gestures — pan, pinch, scrub, chips, search. Pane switching from there
+    // works only via the dots or an edge swipe (capture listener below).
+    if (e.target.closest?.('[data-no-pane-swipe]')) return
+    // Mode-based backstop: while the Vault shows the Cortex, the whole pane is
+    // gesture-owned even where the map leaves gaps (empty profile, chrome air).
+    // Only a swipe starting within 24px of the column edges pages from there.
+    if (pane === 0 && vaultMode === 'cortex' && pagerRef.current) {
+      const r = pagerRef.current.getBoundingClientRect()
+      if (e.clientX - r.left >= 24 && r.right - e.clientX >= 24) return
+    }
     dragRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId, active: false, w: pagerRef.current.clientWidth }
   }
   const onPointerMove = e => {
@@ -214,6 +222,26 @@ export default function App() {
     setDragX(null)
   }
   const goPane = i => { setSettleMs(600); settleUntil.current = Date.now() + 600; setPane(i) }
+
+  // Edge-swipe escape hatch for no-pane-swipe regions: a gesture starting
+  // within 24px of the phone column's edges pages as normal. Must run in the
+  // capture phase and stopPropagation, because the graph's d3-zoom would
+  // otherwise claim the pointer stream (capture-phase window listeners) and
+  // starve the pager. dragRef takes over; move/up flow through the React
+  // handlers as usual.
+  useEffect(() => {
+    const el = pagerRef.current
+    const onCapture = e => {
+      if (!e.isPrimary || dragRef.current || Date.now() < settleUntil.current) return
+      if (!e.target.closest?.('[data-no-pane-swipe]')) return
+      const r = el.parentElement.getBoundingClientRect() // .phone column
+      if (e.clientX - r.left >= 24 && r.right - e.clientX >= 24) return
+      e.stopPropagation() // the map never sees this one
+      dragRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId, active: false, w: el.clientWidth }
+    }
+    el.addEventListener('pointerdown', onCapture, true)
+    return () => el.removeEventListener('pointerdown', onCapture, true)
+  }, [])
 
   // Chrome avatar follows the saved profile picture (lib/avatar.js).
   const [avatarTick, setAvatarTick] = useState(0)

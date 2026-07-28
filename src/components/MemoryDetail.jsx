@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import '../styles/memory.css'
-import { Camera, Close, Mic, Pause, Person, Pin, Play, Plus, Spotify, Transcript } from './Icons.jsx'
-import { findTrack, uploadPhoto } from '../lib/api.js'
+import { AppleMusic, Camera, Close, Mic, Pause, Person, Pin, Play, Plus, Spotify, Transcript } from './Icons.jsx'
+import { appleMusicSearchUrl, findTrack, uploadPhoto } from '../lib/api.js'
+import { getSettings, personIdFromMemoryId } from '../lib/settings.js'
 import { encodePhoto } from '../lib/photos.js'
 import { startRecording, transcribe } from '../lib/voice.js'
 import { REGISTRY } from '../lib/people.js'
@@ -37,35 +38,51 @@ function VoiceRow({ note, rise }) {
   )
 }
 
-// Music row: play + song and artist + Spotify logo + open link (6.4.5).
-// Inline play uses the Apple catalog preview via findTrack.
-function MusicRow({ music }) {
-  const [preview, setPreview] = useState(null) // null | 'loading' | 'missing' | url
+// Music row: play + song and artist + service logo + open link (6.4.5).
+// Inline play uses the Apple catalog preview via findTrack; playback starts on
+// open (a rejected play() just leaves the row paused). Play state is derived
+// from the element's own events, never assumed. The logo and the Open link
+// follow the person's music service preference (Spotify default).
+function MusicRow({ music, service, stopTick }) {
+  const [info, setInfo] = useState(null) // null (looking) | { missing } | track info
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef(null)
-  const toggle = async () => {
+  useEffect(() => {
+    let live = true
+    findTrack(music).then(t => { if (live) setInfo(t?.previewUrl ? t : { missing: true }) })
+    return () => { live = false }
+  }, [music])
+  // Autoplay once the preview is known; a rejection degrades silently to paused.
+  useEffect(() => {
+    if (info?.previewUrl) audioRef.current?.play().catch(() => {})
+  }, [info])
+  // The Slideshow (or the closing animation) takes the sound over.
+  useEffect(() => {
+    if (stopTick) audioRef.current?.pause()
+  }, [stopTick])
+  const toggle = () => {
     const a = audioRef.current
-    if (a && typeof preview === 'string' && preview !== 'loading' && preview !== 'missing') {
-      if (a.paused) { a.play().catch(() => {}); setPlaying(true) } else { a.pause(); setPlaying(false) }
-      return
-    }
-    if (preview === 'loading') return
-    setPreview('loading')
-    const info = await findTrack(music)
-    if (info?.previewUrl) { setPreview(info.previewUrl); setPlaying(true) }
-    else setPreview('missing')
+    if (!a) return
+    if (a.paused) a.play().catch(() => {})
+    else a.pause()
   }
-  const url = 'https://open.spotify.com/search/' + encodeURIComponent(`${music.name} ${music.artist || ''}`.trim())
-  const hasUrl = typeof preview === 'string' && preview !== 'loading' && preview !== 'missing'
+  const spotify = service !== 'apple'
+  const url = spotify
+    ? 'https://open.spotify.com/search/' + encodeURIComponent(`${music.name} ${music.artist || ''}`.trim())
+    : info?.trackViewUrl || appleMusicSearchUrl(music)
   return (
     <div className="md-row">
       <button className="md-play" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>
         {playing ? <Pause size={18} /> : <Play size={18} />}
       </button>
       <span className="type-label md-grow">{music.name}{music.artist ? ` · ${music.artist}` : ''}</span>
-      <Spotify size={18} />
+      {spotify ? <Spotify size={18} /> : <AppleMusic size={18} />}
       <a className="type-label md-lnk" href={url} target="_blank" rel="noreferrer">{MUSIC_LINK}</a>
-      {hasUrl && <audio ref={audioRef} src={preview} autoPlay onEnded={() => setPlaying(false)} />}
+      {info?.previewUrl && (
+        <audio ref={audioRef} src={info.previewUrl}
+          onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)} onError={() => setPlaying(false)} />
+      )}
     </div>
   )
 }
@@ -83,7 +100,10 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
     const id = requestAnimationFrame(() => requestAnimationFrame(() => setPhase('open')))
     return () => cancelAnimationFrame(id)
   }, [])
+  // Bumping this pauses the music row (close and Slideshow both take over).
+  const [musicStop, setMusicStop] = useState(0)
   const close = () => {
+    setMusicStop(t => t + 1)
     setPhase('closing')
     setTimeout(onClose, reduced ? 0 : 900)
   }
@@ -271,7 +291,10 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
           <VoiceRow key={note.src || i} note={note} rise={fresh === note.src} />
         ))}
 
-        {memory.music && <MusicRow music={memory.music} />}
+        {memory.music && (
+          <MusicRow music={memory.music} stopTick={musicStop}
+            service={getSettings(personIdFromMemoryId(memory.id)).musicService || 'spotify'} />
+        )}
 
         {memory.feeling?.length > 0 && (
           <>
@@ -299,7 +322,8 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
         )}
 
         <div className="md-actions">
-          <button className="md-pill prim" onClick={() => openSlideshow(memory.id)}>{SLIDESHOW_ACTION}</button>
+          <button className="md-pill prim"
+            onClick={() => { setMusicStop(t => t + 1); openSlideshow(memory.id) }}>{SLIDESHOW_ACTION}</button>
           <button className="md-pill quiet" onClick={() => setAdd('menu')}><Plus size={16} />Add</button>
           <button className="md-pill quiet" onClick={openTag}><Person size={16} />Tag people</button>
         </div>

@@ -41,6 +41,32 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })
 
+    // Memory Card persistence, mirroring /__save-memories but with per-person
+    // files that are fetched (never imported), so no module-cache dance needed.
+    // GET /__cards?person=p1 → the array. POST { person, upsert: card } or
+    // { person, delete: id }.
+    server.middlewares.use('/__cards', async (req, res) => {
+      try {
+        const fileOf = (p) => join(root, 'src/data', `cards-${String(p).replace(/[^\w-]/g, '')}.json`)
+        const readCards = (p) => { try { return JSON.parse(readFileSync(fileOf(p), 'utf8')) } catch { return [] } }
+        if (req.method === 'GET') {
+          const person = new URL(req.url, 'http://x').searchParams.get('person') || ''
+          res.setHeader('Content-Type', 'application/json')
+          return res.end(JSON.stringify(readCards(person)))
+        }
+        if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+        const { person, upsert, delete: delId } = JSON.parse(await readBody(req))
+        let cards = readCards(person)
+        if (upsert) {
+          const i = cards.findIndex((c) => c.id === upsert.id)
+          i === -1 ? cards.push(upsert) : (cards[i] = upsert)
+        }
+        if (delId) cards = cards.filter((c) => c.id !== delId)
+        writeFileSync(fileOf(person), JSON.stringify(cards, null, 2) + '\n')
+        res.end('ok')
+      } catch (e) { res.statusCode = 500; res.end(String(e)) }
+    })
+
     // Serve photos straight from disk. Vite's own public-file serving relies on a
     // watcher-fed file list, and the watcher deliberately ignores public/photos
     // (uploads must not trigger reloads) — so photos uploaded mid-session fell
@@ -50,7 +76,10 @@ const devApi = (env) => ({
         const name = decodeURIComponent((req.url || '').split('?')[0]).replace(/^\//, '')
         if (!name || name.includes('..') || name.includes('/')) return next()
         const buf = readFileSync(join(root, 'public/photos', name))
-        res.setHeader('Content-Type', name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+        res.setHeader('Content-Type',
+          name.endsWith('.png') ? 'image/png'
+            : name.endsWith('.m4a') ? 'audio/mp4'
+              : name.endsWith('.webm') ? 'audio/webm' : 'image/jpeg')
         res.end(buf)
       } catch { next() }
     })
@@ -61,6 +90,18 @@ const devApi = (env) => ({
       try {
         const ext = (req.headers['content-type'] || '').includes('png') ? 'png' : 'jpg'
         const name = `new_${Date.now()}.${ext}`
+        writeFileSync(join(root, 'public/photos', name), await readBody(req))
+        res.end(JSON.stringify({ path: `photos/${name}` }))
+      } catch (e) { res.statusCode = 500; res.end(String(e)) }
+    })
+
+    // Mirror of /__upload-photo for voice notes; extension follows the audio type.
+    server.middlewares.use('/__upload-audio', async (req, res) => {
+      if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+      try {
+        const ct = req.headers['content-type'] || ''
+        const ext = ct.includes('mp4') ? 'm4a' : 'webm'
+        const name = `voice_${Date.now()}.${ext}`
         writeFileSync(join(root, 'public/photos', name), await readBody(req))
         res.end(JSON.stringify({ path: `photos/${name}` }))
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
@@ -160,6 +201,6 @@ export default defineConfig(({ mode }) => {
     // HTTPS=1 (npm run dev:phone): self-signed cert so Safari on the phone grants
     // mic access — getUserMedia needs a secure context off localhost.
     plugins: [react(), devApi(env), ...(process.env.HTTPS ? [basicSsl()] : [])],
-    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/layout-*.json', '**/public/photos/**'] } },
+    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/cards-*.json', '**/src/data/layout-*.json', '**/public/photos/**'] } },
   }
 })

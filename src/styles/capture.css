@@ -152,6 +152,10 @@
 }
 .wave i.played { background: var(--text-primary); }
 .dur { color: var(--text-secondary); }
+/* Recording or upload failed (5.1 failed style) */
+.msg-voice.failed { outline: 1px solid var(--error); }
+/* Audio gone after reload (blob URL died before upload): quiet, never broken */
+.msg-voice.unavailable { opacity: 0.55; }
 
 /* Memory summary card, inline and permanent (5.4, 5.6) */
 .mem-card {

@@ -37,6 +37,36 @@ srcs under `videos/`, voice srcs under `voice/`). Players must degrade
 gracefully: show the poster frame and duration for videos, render the voice row
 (and transcript) even when the audio cannot load. Never block on missing media.
 
+## Memory Card (spec 6.5, `lib/cards.js`)
+
+One card = one AI-woven collection of memories. Persisted through `api.js`
+(`loadCards` / `upsertCard` / `removeCard`): Supabase table `cards`
+(person_id, id, data jsonb) or, in dev, `src/data/cards-<pid>.json` via the
+`/__cards` vite middleware. This JSON is also the input format for cards
+produced anywhere else.
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | `c001`, unique per person space. |
+| `title` | string | Short evocative title, max ~6 words. |
+| `span` | string | Derived at weave time from the members: `June 2026` or `Oct 2024 – Mar 2025`. |
+| `config` | object | The weave request, kept for re-weaving: `{theme, people[], place, from, to}`. `people` are names from `who`; `from`/`to` are `YYYY-MM-DD` or empty. Hard filters (people any-of, place substring, date range) run client-side; only the theme goes to the LLM. |
+| `summary` | string | The woven story, about 3 to 6 sentences. |
+| `insights` | `string[]` | 2 to 4 short factual lines. |
+| `memoryIds` | `string[]` | Member memories. Ids that no longer exist are skipped at render. |
+| `cover` | string | Photo path from a member memory, or null. |
+| `createdAt` | string | ISO timestamp. The grid sorts newest first. |
+
+Everything else (media masonry, member rows, counts) is recomputed from the
+member memories at render time. Weaving never fails: an unreachable or mocked
+LLM falls back to a deterministic newest-8 selection with a templated title and
+computed insights.
+
+Card counts for other views (Profile numbers row) without prop drilling:
+`localStorage['memmory.cardCount.<personId>']` mirrors the count, and every
+change dispatches `window` event `memmory:cards` with
+`detail: {personId, count}`.
+
 ## Edges (`lib/edges.js`, spec 6.3, exact)
 
 An edge exists only when two memories share a **person**, a **place** or a

@@ -141,6 +141,37 @@
 }
 .pf-qactions button { padding: var(--space-xs) var(--space-sm); }
 
+/* Music service picker: two icon choices, the chosen one on a white pill */
+.pf-seg {
+  display: flex;
+  gap: 2px;
+  background: var(--surface-cream);
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  flex-shrink: 0;
+}
+.pf-seg-opt {
+  width: 40px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+}
+.pf-seg-opt.sel {
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+  color: var(--text-primary);
+}
+
+/* AI Insights: quiet Copy and Refresh above the rows */
+.pf-iactions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
 /* Face ID switch (visual only) */
 .pf-switch {
   width: 44px;

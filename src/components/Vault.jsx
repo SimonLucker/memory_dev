@@ -131,7 +131,7 @@ export default function Vault({ memories, pending, mode, setMode, openMemory, to
       </div>
 
       {mode === 'cortex' ? (
-        <div className="vault-cortex">{cortexSlot}</div>
+        <div className="vault-cortex" data-no-pane-swipe>{cortexSlot}</div>
       ) : (
         <div className="vault-list" onScroll={onScroll}>
           {pending.map(m => (

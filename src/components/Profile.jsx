@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/profile.css'
-import { Close, ChevronLeft, ChevronRight, Sparkle } from './Icons.jsx'
+import { AppleMusic, Close, ChevronLeft, ChevronRight, Sparkle, Spotify } from './Icons.jsx'
 import { personColor, HEAT } from '../lib/palette.js'
 import { getAvatar, setAvatar, uploadAvatar } from '../lib/avatar.js'
 import { whenToTs } from '../lib/thread.js'
 import { PRESENCE_LINE, PRIVACY_ROW } from '../lib/copy.js'
+import { getSettings, setSetting } from '../lib/settings.js'
+import { computeInsights, fetchNarrative, loadNarrative, saveNarrative } from '../lib/insights.js'
 
 // Demo bio facts per profile (test phase; real profiles carry their own).
 const BIO = {
@@ -56,6 +58,79 @@ function Gauge({ memories }) {
   )
 }
 
+// AI Insights (spec 6.6.3b): computed white rows on cream, an LLM narrative on
+// top when the adapter answers well, quiet Copy and Refresh. Printable and
+// copyable by design.
+function InsightsView({ person, memories }) {
+  const sections = useMemo(() => computeInsights(person, memories), [person, memories])
+  const [narrative, setNarrative] = useState(() => loadNarrative(person.id))
+  const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const refresh = async () => {
+    setBusy(true)
+    try {
+      const lines = await fetchNarrative(person, memories)
+      setNarrative(lines)
+      saveNarrative(person.id, lines)
+    } catch { /* quiet; the computed rows carry the view */ }
+    setBusy(false)
+  }
+  useEffect(() => {
+    if (!loadNarrative(person.id) && memories.length) refresh()
+  }, [person.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const copy = async () => {
+    const text = [...(narrative || []), ...sections.flatMap(s => s.lines)].join('\n')
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      const t = document.createElement('textarea')
+      t.value = text
+      document.body.appendChild(t)
+      t.select()
+      document.execCommand('copy')
+      t.remove()
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  if (!sections.length) {
+    return (
+      <p className="type-body pf-quiet pf-center">
+        Patterns from travels, people and thoughts.
+      </p>
+    )
+  }
+  return (
+    <>
+      <div className="pf-iactions">
+        <button className="pf-link type-label" onClick={copy}>{copied ? 'Copied' : 'Copy'}</button>
+        <button className="pf-link type-label" onClick={refresh} disabled={busy}>
+          {busy ? 'Refreshing' : 'Refresh'}
+        </button>
+      </div>
+      {narrative && (
+        <>
+          <p className="type-label pf-label">Patterns</p>
+          {narrative.map((line, i) => (
+            <div key={i} className="pf-row"><span className="type-body">{line}</span></div>
+          ))}
+        </>
+      )}
+      {sections.map(s => (
+        <div key={s.label}>
+          <p className="type-label pf-label">{s.label}</p>
+          {s.lines.map((line, i) => (
+            <div key={i} className="pf-row"><span className="type-body">{line}</span></div>
+          ))}
+        </div>
+      ))}
+    </>
+  )
+}
+
 const PersonRow = ({ p }) => (
   <div className="pf-row">
     <span className="pf-dot" style={{ background: personColor(p.id) }} />
@@ -70,6 +145,8 @@ export default function Profile({ person, persons, memories, onClose, switchPers
   const [editing, setEditing] = useState(null) // question index being edited
   const [draft, setDraft] = useState('')
   const [faceId, setFaceId] = useState(false) // visual only
+  const [musicService, setMusicService] = useState(() => getSettings(person.id).musicService || 'spotify')
+  const pickService = s => { setMusicService(s); setSetting(person.id, 'musicService', s) }
   const [picking, setPicking] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState(() => getAvatar(person.id))
   const [pick, setPick] = useState(null) // { file, url } pending save
@@ -83,6 +160,7 @@ export default function Profile({ person, persons, memories, onClose, switchPers
     setAvatarUrl(getAvatar(person.id))
     setPick(null)
     setSaving(false)
+    setMusicService(getSettings(person.id).musicService || 'spotify')
   }, [person.id])
 
   const onPickPhoto = e => {
@@ -139,9 +217,7 @@ export default function Profile({ person, persons, memories, onClose, switchPers
         ) : (
           <>
             <h2 className="type-headline pf-subtitle">AI Insights</h2>
-            <p className="type-body pf-quiet pf-center">
-              Patterns from travels, people and thoughts.
-            </p>
+            <InsightsView person={person} memories={memories} />
           </>
         )}
       </div>
@@ -248,6 +324,17 @@ export default function Profile({ person, persons, memories, onClose, switchPers
         </>
       )}
 
+      <div className="pf-row">
+        <span className="type-body pf-grow">Music opens in</span>
+        <div className="pf-seg">
+          <button className={'pf-seg-opt' + (musicService === 'spotify' ? ' sel' : '')}
+            aria-label="Spotify" aria-pressed={musicService === 'spotify'}
+            onClick={() => pickService('spotify')}><Spotify size={18} /></button>
+          <button className={'pf-seg-opt' + (musicService === 'apple' ? ' sel' : '')}
+            aria-label="Apple Music" aria-pressed={musicService === 'apple'}
+            onClick={() => pickService('apple')}><AppleMusic size={18} /></button>
+        </div>
+      </div>
       <div className="pf-row">
         <span className="type-body pf-grow">Face ID</span>
         <button className={faceId ? 'pf-switch on' : 'pf-switch'} role="switch"

@@ -2,14 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/capture.css'
 import { Camera, Mic, Send, Play, Pause, Moment as MomentIcon } from './Icons.jsx'
 import {
-  appendMessage, updateMessage, seedThreadFromMemories, monthKey, whenToTs,
-  monthLabel, metaLine, fmtDur, WAVE,
+  appendMessage, updateMessage, seedThreadFromMemories, deriveOpenWindow,
+  monthKey, whenToTs, monthLabel, metaLine, fmtDur, WAVE,
 } from '../lib/thread.js'
 import { evaluate, markShown, dismiss as dismissPrompt } from '../lib/keeper.js'
 import { startRecording, transcribe } from '../lib/voice.js'
 import { buildVocab } from '../lib/edges.js'
 import { parseQuery, filterMemories } from '../lib/search.js'
-import { uploadPhoto } from '../lib/api.js'
+import { uploadPhoto, uploadAudio, ask } from '../lib/api.js'
 import {
   GREETING, EMPTY_CAPTURE, INPUT_PLACEHOLDER, FORMING_BAR, FORMING_BAR_ACTION,
   MOMENT_END_ACTION, MOMENT_AUTO_SUGGEST, ON_THIS_DAY_LABEL, SEARCH_NO_RESULT,
@@ -36,20 +36,31 @@ const titleFrom = (texts, ts) => {
 }
 const isQuestion = t => /\?\s*$/.test(t) || /^(when|where|what|who|show)\b/i.test(t.trim())
 
-function VoiceMsg({ msg }) {
+// Fixed follow-up when the LLM cannot supply one (no bank string covers this).
+const FOLLOW_UP_FALLBACK = 'Who was there, and where was this?'
+
+function VoiceMsg({ msg, onRetry }) {
   const audioRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [frac, setFrac] = useState(0)
+  const [dead, setDead] = useState(false) // blob URL died on reload: quiet row
+  const failed = msg.state === 'failed'
   const toggle = () => {
+    if (failed) { onRetry?.(); return }
     const a = audioRef.current
-    if (!a) return
-    if (a.paused) { a.play().catch(() => {}); setPlaying(true) } else { a.pause(); setPlaying(false) }
+    if (!a || dead) return
+    if (a.paused) {
+      a.play().then(() => setPlaying(true)).catch(() => { setPlaying(false); setDead(true) })
+    } else { a.pause(); setPlaying(false) }
   }
   return (
-    <div className="msg-voice">
-      <audio ref={audioRef} src={msg.src} preload="none"
-        onTimeUpdate={e => setFrac(e.target.currentTime / (msg.duration || 1))}
-        onEnded={() => { setPlaying(false); setFrac(0) }} />
+    <div className={`msg-voice${failed ? ' failed' : ''}${dead ? ' unavailable' : ''}`}>
+      {msg.src && (
+        <audio ref={audioRef} src={msg.src} preload="none"
+          onTimeUpdate={e => setFrac(e.target.currentTime / (msg.duration || 1))}
+          onError={() => { setPlaying(false); setDead(true) }}
+          onEnded={() => { setPlaying(false); setFrac(0) }} />
+      )}
       <button className="voice-play" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>
         {playing ? <Pause size={16} /> : <Play size={16} />}
       </button>
@@ -105,16 +116,13 @@ function Swipeable({ onDismiss, className, children, ...rest }) {
 export default function Capture({ person, memories, addMemory, openMemory, updateMemory }) {
   const [thread, setThread] = useState([])
   const [text, setText] = useState('')
-  const [open, setOpen] = useState(null)       // forming: { ids: [], last: ts }
-  const [moment, setMoment] = useState(null)   // { name, since, last, editing }
+  const [editingName, setEditingName] = useState(false)
   const [prompt, setPrompt] = useState(null)   // keeper prompt or local suggest
   const [rec, setRec] = useState(null)         // { t0, elapsed, cancel }
   const [online, setOnline] = useState(navigator.onLine)
 
   const threadRef = useRef(thread); threadRef.current = thread
   const memoriesRef = useRef(memories); memoriesRef.current = memories
-  const openRef = useRef(open); openRef.current = open
-  const momentRef = useRef(moment); momentRef.current = moment
   const scrollRef = useRef(null)
   const inputRef = useRef(null)
   const photoInRef = useRef(null)
@@ -122,6 +130,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const camTimer = useRef(null)
   const sendTimer = useRef(null)
   const recHandle = useRef(null)
+  const micToken = useRef(null) // pending mic hold; cleared on release
   const recX = useRef(0)
   const blobs = useRef({}) // msgId -> blob, for failed-upload retry
   const mountTs = useRef(Date.now())
@@ -136,6 +145,25 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     if (m) setThread(t => t.map(x => (x.id === id ? m : x)))
   }
 
+  // The open capture window is DERIVED from the persisted thread (5.4-5.6):
+  // iOS reloads the tab whenever it likes, so forming/Moment must survive
+  // as thread markers, never as ephemeral state.
+  const { bundle, momentMsg } = useMemo(() => deriveOpenWindow(thread), [thread])
+  const lastCap = bundle[bundle.length - 1] || null
+
+  // The keeper's one unanswered follow-up question (enrichment target), still
+  // pending only while nothing new has been captured since it was asked.
+  const pendingEnrich = useMemo(() => {
+    for (let i = thread.length - 1; i >= 0; i--) {
+      const m = thread[i]
+      if (m.kind === 'keeper' && m.enrich) return m.done ? null : m
+      if (['user-photo', 'user-video', 'user-voice'].includes(m.kind) ||
+        (m.kind === 'user-text' && !m.meta)) return null
+    }
+    return null
+  }, [thread])
+  const pendingEnrichRef = useRef(pendingEnrich); pendingEnrichRef.current = pendingEnrich
+
   // Load (seed) the thread per person + daily greeting.
   useEffect(() => {
     let msgs = seedThreadFromMemories(person.id, memoriesRef.current)
@@ -148,14 +176,14 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       })]
     }
     setThread(msgs)
-    setOpen(null); setMoment(null); setPrompt(null)
+    setPrompt(null)
   }, [person.id])
 
   // Keep the thread pinned to the bottom.
   useEffect(() => {
     const el = scrollRef.current
     if (el) el.scrollTop = el.scrollHeight
-  }, [thread.length, prompt, open?.last, !!moment])
+  }, [thread.length, prompt, lastCap?.id, !!momentMsg])
 
   useEffect(() => {
     const on = () => setOnline(true), off = () => setOnline(false)
@@ -178,61 +206,51 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       // that dies on reload
       photos: msgs.filter(m => m.kind === 'user-photo' && !m.state).map(m => m.src),
       videos: msgs.filter(m => m.kind === 'user-video').map(m => ({ src: m.src, duration: m.duration || 0 })),
-      // ponytail: voice notes persist as blob: URLs too (no audio upload endpoint yet); real voice upload later
-      voice: msgs.filter(m => m.kind === 'user-voice')
+      voice: msgs.filter(m => m.kind === 'user-voice' && m.src)
         .map(m => ({ src: m.src, duration: m.duration || 0, ...(m.transcript ? { transcript: m.transcript } : {}) })),
       about: texts.join(' '),
     })
-    push({ kind: 'memory-card', memoryId: memory.id })
+    // The memory-card message is the window boundary: it MUST land in the
+    // thread on every save, or the bundle would re-bundle after a reload.
+    const cardMsg = push({ kind: 'memory-card', memoryId: memory.id })
+    maybeFollowUp(memory, cardMsg)
   }
 
-  const closeForming = () => {
-    const o = openRef.current
-    setOpen(null)
-    if (!o) return
-    saveMemoryFrom(threadRef.current.filter(m => o.ids.includes(m.id)))
+  // Close the open window (forming timeout, Save now, or Moment End): the
+  // moment-end marker and the memory card both persist as boundaries.
+  const closeWindow = () => {
+    const { bundle, momentMsg } = deriveOpenWindow(threadRef.current)
+    setEditingName(false)
+    if (momentMsg) push({ kind: 'moment-end', name: momentMsg.name })
+    if (bundle.length) saveMemoryFrom(bundle, momentMsg?.name)
   }
+
+  // Forming: 30s idle since the last captured message. On reload mid-forming
+  // the effect re-arms from now for the derived bundle.
   useEffect(() => {
-    if (!open || moment) return
-    const t = setTimeout(closeForming, 30000)
+    if (!lastCap || momentMsg) return
+    const t = setTimeout(closeWindow, 30000)
     return () => clearTimeout(t)
-  }, [open?.last, !!moment])
+  }, [lastCap?.id, !!momentMsg])
 
-  // A Moment tracks exactly the captured message ids (like the forming window),
-  // so questions asked mid-Moment never leak into the saved memory.
-  const startMoment = (since = Date.now()) => {
-    const o = openRef.current
-    const ids = [...(o?.ids || [])]
-    // absorb capture media sent since `since` (the photos that triggered a suggest)
-    for (const m of threadRef.current) {
-      if (m.ts >= since && !ids.includes(m.id) &&
-        ['user-photo', 'user-video', 'user-voice'].includes(m.kind)) ids.push(m.id)
-    }
-    setOpen(null)
-    setMoment({ name: nameFromTime(), ids, last: Date.now() })
+  // A Moment is a persisted moment-start marker; the window derivation absorbs
+  // everything captured since the last boundary, so photos sent just before
+  // (an auto-suggest) join it too.
+  const startMoment = () => {
+    if (deriveOpenWindow(threadRef.current).momentMsg) return
+    push({ kind: 'moment-start', name: nameFromTime() })
   }
-  const endMoment = () => {
-    const mo = momentRef.current
-    setMoment(null)
-    if (!mo) return
-    saveMemoryFrom(threadRef.current.filter(m => mo.ids.includes(m.id)), mo.name)
-  }
+  // Silent auto-close 2 quiet hours after the last message, reload-safe.
   useEffect(() => {
-    if (!moment) return
-    const t = setTimeout(endMoment, 2 * 3600 * 1000) // silent auto-close after 2 quiet hours
+    if (!momentMsg) return
+    const lastTs = Math.max(momentMsg.ts, lastCap?.ts || 0)
+    const t = setTimeout(closeWindow, Math.max(1000, lastTs + 2 * 3600 * 1000 - Date.now()))
     return () => clearTimeout(t)
-  }, [moment?.last])
-  const momentCount = moment ? moment.ids.length : 0
-
-  // Every capture message joins the forming window (or the active Moment).
-  const captured = full => {
-    if (momentRef.current) setMoment(mo => ({ ...mo, ids: [...mo.ids, full.id], last: Date.now() }))
-    else setOpen(o => ({ ids: [...(o?.ids || []), full.id], last: Date.now() }))
-  }
+  }, [momentMsg?.id, lastCap?.id])
 
   // Moment auto-suggest: 5+ photos in 10 minutes, no Moment, once per day.
   const maybeSuggest = () => {
-    if (momentRef.current || promptRef.current) return
+    if (deriveOpenWindow(threadRef.current).momentMsg || promptRef.current) return
     const key = `memmory.suggest.${person.id}`
     const today = new Date().toDateString()
     if (localStorage.getItem(key) === today) return
@@ -242,9 +260,60 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       localStorage.setItem(key, today)
       setPrompt({
         id: `suggest:${today}`, kind: 'suggest', text: MOMENT_AUTO_SUGGEST,
-        quickReplies: [QUICK_REPLY_KEEP, QUICK_REPLY_LATER], since: recent[0].ts,
+        quickReplies: [QUICK_REPLY_KEEP, QUICK_REPLY_LATER],
       })
     }
+  }
+
+  // ---- Follow-up question + enrichment (thin saves) -----------------------
+
+  // A thin draft (nobody tagged, no place, no feelings) earns ONE short
+  // clarifying question. The asked flag lives on the memory-card message, so
+  // it never repeats, reload or not.
+  const maybeFollowUp = (memory, cardMsg) => {
+    const thin = !(memory.who || []).length && !memory.where && !(memory.feeling || []).length
+    if (!thin || cardMsg.asked) return
+    patch(cardMsg.id, { asked: true })
+    const post = q => push({ kind: 'keeper', text: q, enrich: memory.id })
+    ask([
+      { role: 'system', content: 'You are a calm memory keeper. Reply with exactly one short clarifying question, under 12 words. No em dashes, no exclamation marks, no emoji.' },
+      { role: 'user', content: `I just saved this memory: "${memory.what}. ${memory.about || ''}". Ask me one question to learn who was there or where it was.` },
+    ]).then(q => {
+      const clean = String(q || '').trim()
+      const good = clean && clean.length <= 90 && !clean.includes('\n') && !clean.includes('—') && clean.endsWith('?')
+      post(good ? clean : FOLLOW_UP_FALLBACK)
+    }).catch(() => post(FOLLOW_UP_FALLBACK))
+  }
+
+  // The next text reply answers the question: extract details defensively,
+  // fall back to appending the reply to the memory's story.
+  const enrich = (keeperMsg, reply) => {
+    patch(keeperMsg.id, { done: true })
+    const mem = memoriesRef.current.find(m => m.id === keeperMsg.enrich)
+    if (!mem) return
+    const fallback = () => updateMemory({ ...mem, about: [mem.about, reply].filter(Boolean).join(' ') })
+    ask([
+      { role: 'system', content: 'Extract memory details from the user reply. Answer with ONLY a JSON object; every key optional: {"who": ["names"], "where": "place", "feeling": ["feelings"], "aboutAppend": "one factual sentence"}. No other text.' },
+      { role: 'user', content: reply },
+    ]).then(raw => {
+      const j = JSON.parse(raw.match(/\{[\s\S]*\}/)[0])
+      const upd = { ...mem }
+      let changed = false
+      if (Array.isArray(j.who) && j.who.length) {
+        upd.__whoNames = [...(mem.who || []).map(p => p.name), ...j.who.filter(n => typeof n === 'string')]
+        changed = true
+      }
+      if (typeof j.where === 'string' && j.where && !mem.where) { upd.where = j.where; changed = true }
+      if (Array.isArray(j.feeling) && j.feeling.length) {
+        upd.feeling = [...(mem.feeling || []), ...j.feeling.filter(f => typeof f === 'string')]
+        changed = true
+      }
+      if (typeof j.aboutAppend === 'string' && j.aboutAppend) {
+        upd.about = [mem.about, j.aboutAppend].filter(Boolean).join(' ')
+        changed = true
+      }
+      changed ? updateMemory(upd) : fallback()
+    }).catch(fallback)
   }
 
   // ---- Sending ------------------------------------------------------------
@@ -269,15 +338,15 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     const t = text.trim()
     if (!t) return
     setText('')
-    const full = push({ kind: 'user-text', text: t })
-    if (isQuestion(t)) answer(t)
-    else captured(full)
+    if (isQuestion(t)) { push({ kind: 'user-text', text: t, meta: true }); answer(t); return }
+    const pe = pendingEnrichRef.current
+    if (pe && !momentMsg) { push({ kind: 'user-text', text: t, meta: true }); enrich(pe, t); return }
+    push({ kind: 'user-text', text: t }) // joins the derived window
   }
 
   const addFiles = (files, kind) => {
     for (const file of files) {
       const full = push({ kind, src: URL.createObjectURL(file), ...(kind === 'user-photo' ? { state: 'sending' } : {}) })
-      captured(full)
       if (kind === 'user-photo') {
         blobs.current[full.id] = file
         uploadPhoto(file)
@@ -315,27 +384,56 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   }
 
   // Mic: hold records, slide left cancels, release sends a voice note.
+  // A denied mic or an empty recording surfaces the calm failed state (5.1),
+  // never silence.
   const micDown = async e => {
     e.preventDefault()
-    e.currentTarget.setPointerCapture?.(e.pointerId)
+    try { e.currentTarget.setPointerCapture?.(e.pointerId) } catch {}
     recX.current = e.clientX
-    try { recHandle.current = await startRecording() } catch { return }
+    const token = {}
+    micToken.current = token
+    try {
+      const h = await startRecording()
+      // released while the permission prompt was up: stop and discard quietly
+      if (micToken.current !== token) { h.stop(); return }
+      recHandle.current = h
+    } catch {
+      // meta: nothing was recorded, so this state row never joins a bundle
+      if (micToken.current === token) push({ kind: 'user-voice', duration: 0, state: 'failed', meta: true })
+      return
+    }
     setRec({ t0: Date.now(), elapsed: 0, cancel: false })
   }
   const micMove = e => {
     if (recHandle.current) setRec(r => r && { ...r, cancel: e.clientX - recX.current < -60 })
   }
   const micUp = async () => {
+    micToken.current = null
     const h = recHandle.current
     recHandle.current = null
     if (!h) return
     const cancelled = !!rec?.cancel
     setRec(null)
     const { blobUrl, duration, blob } = await h.stop()
-    if (cancelled || duration < 1) return
+    if (cancelled) return
+    if (!blob || !blob.size) { push({ kind: 'user-voice', duration: 0, state: 'failed', meta: true }); return }
+    if (duration < 1) return // an accidental tap, nothing recorded yet
+    // Optimistic: the voice message lands NOW with its blob URL; the durable
+    // src swaps in when the upload lands. A failed upload keeps the blob for
+    // this session; after a reload the row degrades to the quiet state.
     const full = push({ kind: 'user-voice', src: blobUrl, duration })
-    captured(full)
+    blobs.current[full.id] = blob
+    uploadAudio(blob)
+      .then(src => { delete blobs.current[full.id]; patch(full.id, { src, upload: undefined }) })
+      .catch(() => patch(full.id, { upload: 'failed' }))
     transcribe(blob).then(t => { if (t) patch(full.id, { transcript: t }) })
+  }
+  const retryVoice = msg => {
+    const blob = blobs.current[msg.id]
+    if (!blob) return
+    uploadAudio(blob)
+      .then(src => { delete blobs.current[msg.id]; patch(msg.id, { src, upload: undefined, state: undefined }) })
+      .catch(() => patch(msg.id, { upload: 'failed' }))
   }
   useEffect(() => {
     if (!rec) return
@@ -371,7 +469,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     const p = prompt
     clearPrompt()
     if (reply === QUICK_REPLY_LATER) return
-    if (p.kind === 'suggest') startMoment(p.since)
+    if (p.kind === 'suggest') startMoment()
     else inputRef.current?.focus()
   }
 
@@ -379,6 +477,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
 
   const groups = []
   for (const m of thread) {
+    if (m.kind === 'moment-start' || m.kind === 'moment-end') continue // markers, never rendered
     const k = monthKey(m.ts)
     if (!groups.length || groups[groups.length - 1].key !== k) groups.push({ key: k, msgs: [] })
     groups[groups.length - 1].msgs.push(m)
@@ -410,7 +509,12 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       case 'user-video':
         return <div className="right"><VideoMsg msg={m} /></div>
       case 'user-voice':
-        return <div className="right"><VoiceMsg msg={m} /></div>
+        return (
+          <div className="right">
+            <VoiceMsg msg={m} onRetry={() => retryVoice(m)} />
+            {m.state === 'failed' && <span className="type-label state error">{FAILED_SEND}</span>}
+          </div>
+        )
       case 'memory-card': {
         const mem = memories.find(x => x.id === m.memoryId)
         if (!mem) return null
@@ -436,21 +540,20 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
 
   return (
     <div className="capture">
-      {moment && (
+      {momentMsg && (
         <div className="moment-banner">
           <MomentIcon size={18} />
-          {moment.editing ? (
-            <input className="moment-name" autoFocus value={moment.name}
-              onChange={e => setMoment(mo => ({ ...mo, name: e.target.value }))}
-              onBlur={() => setMoment(mo => ({ ...mo, editing: false }))}
-              onKeyDown={e => e.key === 'Enter' && setMoment(mo => ({ ...mo, editing: false }))} />
+          {editingName ? (
+            <input className="moment-name" autoFocus value={momentMsg.name}
+              onChange={e => patch(momentMsg.id, { name: e.target.value })}
+              onBlur={() => setEditingName(false)}
+              onKeyDown={e => e.key === 'Enter' && setEditingName(false)} />
           ) : (
-            <button className="moment-label type-label"
-              onClick={() => setMoment(mo => ({ ...mo, editing: true }))}>
-              Moment · {moment.name} · {momentCount} kept
+            <button className="moment-label type-label" onClick={() => setEditingName(true)}>
+              Moment · {momentMsg.name} · {bundle.length} kept
             </button>
           )}
-          <button className="moment-end type-label" onClick={endMoment}>{MOMENT_END_ACTION}</button>
+          <button className="moment-end type-label" onClick={closeWindow}>{MOMENT_END_ACTION}</button>
         </div>
       )}
 
@@ -490,12 +593,12 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
           </Swipeable>
         )}
 
-        {open && !moment && (
+        {lastCap && !momentMsg && (
           <div className="forming-bar">
             <span className="type-label forming-text">{FORMING_BAR}</span>
-            <span className="forming-line"><i key={open.last} /></span>
-            <button className="pill-btn type-label" onClick={closeForming}>{FORMING_BAR_ACTION}</button>
-            <button className="pill-btn quiet type-label" onClick={() => startMoment()}>Moment</button>
+            <span className="forming-line"><i key={lastCap.id} /></span>
+            <button className="pill-btn type-label" onClick={closeWindow}>{FORMING_BAR_ACTION}</button>
+            <button className="pill-btn quiet type-label" onClick={startMoment}>Moment</button>
           </div>
         )}
       </div>

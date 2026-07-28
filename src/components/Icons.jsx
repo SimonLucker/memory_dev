@@ -149,6 +149,15 @@ export const Spotify = p => (
   </Icon>
 )
 
+export const AppleMusic = p => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9.5" />
+    <path d="M10 15.5V8.2l6-1.3v7.1" />
+    <circle cx="8.5" cy="15.5" r="1.5" />
+    <circle cx="14.5" cy="14" r="1.5" />
+  </Icon>
+)
+
 export const Sparkle = p => (
   <Icon {...p}>
     <path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z" />

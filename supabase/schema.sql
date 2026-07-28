@@ -19,6 +19,22 @@ drop policy if exists "anon full access" on public.memories;
 create policy "anon full access" on public.memories
   for all to anon using (true) with check (true);
 
+-- Memory Cards: same pattern as memories — one jsonb card object per row
+-- (see src/lib/SCHEMA.md for the card shape).
+create table if not exists public.cards (
+  person_id text not null,
+  id text not null,
+  data jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (person_id, id)
+);
+
+alter table public.cards enable row level security;
+
+drop policy if exists "anon full access cards" on public.cards;
+create policy "anon full access cards" on public.cards
+  for all to anon using (true) with check (true);
+
 -- Public photo bucket: uploaded memory photos, served via public URLs.
 insert into storage.buckets (id, name, public)
   values ('photos', 'photos', true)

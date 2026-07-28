@@ -67,6 +67,54 @@ export async function removeMemory(personId, id) {
   }
 }
 
+// Memory Cards — same dual-backend pattern as memories. Remote: Supabase
+// `cards` table (person_id, id, data jsonb). Dev: the /__cards middleware,
+// JSON files src/data/cards-<pid>.json. → array of card objects, [] on any
+// failure (a missing table or endpoint must never break the pane).
+export async function loadCards(personId) {
+  try {
+    if (remote) {
+      const r = await ok(await fetch(
+        `${SB_URL}/rest/v1/cards?person_id=eq.${personId}&select=data&order=id.asc`,
+        { headers: sbHeaders }))
+      return (await r.json()).map(row => row.data)
+    }
+    const r = await fetch(`/__cards?person=${personId}`)
+    return r.ok ? await r.json() : []
+  } catch { return [] }
+}
+
+export async function upsertCard(personId, card) {
+  if (remote) {
+    await ok(await fetch(`${SB_URL}/rest/v1/cards`, {
+      method: 'POST',
+      headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify({ person_id: personId, id: card.id, data: card }),
+    }))
+  } else {
+    await fetch('/__cards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ person: personId, upsert: card }),
+    }).catch(() => console.warn('cards endpoint unavailable — card kept in memory only'))
+  }
+}
+
+export async function removeCard(personId, id) {
+  if (remote) {
+    await ok(await fetch(`${SB_URL}/rest/v1/cards?person_id=eq.${personId}&id=eq.${id}`, {
+      method: 'DELETE',
+      headers: sbHeaders,
+    }))
+  } else {
+    await fetch('/__cards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ person: personId, delete: id }),
+    }).catch(() => {})
+  }
+}
+
 // → the src to store in memory.photos: a public URL (remote) or a
 // bundle-relative path (dev).
 export async function uploadPhoto(blob) {
@@ -80,6 +128,24 @@ export async function uploadPhoto(blob) {
     return `${SB_URL}/storage/v1/object/public/photos/${name}`
   }
   const r = await ok(await fetch('/__upload-photo', { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }))
+  return (await r.json()).path
+}
+
+// → the durable src to store for a voice note, following the photo pattern:
+// Storage public URL (remote) or a bundle-relative path (dev middleware).
+// Extension follows the recorded type (iOS records audio/mp4 → .m4a).
+export async function uploadAudio(blob) {
+  const ext = (blob.type || '').includes('mp4') ? 'm4a' : 'webm'
+  if (remote) {
+    const name = `voice_${Date.now()}.${ext}`
+    await ok(await fetch(`${SB_URL}/storage/v1/object/photos/${name}`, {
+      method: 'POST',
+      headers: { ...sbHeaders, 'Content-Type': blob.type || 'audio/webm' },
+      body: blob,
+    }))
+    return `${SB_URL}/storage/v1/object/public/photos/${name}`
+  }
+  const r = await ok(await fetch('/__upload-audio', { method: 'POST', headers: { 'Content-Type': blob.type || 'audio/webm' }, body: blob }))
   return (await r.json()).path
 }
 
