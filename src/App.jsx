@@ -9,6 +9,7 @@ import Profile from './components/Profile.jsx'
 import { PERSONS } from './data/persons.js'
 import { resolvePerson } from './lib/people.js'
 import { deriveEdges } from './lib/edges.js'
+import { getAvatar } from './lib/avatar.js'
 import * as api from './lib/api.js'
 
 // Resolve plain names to {id,name}: reuse the id of any existing person with the
@@ -168,18 +169,26 @@ export default function App() {
   const slideshowMemory = slideshowId ? all.find(m => m.id === slideshowId) : null
 
   // Pager: swipe tracks the finger 1:1 and settles in 200ms; dot taps take 600ms.
+  // One gesture pathway (pointer events), one pane max per gesture, and a
+  // browser scroll take-over (pointercancel) aborts the drag — its coordinates
+  // are garbage (clientX 0 on Chromium) and must never pick a pane.
   const pagerRef = useRef(null)
   const dragRef = useRef(null)
+  const settleUntil = useRef(0) // ignore new gestures while a settle animates
   const [dragX, setDragX] = useState(null) // px while a finger is down, else null
   const [settleMs, setSettleMs] = useState(200)
 
   const onPointerDown = e => {
     if (profileOpen || openMemoryId || slideshowId) return
+    if (!e.isPrimary || dragRef.current || Date.now() < settleUntil.current) return
+    // Children that pan horizontally themselves (Cortex canvas, heat pill,
+    // chip row) own their gesture — never turn those into pane swipes.
+    if (e.target.closest?.('canvas, [data-no-pane-swipe], .cortex-values')) return
     dragRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId, active: false, w: pagerRef.current.clientWidth }
   }
   const onPointerMove = e => {
     const d = dragRef.current
-    if (!d) return
+    if (!d || e.pointerId !== d.id) return
     const dx = e.clientX - d.x
     const dy = e.clientY - d.y
     if (!d.active) {
@@ -194,14 +203,26 @@ export default function App() {
   }
   const endDrag = e => {
     const d = dragRef.current
+    if (!d || e.pointerId !== d.id) return
     dragRef.current = null
-    if (!d?.active) return
-    const dx = e.clientX - d.x
+    if (!d.active) return
+    // pointercancel = the browser claimed the touch for scrolling; snap back.
+    const dx = e.type === 'pointercancel' ? 0 : e.clientX - d.x
     setSettleMs(200)
+    settleUntil.current = Date.now() + 200
     if (Math.abs(dx) > d.w / 4) setPane(p => Math.max(0, Math.min(2, p + (dx < 0 ? 1 : -1))))
     setDragX(null)
   }
-  const goPane = i => { setSettleMs(600); setPane(i) }
+  const goPane = i => { setSettleMs(600); settleUntil.current = Date.now() + 600; setPane(i) }
+
+  // Chrome avatar follows the saved profile picture (lib/avatar.js).
+  const [avatarTick, setAvatarTick] = useState(0)
+  useEffect(() => {
+    const bump = () => setAvatarTick(t => t + 1)
+    window.addEventListener('memmory:avatar', bump)
+    return () => window.removeEventListener('memmory:avatar', bump)
+  }, [])
+  const avatarSrc = getAvatar(person.id) || person.photo // avatarTick re-reads on change
 
   const pagerStyle = {
     transform: `translateX(calc(${pane * -100}% + ${dragX || 0}px))`,
@@ -213,7 +234,7 @@ export default function App() {
       <div className="phone bg-dawn">
         <div className="chrome">
           <button className="avatar" aria-label="Profile" onClick={() => setProfileOpen(true)}>
-            {person.photo ? <img src={person.photo} alt="" /> : person.name[0]}
+            {avatarSrc ? <img src={avatarSrc} alt="" /> : person.name[0]}
           </button>
           <nav className="pane-dots" aria-label="Panes">
             {['Vault', 'Capture', 'Cards'].map((name, i) => (

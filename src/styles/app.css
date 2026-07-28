@@ -90,6 +90,14 @@
   touch-action: pan-y;
   will-change: transform;
 }
+/* touch-action on .pager does NOT cover nested scroll containers (.pane,
+   .cap-thread, .vault-list, ...): a touch starting inside one lets the browser
+   claim even a horizontal swipe for scrolling and kill the pointer stream with
+   a pointercancel mid-gesture. Every descendant declares pan-y itself. */
+.pager * { touch-action: pan-y; }
+/* The one browser-scrolled horizontal strip inside the pager keeps pan-x;
+   the pager ignores gestures starting on it (see onPointerDown). */
+.pager .cortex-values { touch-action: pan-x; }
 .pane {
   flex: 0 0 100%;
   height: 100%;

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/profile.css'
 import { Close, ChevronLeft, ChevronRight, Sparkle } from './Icons.jsx'
 import { personColor, HEAT } from '../lib/palette.js'
+import { getAvatar, setAvatar, uploadAvatar } from '../lib/avatar.js'
 import { whenToTs } from '../lib/thread.js'
 import { PRESENCE_LINE, PRIVACY_ROW } from '../lib/copy.js'
 
@@ -70,12 +71,35 @@ export default function Profile({ person, persons, memories, onClose, switchPers
   const [draft, setDraft] = useState('')
   const [faceId, setFaceId] = useState(false) // visual only
   const [picking, setPicking] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(() => getAvatar(person.id))
+  const [pick, setPick] = useState(null) // { file, url } pending save
+  const [saving, setSaving] = useState(false)
+  const fileRef = useRef(null)
 
   useEffect(() => {
     setQs(loadQs(person.id))
     setEditing(null)
     setPicking(false)
+    setAvatarUrl(getAvatar(person.id))
+    setPick(null)
+    setSaving(false)
   }, [person.id])
+
+  const onPickPhoto = e => {
+    const file = e.target.files[0]
+    if (file) setPick({ file, url: URL.createObjectURL(file) })
+    e.target.value = ''
+  }
+  const savePhoto = async () => {
+    setSaving(true)
+    try {
+      const url = await uploadAvatar(pick.file)
+      setAvatar(person.id, url)
+      setAvatarUrl(url)
+      setPick(null)
+    } catch { /* quiet; Save stays for a retry */ }
+    setSaving(false)
+  }
 
   const people = useMemo(() => {
     const map = new Map()
@@ -128,11 +152,24 @@ export default function Profile({ person, persons, memories, onClose, switchPers
     <div className="pf">
       <button className="pf-icon" onClick={close} aria-label="Close"><Close /></button>
 
-      <div className="pf-portrait">
-        {person.photo
-          ? <img src={person.photo} alt="" />
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPickPhoto} />
+      <button className="pf-portrait" onClick={() => fileRef.current.click()}
+        aria-label="Change profile photo">
+        {(avatarUrl || person.photo)
+          ? <img src={avatarUrl || person.photo} alt="" />
           : <span className="type-headline">{person.name[0]}</span>}
-      </div>
+        {pick && <img className="pf-portrait-new" src={pick.url} alt="" />}
+      </button>
+      {pick && (
+        <div className="pf-avatar-actions">
+          {saving
+            ? <span className="type-label pf-quiet">Saving</span>
+            : <>
+                <button className="pf-pill type-label" onClick={savePhoto}>Save</button>
+                <button className="type-label pf-quiet" onClick={() => setPick(null)}>Cancel</button>
+              </>}
+        </div>
+      )}
       <h2 className="type-headline pf-center">{person.name}</h2>
       <p className="type-label pf-quiet pf-center">
         {bio ? `Born ${bio.born} · ${bio.city} · ` : ''}{memories.length} memories

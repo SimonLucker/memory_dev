@@ -2,11 +2,11 @@
 
 A React + Vite prototype of the Memmory app: a calm, mobile-first memory keeper. The app fills the viewport on phones; on wider screens it renders as a centered phone-proportioned column (max-width ~430px, cream backdrop) so it always matches the phone mockups.
 
-**Master spec: `memmory-design-v2/design-foundation.md` (v2.4).** Sections 4, 6, 9 are binding; section 8 is the non-negotiable rule sheet; section 7 the copy bank (strings verbatim); section 3 the locked vocabulary; section 2 exact tokens. The visual twin with phone mockups is `memmory-design-v2/design-direction-v2.html` — its inline CSS holds exact mockup values. The spec wins over any existing code or old skill docs.
+**Master spec: `memmory-design-v2/design-foundation.md` (v2.5).** Sections 4, 6, 9 are binding; section 8 is the non-negotiable rule sheet; section 7 the copy bank (strings verbatim); section 3 the locked vocabulary; section 2 exact tokens. The visual twin with phone mockups is `memmory-design-v2/design-direction-v2.html` — its inline CSS holds exact mockup values. The spec wins over any existing code or old skill docs.
 
 ## Locked view names
 
-Three panes, swiped or dot-tapped, Capture is home: **Vault** (pane 0) with a segmented [List | Cortex] control, **Capture** (pane 1), **Cards** (pane 2). Overlays: **Memory** (opened memory detail), **Slideshow**, **Profile** (sheet from the avatar). The words "Memorialize", "Memorialization" and "Chat" are retired and never appear in UI copy or new identifiers.
+Three panes, swiped or dot-tapped, Capture is home: **Vault** (pane 0) with a round top-right view toggle that folds out to the [List | Cortex] pill (v2.5), **Capture** (pane 1), **Cards** (pane 2). Overlays: **Memory** (opened memory detail), **Slideshow**, **Profile** (sheet from the avatar). The words "Memorialize", "Memorialization" and "Chat" are retired and never appear in UI copy or new identifiers.
 
 ## Version control
 

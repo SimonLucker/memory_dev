@@ -37,6 +37,29 @@
   justify-content: center;
 }
 .pf-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.pf-portrait { position: relative; padding: 0; cursor: pointer; }
+.pf-portrait-new {
+  position: absolute;
+  inset: 0;
+  animation: pf-fade var(--motion-fast) var(--ease);
+}
+@keyframes pf-fade { from { opacity: 0; } }
+
+/* Save / Cancel under a freshly picked portrait */
+.pf-avatar-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 32px;
+  margin-bottom: var(--space-sm);
+}
+.pf-pill {
+  background: var(--surface-white);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-md);
+  box-shadow: var(--shadow-raised);
+}
 
 /* White cards and rows */
 .pf-card,
