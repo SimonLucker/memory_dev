@@ -84,7 +84,8 @@ export async function uploadPhoto(blob) {
 }
 
 // → assistant message content string. Throws with a readable message on failure.
-export async function chat(messages) {
+// ('ai-chat' / '/__ai/chat' are deployed backend route names, kept as-is.)
+export async function ask(messages) {
   const url = remote ? `${SB_URL}/functions/v1/ai-chat` : '/__ai/chat'
   const r = await fetch(url, {
     method: 'POST',

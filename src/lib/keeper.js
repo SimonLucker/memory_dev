@@ -15,7 +15,7 @@ import {
 import { whenToTs } from './thread.js'
 
 // Rotation bank for check-ins: never repeat a question within a week.
-export const QUESTION_BANK = [NUDGE_CHECK_IN, ...CHECK_IN_VARIANTS, NUDGE_WORKOUT]
+const QUESTION_BANK = [NUDGE_CHECK_IN, ...CHECK_IN_VARIANTS, NUDGE_WORKOUT]
 
 const WEEK = 7 * 24 * 3600 * 1000
 const KEY = (personId) => `memmory.keeper.${personId}`

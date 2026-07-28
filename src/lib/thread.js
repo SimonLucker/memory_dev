@@ -17,6 +17,27 @@ export const whenToTs = (when) => {
   return new Date(yyyy, mm - 1, dd, h, min).getTime()
 }
 
+// --- Small display helpers shared by Capture, Vault, Cards, MemoryDetail. ---
+
+// '2026-07' (monthKey) → 'July 2026'
+export const monthLabel = (key) => {
+  const [y, m] = key.split('-').map(Number)
+  return new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+// The one metadata line a memory row/card gets: 'Dec 27 · Luang Prabang'.
+export const metaLine = (m) => {
+  const d = new Date(whenToTs(m.when))
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return m.where ? `${date} · ${m.where}` : date
+}
+
+// Seconds → 'm:ss'
+export const fmtDur = (s) => `${Math.floor((s || 0) / 60)}:${String(Math.round(s || 0) % 60).padStart(2, '0')}`
+
+// Static waveform bar heights (mockup values, cycled).
+export const WAVE = [30, 70, 45, 90, 55, 75, 35, 60, 50, 80, 40, 65]
+
 export function loadThread(personId) {
   try {
     return JSON.parse(localStorage.getItem(KEY(personId))) || []

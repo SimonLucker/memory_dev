@@ -1,21 +1,31 @@
 import { useMemo, useRef, useState } from 'react'
-import { whenToTs, monthKey } from '../lib/thread.js'
+import { whenToTs, monthKey, monthLabel, metaLine } from '../lib/thread.js'
 import { EMPTY_VAULT, SEARCH_PLACEHOLDER, SEARCH_NO_RESULT, DELETE_CONFIRM } from '../lib/copy.js'
 import { Search, Heart, HeartFilled, Plus, Share, Trash } from './Icons.jsx'
 import '../styles/vault.css'
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-  'August', 'September', 'October', 'November', 'December']
-
-// "Dec 27 · Luang Prabang" — the one metadata line a row gets.
-const metaLine = m => {
-  const d = new Date(whenToTs(m.when))
-  const date = `${MONTHS[d.getMonth()]} ${d.getDate()}`
-  return m.where ? `${date} · ${m.where}` : date
-}
-
 const thumbSrc = m => m.photos?.[0] || m.videos?.[0]?.poster || null
+
+// View glyphs local to the toggle (Icons.jsx has no list/constellation icons).
+const svgProps = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none',
+  stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' }
+const ListGlyph = () => (
+  <svg {...svgProps}>
+    <line x1="4" y1="6" x2="20" y2="6" />
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="18" x2="14" y2="18" />
+  </svg>
+)
+const CortexGlyph = () => (
+  <svg {...svgProps}>
+    <line x1="7.5" y1="15.5" x2="11" y2="7.5" />
+    <line x1="13.5" y1="7.5" x2="16.5" y2="13.5" />
+    <line x1="9" y1="17" x2="15.5" y2="15.5" />
+    <circle cx="6.5" cy="17.5" r="2" />
+    <circle cx="12" cy="5.5" r="2" />
+    <circle cx="17.5" cy="15.5" r="2" />
+  </svg>
+)
 
 const matches = (m, q) =>
   [m.what, m.where, ...(m.who || []).map(p => p.name), ...(m.voice || []).map(v => v.transcript)]
@@ -27,6 +37,7 @@ export default function Vault({ memories, pending, mode, setMode, openMemory, to
   const [favOnly, setFavOnly] = useState(false)
   const [newestFirst, setNewestFirst] = useState(true)
   const [menu, setMenu] = useState(null) // { memory, confirm: bool }
+  const [toggleOpen, setToggleOpen] = useState(false)
   const [monthsShown, setMonthsShown] = useState(3)
   const [loadingMore, setLoadingMore] = useState(false)
 
@@ -81,21 +92,26 @@ export default function Vault({ memories, pending, mode, setMode, openMemory, to
   const closeMenu = () => setMenu(null)
   const menuAction = fn => () => { fn(); closeMenu() }
 
-  const monthLabel = key => {
-    const [y, mo] = key.split('-')
-    return `${MONTHS_FULL[Number(mo) - 1]} ${y}`
-  }
-
   return (
-    <div className="vault">
-      <div className="vault-top">
-        <div className="vault-seg">
+    <div className={mode === 'cortex' ? 'vault cortex' : 'vault'}>
+      {toggleOpen && <div className="vault-toggle-veil" onClick={() => setToggleOpen(false)} />}
+      <div className={toggleOpen ? 'vault-toggle open' : 'vault-toggle'}>
+        <button className="vault-toggle-glyph" aria-label="Switch view"
+          tabIndex={toggleOpen ? -1 : 0} onClick={() => setToggleOpen(true)}>
+          {mode === 'list' ? <ListGlyph /> : <CortexGlyph />}
+        </button>
+        <div className="vault-toggle-segs">
           {['list', 'cortex'].map(m => (
-            <button key={m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>
+            <button key={m} className={mode === m ? 'on' : ''} tabIndex={toggleOpen ? 0 : -1}
+              onClick={() => { setMode(m); setToggleOpen(false) }}>
               {m === 'list' ? 'List' : 'Cortex'}
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="vault-top">
+        <div className={toggleOpen ? 'vault-fold open' : 'vault-fold'} />
         {mode === 'list' && (
           <div className="vault-tools">
             <label className="vault-search">

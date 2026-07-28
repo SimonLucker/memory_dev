@@ -1,6 +1,7 @@
 /* Vault pane (list view) — spec 6.2, mockup v-vault. Tokens only. */
 
 .vault {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -12,31 +13,101 @@
   flex-shrink: 0;
 }
 
-/* Segmented control [ List | Cortex ]: pill, white active segment. */
-.vault-seg {
-  display: flex;
-  background: var(--surface-glass);
+/* View toggle: a 30px circle in the top-right corner of the pane, the mirror
+   of the avatar circle top-left. Tapping it folds it out width-wise (anchored
+   top right) into the [ List | Cortex ] pill; the .vault-fold spacer below
+   grows in flow so nothing underneath is overlapped. Token motion only. */
+.vault-toggle {
+  position: absolute;
+  top: calc(var(--space-md) + env(safe-area-inset-top));
+  right: var(--space-md);
+  z-index: 12;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-pill);
-  padding: var(--space-xs);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+  overflow: hidden;
+  transform-origin: top right;
+  transition: width var(--motion-normal) var(--ease),
+    height var(--motion-normal) var(--ease),
+    background var(--motion-fast) var(--ease);
 }
-.vault-seg button {
+.vault-toggle.open {
+  width: 172px;
+  height: 46px;
+  background: var(--surface-glass);
+}
+.vault-toggle-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  opacity: 1;
+  transition: opacity var(--motion-fast) var(--ease);
+}
+.vault-toggle.open .vault-toggle-glyph { opacity: 0; pointer-events: none; }
+.vault-toggle-segs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: var(--space-xs);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast) var(--ease);
+}
+.vault-toggle.open .vault-toggle-segs {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: var(--motion-fast); /* labels swap in at the 200ms mark */
+}
+.vault-toggle-segs button {
   flex: 1;
-  padding: var(--space-sm) 0;
   border-radius: var(--radius-pill);
   font-weight: 600;
+  white-space: nowrap;
   transition: background var(--motion-fast) var(--ease);
 }
-.vault-seg button.on {
+.vault-toggle-segs button.on {
   background: var(--surface-white);
   box-shadow: var(--shadow-raised);
 }
 
-/* Search field + heart filter + sort toggle. */
+/* Invisible catch layer: tapping outside the open pill folds it back. */
+.vault-toggle-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+}
+
+/* In-flow spacer under the chrome: grows with the fold-out so the search row
+   (or heat pill) is pushed down rather than overlapped. */
+.vault-fold {
+  height: 0;
+  transition: height var(--motion-normal) var(--ease);
+}
+.vault-fold.open { height: 22px; }
+
+/* Cortex mode: cortexDeep owns the WHOLE pane, chrome band included — no dawn
+   strip, no hard edge (mockup v-cortex). The toggle goes glassOnDusk. */
+.vault.cortex {
+  background: linear-gradient(180deg, var(--cortex-top), var(--cortex-mid), var(--cortex-bot));
+}
+.vault.cortex .vault-toggle { background: var(--surface-glass-dusk); }
+.vault.cortex .vault-toggle-glyph { color: #FFFFFF; }
+.vault.cortex .vault-toggle-segs button { color: #FFFFFF; }
+.vault.cortex .vault-toggle-segs button.on {
+  background: var(--surface-white);
+  color: var(--text-primary);
+}
+
+/* Search field + heart filter + sort toggle, directly under the chrome. */
 .vault-tools {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  margin-top: var(--space-sm);
 }
 .vault-search {
   flex: 1;

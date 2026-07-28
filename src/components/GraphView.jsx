@@ -108,12 +108,30 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
     return { nodes, links }
   }, [memories, layout, edges])
 
-  const allSeeded = useMemo(() => graphData.nodes.every(n => n.x != null), [graphData])
   const nodeById = useMemo(() => new Map(graphData.nodes.map(n => [n.id, n])), [graphData])
 
   const rOf = n => (5 + (n.mem.importance || 1) * 3) * (0.72 + 0.28 * n.depth)
 
+  // Precomputed layouts stay put. Unseeded nodes — or organic `_pos` seeds
+  // (each new memory lands within ~60px of its neighbours, so a grown profile
+  // is one overlapping ball) — need the warmup sim to spread before first paint.
+  const needsSim = useMemo(() => {
+    const ns = graphData.nodes
+    if (!ns.length) return false
+    if (ns.some(n => n.x == null)) return true
+    let hits = 0
+    for (let i = 0; i < ns.length; i++) {
+      for (let j = i + 1; j < ns.length; j++) {
+        const dx = ns[i].x - ns[j].x, dy = ns[i].y - ns[j].y
+        const rr = rOf(ns[i]) + rOf(ns[j]) + 4
+        if (dx * dx + dy * dy < rr * rr) hits++
+      }
+    }
+    return hits > ns.length * 0.2
+  }, [graphData])
+
   // per-frame scratch
+  const engineReadyRef = useRef(false) // true once the lib ingested data + ran warmup
   const camRef = useRef({ x: 0, y: 0 })
   const fitRef = useRef({ done: false, k: 1, cx: 0, cy: 0 })
   const introRef = useRef(0)      // performance.now() when the entrance began
@@ -125,11 +143,21 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
   useEffect(() => {
     const fg = fgRef.current
     if (!fg) return
-    fg.d3Force('link').distance(l => 60 + 180 / l.weight).strength(l => 0.2 + 0.1 * l.weight)
+    // Link pull scales down with node degree (d3's own default heuristic):
+    // a fully interlinked component must not collapse into a ball.
+    const endId = e => (e && typeof e === 'object' ? e.id : e)
+    const deg = new Map()
+    for (const l of graphData.links) {
+      deg.set(endId(l.source), (deg.get(endId(l.source)) || 0) + 1)
+      deg.set(endId(l.target), (deg.get(endId(l.target)) || 0) + 1)
+    }
+    fg.d3Force('link').distance(l => 60 + 180 / l.weight)
+      .strength(l => Math.min(0.5, 1 / Math.min(deg.get(endId(l.source)) || 1, deg.get(endId(l.target)) || 1)))
     fg.d3Force('charge').strength(-240)
-    fg.d3Force('collide', forceCollide(n => rOf(n) + 12).iterations(2))
+    fg.d3Force('collide', forceCollide(n => rOf(n) + 14).iterations(3))
     fg.d3Force('gx', forceX(0).strength(0.06))
     fg.d3Force('gy', forceY(0).strength(0.12))
+    engineReadyRef.current = false
     fitRef.current.done = false
     introRef.current = 0
     labelsRef.current = { at: 0, items: [], prev: new Set() }
@@ -177,7 +205,10 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
     if (!F.done) {
       const nodes = graphData.nodes
       if (!nodes.length) { F.done = true; return }
-      if (nodes[0].x == null) return
+      // wait for the engine (data ingest + warmup are debounced): capturing
+      // hx/hy from raw _pos seeds froze grown profiles as an overlapping ball —
+      // the wobble easing dragged every node back to its pre-warmup seed
+      if (!engineReadyRef.current || nodes[0].x == null) return
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
       for (const n of nodes) {
         n.hx = n.x; n.hy = n.y
@@ -261,7 +292,9 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
     node.px = nx; node.py = ny; node.pr = r
     const dimmed = isDimmed(node)
     ctx.save()
-    ctx.globalAlpha = (dimmed ? 0.12 : 0.6 + 0.4 * node.depth) * intro.a
+    // spheres stay near-opaque so the dark-glass deep rim survives (depth
+    // expresses itself through size and parallax, not transparency)
+    ctx.globalAlpha = (dimmed ? 0.12 : 0.85 + 0.15 * node.depth) * intro.a
     const sp = sphereSprite(m.class)
     const sc = r / SR
     ctx.drawImage(sp.cv, nx - sp.cx * sc, ny - sp.cy * sc, sp.size * sc, sp.size * sc)
@@ -309,6 +342,19 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
     y: (y - camRef.current.y) * k + size.h / 2,
   })
 
+  // Theme pill anchor: centered on the class's nodes, below their bounding box.
+  const themePos = (nodes, theme, k, h) => {
+    const ns = nodes.filter(n => n.mem.class === theme)
+    if (!ns.length) return null
+    let ax = 0, maxY = -Infinity
+    for (const n of ns) {
+      const s = toScreen(n.px, n.py, k)
+      ax += s.x
+      maxY = Math.max(maxY, s.y + n.pr * k)
+    }
+    return { sx: ax / ns.length, sy: maxY + 12 + h / 2 }
+  }
+
   const computeLabels = (ctx, k) => {
     const L = labelsRef.current
     const { far, photoA } = zones(k)
@@ -330,8 +376,10 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
         .sort((a, b) => b[1].length - a[1].length)
         .map(([cls]) => ({ theme: cls, text: cls }))
     } else {
-      // mid: only the largest nodes earn labels; near: every photo node may
-      const gate = n => photoA > 0 || rOf(n) * k >= 13 || n.mem.favorite
+      // mid: only the largest on-screen nodes earn labels (relative gate, so
+      // labels appear at any fitted zoom); near: every photo node may
+      const maxR = onScreen.reduce((a, n) => Math.max(a, rOf(n) * k), 0)
+      const gate = n => photoA > 0 || rOf(n) * k >= maxR * 0.8 || n.mem.favorite
       cand = onScreen.filter(gate).sort((a, b) =>
         (b.mem.favorite ? 1 : 0) - (a.mem.favorite ? 1 : 0) ||
         (b.mem.importance || 1) - (a.mem.importance || 1) ||
@@ -350,11 +398,12 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
       const h = far ? 32 : 27
       let sx, sy
       if (c.theme) {
-        const ns = onScreen.filter(n => n.mem.class === c.theme)
-        if (!ns.length) continue
-        let ax = 0, ay = 0, rmax = 0
-        for (const n of ns) { const s = toScreen(n.px, n.py, k); ax += s.x; ay += s.y; rmax = Math.max(rmax, n.pr * k) }
-        sx = ax / ns.length; sy = ay / ns.length + rmax + 20
+        // theme pill hangs below the constellation's bounding box; classes
+        // interleave at far zoom so the node-overlap test is skipped for these
+        // (label-label and fully-on-screen rules still apply)
+        const p = themePos(onScreen, c.theme, k, h)
+        if (!p) continue
+        sx = p.sx; sy = p.sy
       } else {
         const s = toScreen(c.node.px, c.node.py, k)
         sx = s.x; sy = s.y + c.node.pr * k + 10 + h / 2
@@ -364,7 +413,7 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
       if (rect.l < 4 || rect.r > size.w - 4 || rect.t < 4 || rect.b > size.h - 4) continue
       // never overlaps a node (its own node sits above the pill, excluded)
       let ok = true
-      for (const n of onScreen) {
+      if (!c.theme) for (const n of onScreen) {
         if (c.node === n) continue
         const s = toScreen(n.px, n.py, k)
         const rr = n.pr * k
@@ -419,11 +468,9 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
       if (!!it.theme !== far) continue // zoom level flipped since the last pass
       let sx, sy
       if (it.theme) {
-        const ns = graphData.nodes.filter(n => n.px != null && !isDimmed(n) && n.mem.class === it.theme)
-        if (!ns.length) continue
-        let ax = 0, ay = 0, rmax = 0
-        for (const n of ns) { const s = toScreen(n.px, n.py, k); ax += s.x; ay += s.y; rmax = Math.max(rmax, n.pr * k) }
-        sx = ax / ns.length; sy = ay / ns.length + rmax + 20
+        const p = themePos(graphData.nodes.filter(n => n.px != null && !isDimmed(n)), it.theme, k, it.h)
+        if (!p) continue
+        sx = p.sx; sy = p.sy
       } else {
         if (it.node.px == null || isDimmed(it.node)) continue
         const s = toScreen(it.node.px, it.node.py, k)
@@ -495,11 +542,12 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
         linkCanvasObjectMode={() => 'replace'}
         linkCanvasObject={paintLink}
         linkPointerAreaPaint={() => {}}
+        onEngineStop={() => { engineReadyRef.current = true }}
         onNodeClick={n => onSelect(n.id)}
         onBackgroundClick={() => onSelect(null)}
         enableNodeDrag={false}
         d3VelocityDecay={0.75}
-        warmupTicks={allSeeded ? 0 : 200}
+        warmupTicks={needsSim ? 300 : 0}
         cooldownTicks={0}
         autoPauseRedraw={false}
         minZoom={0.2}

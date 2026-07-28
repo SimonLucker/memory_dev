@@ -4,12 +4,7 @@ import { Close } from './Icons.jsx'
 import { whenToTs } from '../lib/thread.js'
 import { CARDS_EMPTY, CARD_GENERATING, GIFTS_PLACEHOLDER } from '../lib/copy.js'
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December']
-const monthYear = ts => {
-  const d = new Date(ts)
-  return MONTHS[d.getMonth()] + ' ' + d.getFullYear()
-}
+const monthYear = ts => new Date(ts).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
 const CLASS_TITLES = {
   Travel: 'Days away',

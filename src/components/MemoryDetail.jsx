@@ -5,11 +5,8 @@ import { findTrack, uploadPhoto } from '../lib/api.js'
 import { encodePhoto } from '../lib/photos.js'
 import { startRecording, transcribe } from '../lib/voice.js'
 import { REGISTRY } from '../lib/people.js'
-import { whenToTs } from '../lib/thread.js'
-import { LOCATION_LINK, MUSIC_LINK, VIEW_TRANSCRIPT } from '../lib/copy.js'
-
-const fmtDur = s => `${Math.floor((s || 0) / 60)}:${String(Math.round(s || 0) % 60).padStart(2, '0')}`
-const WAVE = [40, 80, 55, 95, 60, 30, 70, 45, 85, 50, 65, 90, 35, 75]
+import { whenToTs, fmtDur, WAVE } from '../lib/thread.js'
+import { LOCATION_LINK, MUSIC_LINK, VIEW_TRANSCRIPT, SLIDESHOW_ACTION } from '../lib/copy.js'
 
 // Voice note row: play, static waveform, duration, quiet transcript reveal (6.4.4).
 function VoiceRow({ note, rise }) {
@@ -79,22 +76,10 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
   const patch = p => updateMemory({ ...memRef.current, ...p })
 
   // ---- Open/close: 900ms expansion, reversed on close (6.4). --------------
-  const rootRef = useRef(null)
   const scrollRef = useRef(null)
   const reduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
   const [phase, setPhase] = useState('enter')
-  const fromRef = useRef(null)
   useLayoutEffect(() => {
-    // Openers may pass the tapped thumbnail's rect via this global helper.
-    const r = window.__memmoryOpenRect
-    window.__memmoryOpenRect = null
-    if (r && rootRef.current) {
-      const host = rootRef.current.getBoundingClientRect()
-      fromRef.current = {
-        origin: `${r.left + r.width / 2 - host.left}px ${r.top + r.height / 2 - host.top}px`,
-        scale: Math.max(0.08, r.width / host.width),
-      }
-    }
     const id = requestAnimationFrame(() => requestAnimationFrame(() => setPhase('open')))
     return () => cancelAnimationFrame(id)
   }, [])
@@ -121,10 +106,9 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
   }
 
   const hidden = phase !== 'open'
-  const from = fromRef.current
   const style = {
-    transformOrigin: from ? from.origin : '50% 45%',
-    transform: hidden ? `scale(${from ? from.scale : 0.6})` : dragY ? `translateY(${dragY}px)` : 'none',
+    transformOrigin: '50% 45%',
+    transform: hidden ? 'scale(0.6)' : dragY ? `translateY(${dragY}px)` : 'none',
     opacity: hidden ? 0 : 1,
     transition: dragY && phase === 'open' ? 'none' : undefined,
   }
@@ -248,11 +232,13 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
   }
 
   return (
-    <div className="overlay memory-detail" ref={rootRef} style={style}>
-      <button className="md-close" onClick={close} aria-label="Close"><Close /></button>
-
+    <div className="overlay memory-detail" style={style}>
       <div className="md-scroll" ref={scrollRef}
         onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+
+        {/* the close X lives in the scrolling column: it scrolls away with the
+            chrome and never floats on top of photos (rule 10) */}
+        <button className="md-close" onClick={close} aria-label="Close"><Close /></button>
 
         {items.length > 0 && (
           <button className="md-hero" onPointerDown={pressDown(0)} onPointerUp={pressUp(0)}
@@ -313,7 +299,7 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
         )}
 
         <div className="md-actions">
-          <button className="md-pill prim" onClick={() => openSlideshow(memory.id)}>Slideshow</button>
+          <button className="md-pill prim" onClick={() => openSlideshow(memory.id)}>{SLIDESHOW_ACTION}</button>
           <button className="md-pill quiet" onClick={() => setAdd('menu')}><Plus size={16} />Add</button>
           <button className="md-pill quiet" onClick={openTag}><Person size={16} />Tag people</button>
         </div>

@@ -6,7 +6,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, var(--cortex-top), var(--cortex-mid), var(--cortex-bot));
+  /* the cortexDeep gradient lives on .vault.cortex (vault.css) so it also runs
+     behind the chrome and segmented control — no background here */
 }
 
 /* Heat pill: ONE continuous rounded bar, smooth gradient, no segments. */
@@ -32,8 +33,29 @@
   transform: translateX(-50%);
   color: #FFFFFF;
 }
-.cortex-years span:first-child { transform: none; }
+/* First anchors left, last anchors right, so labels always fit inside the
+   pill. first-child comes LAST: a lone label is both first and last, and it
+   must anchor left, not translate itself off-screen. */
 .cortex-years span:last-child { transform: translateX(-100%); }
+.cortex-years span:first-child { transform: none; }
+
+/* Scrub readout: white pill floating above the finger while dragging the heat
+   bar. Fixed so no ancestor clips it; fades on release. */
+.cortex-scrub {
+  position: fixed;
+  z-index: 10;
+  transform: translate(-50%, -100%);
+  background: var(--surface-white);
+  color: var(--text-primary);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  box-shadow: var(--shadow-card);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--motion-fast) var(--ease);
+}
+.cortex-scrub.on { opacity: 1; }
 
 /* The field: canvas fills it; the summary card floats over it. */
 .cortex-field {

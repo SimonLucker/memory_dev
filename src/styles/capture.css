@@ -27,7 +27,12 @@
   z-index: 2;
   align-self: center;
   color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.5);
+  /* opaque-enough glass + blur + shadow so the pinned pill stays legible when
+     a card scrolls beneath it (rule 15: no colliding elements) */
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-raised);
   border-radius: var(--radius-pill);
   padding: var(--space-xs) var(--space-md);
   margin: var(--space-sm) 0;
@@ -240,7 +245,7 @@
   flex: 1;
   height: 3px;
   border-radius: 2px;
-  background: var(--border-soft);
+  background: rgba(0, 0, 0, 0.12); /* visible track on the glass bar */
   overflow: clip;
 }
 .forming-line i {

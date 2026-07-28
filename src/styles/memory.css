@@ -10,13 +10,11 @@
 .memory-detail a { color: #FFFFFF; text-decoration: none; }
 .memory-detail button { color: #FFFFFF; }
 
+/* In the scrolling column (rule 10: controls never float on top of photos). */
 .md-close {
-  position: absolute;
-  top: var(--space-md);
-  left: var(--space-md);
-  z-index: 3;
   width: 44px;
   height: 44px;
+  margin: 0 0 var(--space-sm) -12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +25,7 @@
   inset: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 72px var(--space-md) var(--space-xl);
+  padding: var(--space-md) var(--space-md) var(--space-xl);
 }
 
 /* 1. Media grid: hero full width + thumbnail row (mockup ratios). */
@@ -237,6 +235,12 @@
 }
 .ss-slide.on { opacity: 1; }
 .ss-slide img { width: 100%; height: 100%; object-fit: cover; }
+/* Landscape photos would become extreme centre crops in the portrait viewport:
+   they letterbox on the dusk ground instead (class set on load in Slideshow). */
+.ss-slide img.contain { object-fit: contain; }
+/* 8s = the Ken Burns pan span; no motion token fits a slideshow-length drift
+   (crossfades use --motion-slow 900ms per 6.4). Token candidate for the next
+   spec bump. */
 .ss-slide.on img { animation: kb-a 8s var(--ease) both; }
 .ss-slide.on.alt img { animation-name: kb-b; }
 @keyframes kb-a {

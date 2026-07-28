@@ -6,12 +6,10 @@ import Cards from './components/Cards.jsx'
 import MemoryDetail from './components/MemoryDetail.jsx'
 import Slideshow from './components/Slideshow.jsx'
 import Profile from './components/Profile.jsx'
-import { ChevronLeft, ChevronRight, Close, Play, Pause } from './components/Icons.jsx'
 import { PERSONS } from './data/persons.js'
 import { resolvePerson } from './lib/people.js'
 import { deriveEdges } from './lib/edges.js'
 import * as api from './lib/api.js'
-import { findTrack, appleMusicSearchUrl } from './lib/api.js'
 
 // Resolve plain names to {id,name}: reuse the id of any existing person with the
 // same name (case-insensitive); mint sequential ids for genuinely new people.
@@ -169,42 +167,6 @@ export default function App() {
   const openedMemory = openMemoryId ? all.find(m => m.id === openMemoryId) : null
   const slideshowMemory = slideshowId ? all.find(m => m.id === slideshowId) : null
 
-  // Lightbox: full-screen photo viewer.
-  const [lightbox, setLightbox] = useState(null) // { photos: [...], index }
-  const swipeRef = useRef({ x: 0, moved: false })
-  const openLightbox = (photos, index = 0) =>
-    setLightbox({ photos: Array.isArray(photos) ? photos : [photos], index })
-  const stepLightbox = dir =>
-    setLightbox(lb => lb && { ...lb, index: (lb.index + dir + lb.photos.length) % lb.photos.length })
-  useEffect(() => {
-    if (!lightbox) return
-    const h = e => {
-      if (e.key === 'Escape') setLightbox(null)
-      if (e.key === 'ArrowLeft') stepLightbox(-1)
-      if (e.key === 'ArrowRight') stepLightbox(1)
-    }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
-  }, [!!lightbox])
-
-  // Mini music player: look the song up in Apple's catalog, play its preview.
-  const [track, setTrack] = useState(null) // { status, music, info? }
-  const [playing, setPlaying] = useState(true)
-  const audioRef = useRef(null)
-  const playMusic = async music => {
-    if (!music) return
-    setTrack({ status: 'loading', music })
-    setPlaying(true)
-    const info = await findTrack(music)
-    setTrack(info?.previewUrl ? { status: 'ready', music, info } : { status: 'missing', music })
-  }
-  const togglePlay = () => {
-    const a = audioRef.current
-    if (!a) return
-    a.paused ? a.play() : a.pause()
-    setPlaying(!a.paused)
-  }
-
   // Pager: swipe tracks the finger 1:1 and settles in 200ms; dot taps take 600ms.
   const pagerRef = useRef(null)
   const dragRef = useRef(null)
@@ -212,7 +174,7 @@ export default function App() {
   const [settleMs, setSettleMs] = useState(200)
 
   const onPointerDown = e => {
-    if (profileOpen || openMemoryId || slideshowId || lightbox) return
+    if (profileOpen || openMemoryId || slideshowId) return
     dragRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId, active: false, w: pagerRef.current.clientWidth }
   }
   const onPointerMove = e => {
@@ -291,64 +253,6 @@ export default function App() {
 
         {slideshowMemory && (
           <Slideshow memory={slideshowMemory} onClose={() => setSlideshowId(null)} />
-        )}
-
-        {lightbox && (
-          <div
-            className="lightbox"
-            onClick={() => { if (!swipeRef.current.moved) setLightbox(null) }}
-            onTouchStart={e => { swipeRef.current = { x: e.touches[0].clientX, moved: false } }}
-            onTouchEnd={e => {
-              const dx = e.changedTouches[0].clientX - swipeRef.current.x
-              if (Math.abs(dx) > 40 && lightbox.photos.length > 1) {
-                swipeRef.current.moved = true
-                stepLightbox(dx < 0 ? 1 : -1)
-                setTimeout(() => { swipeRef.current.moved = false }, 350)
-              }
-            }}
-          >
-            <img src={lightbox.photos[lightbox.index]} alt="" />
-            {lightbox.photos.length > 1 && (
-              <>
-                <button className="lb-arrow left" onClick={e => { e.stopPropagation(); stepLightbox(-1) }}>
-                  <ChevronLeft size={20} />
-                </button>
-                <button className="lb-arrow right" onClick={e => { e.stopPropagation(); stepLightbox(1) }}>
-                  <ChevronRight size={20} />
-                </button>
-                <div className="lb-count">{lightbox.index + 1} / {lightbox.photos.length}</div>
-              </>
-            )}
-          </div>
-        )}
-
-        {track && (
-          <div className="music-player">
-            {track.status === 'ready' && track.info.artworkUrl100 && (
-              <img className="mp-art" src={track.info.artworkUrl100} alt="" />
-            )}
-            <div className="mp-body">
-              <strong>{track.music.name}</strong>
-              <span>
-                {track.status === 'loading' ? 'Finding song'
-                  : track.status === 'missing' ? 'No preview found'
-                  : track.music.artist || track.info.artistName}
-              </span>
-            </div>
-            {track.status === 'ready' && (
-              <>
-                <audio ref={audioRef} src={track.info.previewUrl} autoPlay
-                  onEnded={() => setPlaying(false)} />
-                <button className="mp-btn" onClick={togglePlay}>
-                  {playing ? <Pause size={18} /> : <Play size={18} />}
-                </button>
-              </>
-            )}
-            <a className="mp-btn mp-link"
-              href={track.status === 'ready' && track.info.trackViewUrl ? track.info.trackViewUrl : appleMusicSearchUrl(track.music)}
-              target="_blank" rel="noreferrer">Open</a>
-            <button className="mp-btn" onClick={() => setTrack(null)}><Close size={18} /></button>
-          </div>
         )}
       </div>
     </div>

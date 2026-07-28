@@ -48,3 +48,15 @@ export function strongestEdges(nodeId, edges, n = 3) {
     .slice(0, n)
 }
 
+// The lowercase attribute vocabulary parseQuery (lib/search.js) matches against.
+export function buildVocab(memories) {
+  const uniq = (a) => [...new Set(a.filter(Boolean))]
+  return {
+    people: uniq(memories.flatMap((m) => (m.who || []).map((p) => p.name.toLowerCase()))),
+    classes: uniq(memories.map((m) => (m.class || '').toLowerCase())),
+    places: uniq(memories.map((m) => (m.where || '').toLowerCase())),
+    feelings: uniq(memories.flatMap((m) => (m.feeling || []).map((f) => f.toLowerCase()))),
+    artists: uniq(memories.map((m) => (m.music?.artist || '').toLowerCase())),
+  }
+}
+

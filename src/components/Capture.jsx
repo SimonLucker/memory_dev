@@ -2,16 +2,18 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/capture.css'
 import { Camera, Mic, Send, Play, Pause, Moment as MomentIcon } from './Icons.jsx'
 import {
-  loadThread, appendMessage, updateMessage, seedThreadFromMemories, monthKey, whenToTs,
+  appendMessage, updateMessage, seedThreadFromMemories, monthKey, whenToTs,
+  monthLabel, metaLine, fmtDur, WAVE,
 } from '../lib/thread.js'
 import { evaluate, markShown, dismiss as dismissPrompt } from '../lib/keeper.js'
 import { startRecording, transcribe } from '../lib/voice.js'
+import { buildVocab } from '../lib/edges.js'
 import { parseQuery, filterMemories } from '../lib/search.js'
 import { uploadPhoto } from '../lib/api.js'
 import {
   GREETING, EMPTY_CAPTURE, INPUT_PLACEHOLDER, FORMING_BAR, FORMING_BAR_ACTION,
   MOMENT_END_ACTION, MOMENT_AUTO_SUGGEST, ON_THIS_DAY_LABEL, SEARCH_NO_RESULT,
-  QUICK_REPLY_KEEP, QUICK_REPLY_LATER, QUICK_REPLY_ANSWER, FAILED_SEND, OFFLINE,
+  QUICK_REPLY_KEEP, QUICK_REPLY_LATER, FAILED_SEND, OFFLINE,
 } from '../lib/copy.js'
 
 const two = n => String(n).padStart(2, '0')
@@ -19,24 +21,12 @@ const whenOf = ts => {
   const d = new Date(ts)
   return `${two(d.getDate())}-${two(d.getMonth() + 1)}-${d.getFullYear()} ${two(d.getHours())}:${two(d.getMinutes())}`
 }
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-  'August', 'September', 'October', 'November', 'December']
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-const monthLabel = key => {
-  const [y, m] = key.split('-')
-  return `${MONTHS[Number(m) - 1]} ${y}`
-}
-const cardMeta = m => {
-  const d = new Date(whenToTs(m.when))
-  const date = `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`
-  return m.where ? `${date} · ${m.where}` : date
-}
 // Moment name / fallback title from time: "Friday night".
 const nameFromTime = (ts = Date.now()) => {
   const d = new Date(ts)
   const h = d.getHours()
   const part = h < 12 ? 'morning' : h < 18 ? 'afternoon' : h < 22 ? 'evening' : 'night'
-  return `${DAYS[d.getDay()]} ${part}`
+  return `${d.toLocaleDateString('en-US', { weekday: 'long' })} ${part}`
 }
 const titleFrom = (texts, ts) => {
   const t = (texts[0] || '').replace(/[.?]+$/, '').trim()
@@ -45,10 +35,6 @@ const titleFrom = (texts, ts) => {
   return words.slice(0, 6).join(' ') + (words.length > 6 ? '…' : '')
 }
 const isQuestion = t => /\?\s*$/.test(t) || /^(when|where|what|who|show)\b/i.test(t.trim())
-const CAPTURE_KINDS = new Set(['user-text', 'user-photo', 'user-video', 'user-voice'])
-const fmtDur = s => `${Math.floor(s / 60)}:${two(s % 60)}`
-// Static waveform bar heights (mockup values, cycled).
-const WAVE = [30, 70, 45, 90, 55, 75, 35, 60, 50, 80, 40, 65]
 
 function VoiceMsg({ msg }) {
   const audioRef = useRef(null)
@@ -169,7 +155,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   useEffect(() => {
     const el = scrollRef.current
     if (el) el.scrollTop = el.scrollHeight
-  }, [thread.length, prompt, open?.last, moment?.since])
+  }, [thread.length, prompt, open?.last, !!moment])
 
   useEffect(() => {
     const on = () => setOnline(true), off = () => setOnline(false)
@@ -188,8 +174,11 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       where: '',
       who: [],
       feeling: [],
-      photos: msgs.filter(m => m.kind === 'user-photo').map(m => m.src),
+      // only uploaded photos persist: a 'sending'/'failed' src is a blob: URL
+      // that dies on reload
+      photos: msgs.filter(m => m.kind === 'user-photo' && !m.state).map(m => m.src),
       videos: msgs.filter(m => m.kind === 'user-video').map(m => ({ src: m.src, duration: m.duration || 0 })),
+      // ponytail: voice notes persist as blob: URLs too (no audio upload endpoint yet); real voice upload later
       voice: msgs.filter(m => m.kind === 'user-voice')
         .map(m => ({ src: m.src, duration: m.duration || 0, ...(m.transcript ? { transcript: m.transcript } : {}) })),
       about: texts.join(' '),
@@ -209,34 +198,35 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     return () => clearTimeout(t)
   }, [open?.last, !!moment])
 
+  // A Moment tracks exactly the captured message ids (like the forming window),
+  // so questions asked mid-Moment never leak into the saved memory.
   const startMoment = (since = Date.now()) => {
     const o = openRef.current
-    if (o?.ids.length) {
-      const first = threadRef.current.find(m => o.ids.includes(m.id))
-      if (first) since = Math.min(since, first.ts)
+    const ids = [...(o?.ids || [])]
+    // absorb capture media sent since `since` (the photos that triggered a suggest)
+    for (const m of threadRef.current) {
+      if (m.ts >= since && !ids.includes(m.id) &&
+        ['user-photo', 'user-video', 'user-voice'].includes(m.kind)) ids.push(m.id)
     }
     setOpen(null)
-    setMoment({ name: nameFromTime(), since, last: Date.now() })
+    setMoment({ name: nameFromTime(), ids, last: Date.now() })
   }
   const endMoment = () => {
     const mo = momentRef.current
     setMoment(null)
     if (!mo) return
-    saveMemoryFrom(
-      threadRef.current.filter(m => CAPTURE_KINDS.has(m.kind) && m.ts >= mo.since), mo.name)
+    saveMemoryFrom(threadRef.current.filter(m => mo.ids.includes(m.id)), mo.name)
   }
   useEffect(() => {
     if (!moment) return
     const t = setTimeout(endMoment, 2 * 3600 * 1000) // silent auto-close after 2 quiet hours
     return () => clearTimeout(t)
   }, [moment?.last])
-  const momentCount = moment
-    ? thread.filter(m => CAPTURE_KINDS.has(m.kind) && m.ts >= moment.since).length
-    : 0
+  const momentCount = moment ? moment.ids.length : 0
 
   // Every capture message joins the forming window (or the active Moment).
   const captured = full => {
-    if (momentRef.current) setMoment(mo => ({ ...mo, last: Date.now() }))
+    if (momentRef.current) setMoment(mo => ({ ...mo, ids: [...mo.ids, full.id], last: Date.now() }))
     else setOpen(o => ({ ids: [...(o?.ids || []), full.id], last: Date.now() }))
   }
 
@@ -259,13 +249,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
 
   // ---- Sending ------------------------------------------------------------
 
-  const vocab = useMemo(() => ({
-    people: [...new Set(memories.flatMap(m => (m.who || []).map(p => p.name.toLowerCase())))],
-    classes: [...new Set(memories.map(m => (m.class || '').toLowerCase()).filter(Boolean))],
-    places: [...new Set(memories.map(m => (m.where || '').toLowerCase()).filter(Boolean))],
-    feelings: [...new Set(memories.flatMap(m => (m.feeling || []).map(f => f.toLowerCase())))],
-    artists: [...new Set(memories.map(m => (m.music?.artist || '').toLowerCase()).filter(Boolean))],
-  }), [memories])
+  const vocab = useMemo(() => buildVocab(memories), [memories])
 
   const answer = q => {
     const { filters } = parseQuery(q, vocab)
@@ -275,7 +259,8 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     if (!hits.length) { push({ kind: 'keeper', text: SEARCH_NO_RESULT }); return }
     const top = hits[0]
     const d = new Date(whenToTs(top.when))
-    const facts = [top.where, `${MONTHS[d.getMonth()]} ${d.getFullYear()}`].filter(Boolean).join(', ')
+    const facts = [top.where,
+      d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })].filter(Boolean).join(', ')
     push({ kind: 'keeper', text: `${top.what}. ${facts}.` })
     hits.slice(0, 2).forEach(m => push({ kind: 'memory-card', memoryId: m.id }))
   }
@@ -363,6 +348,12 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const promptRef = useRef(prompt); promptRef.current = prompt
   useEffect(() => {
     const tick = () => {
+      // an On this day card evaluated in the morning expires at noon; without
+      // this it would invisibly block every later prompt (render gates hide it)
+      if (promptRef.current?.kind === 'on-this-day' && new Date().getHours() >= 12) {
+        promptRef.current = null
+        setPrompt(null)
+      }
       if (promptRef.current) return
       const p = evaluate({ personId: person.id, memories: memoriesRef.current })
       if (p) { markShown(person.id, p); setPrompt(p) }
@@ -429,7 +420,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
             {thumb && <img src={thumb} alt="" />}
             <span className="mem-card-body">
               <span className="mem-card-title">{mem.what}</span>
-              <span className="type-label mem-card-meta">{cardMeta(mem)}</span>
+              <span className="type-label mem-card-meta">{metaLine(mem)}</span>
             </span>
           </button>
         )
@@ -439,7 +430,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     }
   }
 
-  const otdMemory = prompt?.kind === 'on-this-day' && new Date().getHours() < 12
+  const otdMemory = prompt?.kind === 'on-this-day'
     ? memories.find(x => x.id === prompt.memoryId)
     : null
 
@@ -472,7 +463,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
               {otdMemory.photos?.[0] && <img src={otdMemory.photos[0]} alt="" />}
               <span className="mem-card-body">
                 <span className="mem-card-title">{otdMemory.what}</span>
-                <span className="type-label mem-card-meta">{cardMeta(otdMemory)}</span>
+                <span className="type-label mem-card-meta">{metaLine(otdMemory)}</span>
               </span>
             </div>
           </Swipeable>
@@ -536,7 +527,8 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
           )}
           {text.trim() && !rec ? (
             <button className="bar-icon swap-in" aria-label="Send"
-              onPointerDown={sendDown} onPointerUp={sendUp}>
+              onPointerDown={sendDown} onPointerUp={sendUp}
+              onPointerLeave={() => { clearTimeout(sendTimer.current); sendTimer.current = null }}>
               <Send size={22} />
             </button>
           ) : (

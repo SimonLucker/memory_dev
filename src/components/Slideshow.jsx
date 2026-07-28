@@ -52,7 +52,11 @@ export default function Slideshow({ memory, onClose }) {
     <div className="overlay slideshow" onClick={onClose}>
       {photos.map((src, idx) => (
         <div key={idx} className={'ss-slide' + (idx === i ? ' on' : '') + (idx % 2 ? ' alt' : '')}>
-          <img src={src} alt="" />
+          {/* landscape photos letterbox on the dusk ground instead of cropping hard */}
+          <img src={src} alt="" onLoad={e => {
+            const im = e.target
+            if (im.naturalWidth > im.naturalHeight * 1.1) im.classList.add('contain')
+          }} />
         </div>
       ))}
       <div className={'ss-slide ss-about' + (i === last ? ' on' : '')}>

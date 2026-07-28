@@ -7,9 +7,9 @@ import l2 from './layout-p2.json'
 import l3 from './layout-p3.json'
 
 export const PERSONS = [
-  { id: 'p1', name: 'Glenn', short: 'Glenn', memories: p1, layout: l1 },
-  { id: 'p2', name: 'Maya', short: 'Maya', memories: p2, layout: l2 },
-  // Fresh start — real memories, made in Memorialize.
-  { id: 'p3', name: 'Simon Akkerman', short: 'Simon A', memories: p3, layout: l3 },
-  { id: 'p4', name: 'Simon Gullstrøm', short: 'Simon G', memories: p4, layout: {} },
+  { id: 'p1', name: 'Glenn', short: 'Glenn', photo: '/photos/portrait-p1.jpg', memories: p1, layout: l1 },
+  { id: 'p2', name: 'Maya', short: 'Maya', photo: '/photos/portrait-p2.jpg', memories: p2, layout: l2 },
+  // Fresh start, real memories, made in the app.
+  { id: 'p3', name: 'Simon Akkerman', short: 'Simon A', photo: '/photos/portrait-p3.jpg', memories: p3, layout: l3 },
+  { id: 'p4', name: 'Simon Gullstrøm', short: 'Simon G', photo: '/photos/portrait-p4.jpg', memories: p4, layout: {} },
 ]

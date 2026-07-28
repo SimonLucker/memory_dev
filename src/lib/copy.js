@@ -28,14 +28,14 @@ export const QUICK_REPLY_ANSWER = 'Answer'
 export const LOCATION_LINK = 'Maps'
 export const MUSIC_LINK = 'Open'
 export const VIEW_TRANSCRIPT = 'View transcript'
-export const SLIDESHOW_ACTION = 'Play as slideshow'
+// Spec conflict: section 7 says 'Play as slideshow', binding 6.4 (newer) names
+// the pill 'Slideshow'. 6.4 wins; flagged to Simon G for the next spec bump.
+export const SLIDESHOW_ACTION = 'Slideshow'
 
 // Capture
 export const INPUT_PLACEHOLDER = 'What do you want to keep?'
-export const MEMORY_SAVED = 'Kept.' // only when meaningful
 export const FORMING_BAR = 'Keeping this together'
 export const FORMING_BAR_ACTION = 'Save now'
-export const MOMENT_BANNER_EXAMPLE = 'Moment · Hike in the dunes · 14 kept'
 export const MOMENT_END_ACTION = 'End'
 export const MOMENT_AUTO_SUGGEST = 'Looks like a moment. Keep it together as one?'
 export const EMPTY_CAPTURE = 'Send something you want to remember.' // empty thread, first open

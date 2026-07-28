@@ -45,27 +45,58 @@ export default function Cortex({ memories, edges, layout, openMemory }) {
       const p = (t - t0) / (t1 - t0)
       for (let i = 0; i < N; i++) { const c = (i + 0.5) / N; d[i] += Math.exp(-((p - c) ** 2) / s2) }
     }
-    const max = Math.max(...d) || 1
-    const stops = d.map((v, i) => `${heatColor(v / max)} ${((i / (N - 1)) * 100).toFixed(1)}%`)
-    // at most 4 year labels beneath
+    // min-max normalize so the quietest bins land on cool heat1 blue, not a
+    // washed warm floor (overlapping kernels never reach zero on their own)
+    const min = Math.min(...d)
+    const max = Math.max(...d)
+    const stops = d.map((v, i) =>
+      `${heatColor((v - min) / (max - min || 1))} ${((i / (N - 1)) * 100).toFixed(1)}%`)
+    // at most 4 labels beneath: years across a multi-year span, months when
+    // everything sits inside a single year (a lone "2026" was half off-screen)
     const y0 = new Date(t0).getFullYear()
     const y1 = new Date(t1).getFullYear()
-    const all = []
-    for (let y = y0; y <= y1; y++) all.push(y)
-    const pick = all.length <= 4 ? all : [0, 1, 2, 3].map(i => all[Math.round((i * (all.length - 1)) / 3)])
-    const years = [...new Set(pick)].map(y => ({
-      y,
-      frac: Math.max(0, Math.min(1, (new Date(y, 0, 1).getTime() - t0) / (t1 - t0))),
-    }))
-    return { css: `linear-gradient(90deg, ${stops.join(', ')})`, t0, t1, years }
+    const singleYear = y0 === y1
+    const frac = t => Math.max(0, Math.min(1, (t - t0) / (t1 - t0)))
+    let labels
+    if (singleYear) {
+      const months = []
+      for (const d = new Date(y0, new Date(t0).getMonth(), 1); d.getTime() <= t1; d.setMonth(d.getMonth() + 1))
+        months.push(new Date(d))
+      const pick = months.length <= 4 ? months : [0, 1, 2, 3].map(i => months[Math.round((i * (months.length - 1)) / 3)])
+      labels = [...new Set(pick)].map(d => ({
+        text: d.toLocaleDateString('en-US', { month: 'short' }),
+        frac: frac(d.getTime()),
+      }))
+    } else {
+      const all = []
+      for (let y = y0; y <= y1; y++) all.push(y)
+      const pick = all.length <= 4 ? all : [0, 1, 2, 3].map(i => all[Math.round((i * (all.length - 1)) / 3)])
+      labels = [...new Set(pick)].map(y => ({ text: String(y), frac: frac(new Date(y, 0, 1).getTime()) }))
+    }
+    return { css: `linear-gradient(90deg, ${stops.join(', ')})`, t0, t1, labels, singleYear }
   }, [memories])
 
+  // Scrubbing the heat pill travels in time AND shows a zoomed date readout
+  // above the finger: month + year across a multi-year span, day + month when
+  // the whole span sits inside one year. Fades out on release (motion-fast).
+  const [scrub, setScrub] = useState(null)
   const seek = e => {
     if (!heat) return
     const r = e.currentTarget.getBoundingClientRect()
     const f = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))
-    apiRef.current.panToTime?.(heat.t0 + f * (heat.t1 - heat.t0))
+    const t = heat.t0 + f * (heat.t1 - heat.t0)
+    apiRef.current.panToTime?.(t)
+    const d = new Date(t)
+    setScrub({
+      x: Math.max(r.left + 44, Math.min(r.right - 44, e.clientX)),
+      y: r.top - 8,
+      text: heat.singleYear
+        ? `${d.getDate()} ${d.toLocaleDateString('en-US', { month: 'short' })}`
+        : d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      on: true,
+    })
   }
+  const endScrub = () => setScrub(s => (s ? { ...s, on: false } : s))
 
   // chip values, most frequent first (years chronological)
   const values = useMemo(() => {
@@ -116,13 +147,18 @@ export default function Cortex({ memories, edges, layout, openMemory }) {
       {heat && (
         <div className="cortex-top">
           <div className="cortex-heat" style={{ background: heat.css }}
-            onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); seek(e) }}
-            onPointerMove={e => { if (e.buttons) seek(e) }} />
+            onPointerDown={e => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); seek(e) }}
+            onPointerMove={e => { if (e.buttons) { e.stopPropagation(); seek(e) } }}
+            onPointerUp={endScrub} onPointerCancel={endScrub} />
           <div className="cortex-years">
-            {heat.years.map(({ y, frac }) => (
-              <span key={y} className="type-label" style={{ left: `${frac * 100}%` }}>{y}</span>
+            {heat.labels.map(({ text, frac }) => (
+              <span key={text} className="type-label" style={{ left: `${frac * 100}%` }}>{text}</span>
             ))}
           </div>
+          {scrub && (
+            <span className={'cortex-scrub type-label' + (scrub.on ? ' on' : '')}
+              style={{ left: scrub.x, top: scrub.y }}>{scrub.text}</span>
+          )}
         </div>
       )}
 
