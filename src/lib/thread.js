@@ -82,6 +82,16 @@ export function updateMessage(personId, id, patch) {
 // marker (no boundary after it), or null.
 const BOUNDARY_KINDS = ['memory-card', 'moment-end']
 const CAPTURE_KINDS = ['user-text', 'user-photo', 'user-video', 'user-voice']
+const MEDIA_KINDS = ['user-photo', 'user-video', 'user-voice']
+
+// A media row that never produced media (a recording that failed, a photo that
+// vanished) is a STATE row, not content: four dead voice rows must never turn
+// into a memory made of nothing. Structural, so a forgotten `meta` flag on a
+// failure path cannot re-create the field bug.
+export const isCapture = (m) =>
+  CAPTURE_KINDS.includes(m.kind) && !m.meta && m.state !== 'failed' &&
+  !(MEDIA_KINDS.includes(m.kind) && !m.src)
+
 export function deriveOpenWindow(msgs) {
   let start = 0
   let momentMsg = null
@@ -89,8 +99,7 @@ export function deriveOpenWindow(msgs) {
     if (BOUNDARY_KINDS.includes(msgs[i].kind)) { start = i + 1; momentMsg = null }
     else if (msgs[i].kind === 'moment-start') momentMsg = msgs[i]
   }
-  const bundle = msgs.slice(start).filter((m) => CAPTURE_KINDS.includes(m.kind) && !m.meta)
-  return { bundle, momentMsg }
+  return { bundle: msgs.slice(start).filter(isCapture), momentMsg }
 }
 
 // Build a plausible historical thread from existing memories: one memory-card

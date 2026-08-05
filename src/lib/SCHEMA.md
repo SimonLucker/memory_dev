@@ -130,3 +130,11 @@ blocked demo fire logs its reason to the console.
 hard stop. `transcribe(blob)` posts to the api.js transcription backend
 (Supabase edge function or the `/__ai/transcribe` dev middleware) and resolves
 to the text or `null` on any failure; it never throws and never blocks capture.
+
+## Synthesis contracts (July 29)
+
+- Memory flag `_unsynthesized: true`: save fell back to the deterministic draft (LLM unavailable); a later pass may re-synthesize.
+- Thread message fields: `reason` (failure reason on voice rows), `memId` (links a summary card to its memory), `synthesized`, `txMerged`, `upload`.
+- `voice.startRecording()` rejects with errors carrying `.reason` ('permission' | 'empty') and resolves with `{blobUrl, blob, ms}`; duration is wall time.
+- `thread.isCapture(msg)` is the single bundling gate: meta, failed, or src-less media rows never bundle.
+- `lib/synthesize.js`: synthesizeMemory(bundle) → validated {what, where, who, feeling (closed vocabulary), class, about, music}; extractAnswer(question, reply) for interview replies ("I was alone" → who [], never a feeling).

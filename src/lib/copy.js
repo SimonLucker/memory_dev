@@ -60,7 +60,15 @@ export const PRESENCE_LINE = 'You kept something 5 days in a row.'
 // Profile
 export const PRIVACY_ROW = 'Private by default. Your memories are never posted anywhere.'
 
+// Keeper interview after a memory saves (max two questions, one at a time)
+export const ASK_WHO = 'Who was with you?'
+export const ASK_WHERE = 'Where was this?'
+
 // States
 export const FAILED_SEND = 'Not saved. Tap to retry.'
+// Voice failures name their reason on the label line (5.1 failed state).
+export const VOICE_MIC_OFF = 'Microphone is off. Hold to try again.'
+export const VOICE_EMPTY = 'Nothing was recorded. Hold to try again.'
+export const VOICE_UPLOAD_FAILED = 'Not saved. Tap to retry.'
 export const OFFLINE = 'Offline. Everything you send is kept and syncs later.'
 export const DELETE_CONFIRM = 'This memory will be gone. That is the one thing Memmory cannot undo.'

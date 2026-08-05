@@ -2,18 +2,22 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/capture.css'
 import { Camera, Mic, Send, Play, Pause, Moment as MomentIcon } from './Icons.jsx'
 import {
-  appendMessage, updateMessage, seedThreadFromMemories, deriveOpenWindow,
+  appendMessage, updateMessage, seedThreadFromMemories, deriveOpenWindow, isCapture,
   monthKey, whenToTs, monthLabel, metaLine, fmtDur, WAVE,
 } from '../lib/thread.js'
 import { evaluate, markShown, dismiss as dismissPrompt } from '../lib/keeper.js'
-import { startRecording, transcribe } from '../lib/voice.js'
+import { startRecording, transcribe, vlog, voiceLog, REASON } from '../lib/voice.js'
+import {
+  synthesizeMemory, extractAnswer, fallbackDraft, nameFromTime, saysSolo,
+} from '../lib/synthesize.js'
 import { buildVocab } from '../lib/edges.js'
 import { parseQuery, filterMemories } from '../lib/search.js'
-import { uploadPhoto, uploadAudio, ask } from '../lib/api.js'
+import { uploadPhoto, uploadAudio } from '../lib/api.js'
 import {
   GREETING, EMPTY_CAPTURE, INPUT_PLACEHOLDER, FORMING_BAR, FORMING_BAR_ACTION,
   MOMENT_END_ACTION, MOMENT_AUTO_SUGGEST, ON_THIS_DAY_LABEL, SEARCH_NO_RESULT,
   QUICK_REPLY_KEEP, QUICK_REPLY_LATER, FAILED_SEND, OFFLINE,
+  ASK_WHO, ASK_WHERE, VOICE_MIC_OFF, VOICE_EMPTY, VOICE_UPLOAD_FAILED,
 } from '../lib/copy.js'
 
 const two = n => String(n).padStart(2, '0')
@@ -21,30 +25,30 @@ const whenOf = ts => {
   const d = new Date(ts)
   return `${two(d.getDate())}-${two(d.getMonth() + 1)}-${d.getFullYear()} ${two(d.getHours())}:${two(d.getMinutes())}`
 }
-// Moment name / fallback title from time: "Friday night".
-const nameFromTime = (ts = Date.now()) => {
-  const d = new Date(ts)
-  const h = d.getHours()
-  const part = h < 12 ? 'morning' : h < 18 ? 'afternoon' : h < 22 ? 'evening' : 'night'
-  return `${d.toLocaleDateString('en-US', { weekday: 'long' })} ${part}`
-}
-const titleFrom = (texts, ts) => {
-  const t = (texts[0] || '').replace(/[.?]+$/, '').trim()
-  if (!t) return nameFromTime(ts)
-  const words = t.split(/\s+/)
-  return words.slice(0, 6).join(' ') + (words.length > 6 ? '…' : '')
-}
 const isQuestion = t => /\?\s*$/.test(t) || /^(when|where|what|who|show)\b/i.test(t.trim())
 
-// Fixed follow-up when the LLM cannot supply one (no bank string covers this).
-const FOLLOW_UP_FALLBACK = 'Who was there, and where was this?'
+// How long a save waits for transcriptions still in flight before synthesising.
+// Long enough for a short note to land, short enough that nothing feels stuck.
+const TRANSCRIPT_GRACE = 4000
+// A hold shorter than this is a tap on a hold control, not a lost recording.
+const MIN_HOLD_MS = 350
+// How long a keeper question stays answerable. After this the next text is a
+// new capture, never an answer.
+const ANSWER_WINDOW = 5 * 60 * 1000
+
+// The failed-voice label names the reason (5.1: errors are calm and specific).
+const voiceReason = m => {
+  if (m.upload === 'failed') return VOICE_UPLOAD_FAILED
+  if (m.state !== 'failed') return null
+  return m.reason === REASON.PERMISSION ? VOICE_MIC_OFF : VOICE_EMPTY
+}
 
 function VoiceMsg({ msg, onRetry }) {
   const audioRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [frac, setFrac] = useState(0)
   const [dead, setDead] = useState(false) // blob URL died on reload: quiet row
-  const failed = msg.state === 'failed'
+  const failed = msg.state === 'failed' || msg.upload === 'failed'
   const toggle = () => {
     if (failed) { onRetry?.(); return }
     const a = audioRef.current
@@ -119,6 +123,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const [editingName, setEditingName] = useState(false)
   const [prompt, setPrompt] = useState(null)   // keeper prompt or local suggest
   const [rec, setRec] = useState(null)         // { t0, elapsed, cancel }
+  const [armed, setArmed] = useState(false)    // retry hint on the mic button
   const [online, setOnline] = useState(navigator.onLine)
 
   const threadRef = useRef(thread); threadRef.current = thread
@@ -133,7 +138,18 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const micToken = useRef(null) // pending mic hold; cleared on release
   const recX = useRef(0)
   const blobs = useRef({}) // msgId -> blob, for failed-upload retry
+  const txPending = useRef({}) // msgId -> in-flight transcription promise
+  const upPending = useRef({}) // msgId -> in-flight upload promise
   const mountTs = useRef(Date.now())
+  const recRef = useRef(rec); recRef.current = rec
+
+  // The voice diagnostics ring buffer, readable from the console on a real
+  // phone: window.__memmory.voiceLog. Attached here too because keeper.js
+  // claims window.__memmory at import time.
+  useEffect(() => {
+    window.__memmory = window.__memmory || {}
+    window.__memmory.voiceLog = voiceLog
+  }, [])
 
   const push = msg => {
     const full = appendMessage(person.id, msg)
@@ -143,6 +159,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const patch = (id, p) => {
     const m = updateMessage(person.id, id, p)
     if (m) setThread(t => t.map(x => (x.id === id ? m : x)))
+    return m
   }
 
   // The open capture window is DERIVED from the persisted thread (5.4-5.6):
@@ -152,13 +169,16 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   const lastCap = bundle[bundle.length - 1] || null
 
   // The keeper's one unanswered follow-up question (enrichment target), still
-  // pending only while nothing new has been captured since it was asked.
+  // pending only while nothing new has been captured since it was asked, and
+  // only for a few minutes: a question left hanging must never swallow what the
+  // user types an hour later (the thread survives reloads, the question does not).
   const pendingEnrich = useMemo(() => {
     for (let i = thread.length - 1; i >= 0; i--) {
       const m = thread[i]
-      if (m.kind === 'keeper' && m.enrich) return m.done ? null : m
-      if (['user-photo', 'user-video', 'user-voice'].includes(m.kind) ||
-        (m.kind === 'user-text' && !m.meta)) return null
+      if (m.kind === 'keeper' && m.enrich) {
+        return m.done || Date.now() - m.ts > ANSWER_WINDOW ? null : m
+      }
+      if (isCapture(m)) return null // something real was captured since
     }
     return null
   }, [thread])
@@ -193,27 +213,102 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
 
   // ---- Memory forming (5.4) and Moment (5.5) ------------------------------
 
-  const saveMemoryFrom = (msgs, name) => {
-    if (!msgs.length) return
-    const texts = msgs.filter(m => m.kind === 'user-text').map(m => m.text)
-    const memory = addMemory({
-      what: name || titleFrom(texts, msgs[0].ts),
-      when: whenOf(Date.now()),
-      where: '',
-      who: [],
-      feeling: [],
-      // only uploaded photos persist: a 'sending'/'failed' src is a blob: URL
-      // that dies on reload
+  // Media as it stands right now, read fresh from the thread: an upload that
+  // landed after the save still reaches the memory this way.
+  const mediaOf = ids => {
+    const msgs = threadRef.current.filter(m => ids.includes(m.id))
+    return {
       photos: msgs.filter(m => m.kind === 'user-photo' && !m.state).map(m => m.src),
       videos: msgs.filter(m => m.kind === 'user-video').map(m => ({ src: m.src, duration: m.duration || 0 })),
-      voice: msgs.filter(m => m.kind === 'user-voice' && m.src)
+      voice: msgs.filter(m => m.kind === 'user-voice' && m.src && m.upload !== 'failed')
         .map(m => ({ src: m.src, duration: m.duration || 0, ...(m.transcript ? { transcript: m.transcript } : {}) })),
-      about: texts.join(' '),
+    }
+  }
+
+  const bundleOf = (msgs, name) => ({
+    texts: msgs.filter(m => m.kind === 'user-text').map(m => m.text),
+    voiceTranscripts: msgs.filter(m => m.kind === 'user-voice').map(m => m.transcript).filter(Boolean),
+    photoCount: msgs.filter(m => m.kind === 'user-photo').length,
+    videoCount: msgs.filter(m => m.kind === 'user-video').length,
+    timestamps: msgs.map(m => m.ts),
+    momentName: name || '',
+  })
+
+  // Saving is INSTANT and silent: the card lands with the deterministic draft,
+  // then synthesis rewrites it in place. No spinner, no "thinking" bubble.
+  const saveMemoryFrom = (msgs, name) => {
+    if (!msgs.length) return
+    const ids = msgs.map(m => m.id)
+    const memory = addMemory({
+      ...fallbackDraft(bundleOf(msgs, name), name),
+      when: whenOf(Date.now()),
+      ...mediaOf(ids),
     })
     // The memory-card message is the window boundary: it MUST land in the
     // thread on every save, or the bundle would re-bundle after a reload.
-    const cardMsg = push({ kind: 'memory-card', memoryId: memory.id })
-    maybeFollowUp(memory, cardMsg)
+    push({ kind: 'memory-card', memoryId: memory.id })
+    // Voice rows remember where they landed, so a transcript arriving after
+    // synthesis knows which memory to enrich.
+    msgs.filter(m => m.kind === 'user-voice').forEach(m => patch(m.id, { memId: memory.id }))
+    synthesizeInto(memory.id, msgs, name)
+  }
+
+  // Wait briefly for transcriptions in flight, synthesise once, patch the saved
+  // memory. Failure leaves the fallback draft standing (flagged _unsynthesized).
+  const synthesizeInto = async (memId, msgs, name) => {
+    const ids = msgs.map(m => m.id)
+    // Transcriptions enrich the story, uploads turn blob URLs into durable
+    // srcs. Both are worth a few seconds; neither may hold the save hostage.
+    const waits = ids.flatMap(id => [txPending.current[id], upPending.current[id]]).filter(Boolean)
+    if (waits.length) {
+      await Promise.race([
+        Promise.all(waits.map(p => p.catch(() => null))),
+        new Promise(r => setTimeout(r, TRANSCRIPT_GRACE)),
+      ])
+    }
+    // Re-read the thread: transcripts and uploads may have landed since.
+    const fresh = threadRef.current.filter(m => ids.includes(m.id))
+    // From here a late transcript appends to `about` instead of waiting.
+    fresh.filter(m => m.kind === 'user-voice').forEach(m => patch(m.id, { synthesized: true }))
+
+    const bundle = bundleOf(fresh, name)
+    const fields = await synthesizeMemory(bundle, { momentName: name })
+    const mem = memoriesRef.current.find(m => m.id === memId)
+    if (!mem) return
+    // Media is re-read either way: an upload that landed after the instant save
+    // must reach the memory even when synthesis could not run.
+    const upd = { ...mem, ...mediaOf(ids) }
+    if (!fields._unsynthesized) {
+      upd.what = fields.what || mem.what
+      upd.about = fields.about || mem.about
+      if (fields.where) upd.where = fields.where
+      if (fields.feeling.length) upd.feeling = fields.feeling
+      if (fields.class) upd.class = fields.class
+      if (fields.music) upd.music = fields.music
+      if (fields.who.length) upd.__whoNames = fields.who
+      delete upd._unsynthesized
+    }
+    updateMemory(upd)
+    interview(memId, fields, bundle)
+  }
+
+  // ---- The keeper interview: at most TWO questions, one at a time ----------
+
+  const askQuestion = (memId, field, next) => {
+    push({
+      kind: 'keeper', enrich: memId, field, next,
+      text: field === 'who' ? ASK_WHO : ASK_WHERE,
+    })
+  }
+
+  // Who first, then where. Nothing is asked when the content already answers
+  // it (named people, or the user saying they were on their own).
+  const interview = (memId, fields, bundle) => {
+    const solo = saysSolo([...bundle.texts, ...bundle.voiceTranscripts].join(' '))
+    const needWho = !(fields.who || []).length && !solo
+    const needWhere = !fields.where
+    if (needWho) askQuestion(memId, 'who', needWhere ? 'where' : null)
+    else if (needWhere) askQuestion(memId, 'where', null)
   }
 
   // Close the open window (forming timeout, Save now, or Moment End): the
@@ -265,55 +360,30 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     }
   }
 
-  // ---- Follow-up question + enrichment (thin saves) -----------------------
-
-  // A thin draft (nobody tagged, no place, no feelings) earns ONE short
-  // clarifying question. The asked flag lives on the memory-card message, so
-  // it never repeats, reload or not.
-  const maybeFollowUp = (memory, cardMsg) => {
-    const thin = !(memory.who || []).length && !memory.where && !(memory.feeling || []).length
-    if (!thin || cardMsg.asked) return
-    patch(cardMsg.id, { asked: true })
-    const post = q => push({ kind: 'keeper', text: q, enrich: memory.id })
-    ask([
-      { role: 'system', content: 'You are a calm memory keeper. Reply with exactly one short clarifying question, under 12 words. No em dashes, no exclamation marks, no emoji.' },
-      { role: 'user', content: `I just saved this memory: "${memory.what}. ${memory.about || ''}". Ask me one question to learn who was there or where it was.` },
-    ]).then(q => {
-      const clean = String(q || '').trim()
-      const good = clean && clean.length <= 90 && !clean.includes('\n') && !clean.includes('—') && clean.endsWith('?')
-      post(good ? clean : FOLLOW_UP_FALLBACK)
-    }).catch(() => post(FOLLOW_UP_FALLBACK))
-  }
-
-  // The next text reply answers the question: extract details defensively,
-  // fall back to appending the reply to the memory's story.
+  // The next text reply answers the question. Extraction never adds a feeling:
+  // "I was alone" is a fact about company, and the field build turned it into
+  // an "alone" chip. The second question only ever follows the first answer.
   const enrich = (keeperMsg, reply) => {
     patch(keeperMsg.id, { done: true })
-    const mem = memoriesRef.current.find(m => m.id === keeperMsg.enrich)
-    if (!mem) return
-    const fallback = () => updateMemory({ ...mem, about: [mem.about, reply].filter(Boolean).join(' ') })
-    ask([
-      { role: 'system', content: 'Extract memory details from the user reply. Answer with ONLY a JSON object; every key optional: {"who": ["names"], "where": "place", "feeling": ["feelings"], "aboutAppend": "one factual sentence"}. No other text.' },
-      { role: 'user', content: reply },
-    ]).then(raw => {
-      const j = JSON.parse(raw.match(/\{[\s\S]*\}/)[0])
+    const memId = keeperMsg.enrich
+    extractAnswer(keeperMsg.text, reply).then(a => {
+      const mem = memoriesRef.current.find(m => m.id === memId)
+      if (!mem) return
       const upd = { ...mem }
       let changed = false
-      if (Array.isArray(j.who) && j.who.length) {
-        upd.__whoNames = [...(mem.who || []).map(p => p.name), ...j.who.filter(n => typeof n === 'string')]
+      if (a.who.length) {
+        upd.__whoNames = [...(mem.who || []).map(p => p.name), ...a.who]
         changed = true
       }
-      if (typeof j.where === 'string' && j.where && !mem.where) { upd.where = j.where; changed = true }
-      if (Array.isArray(j.feeling) && j.feeling.length) {
-        upd.feeling = [...(mem.feeling || []), ...j.feeling.filter(f => typeof f === 'string')]
+      if (a.where && !mem.where) { upd.where = a.where; changed = true }
+      if (a.aboutAppend) {
+        upd.about = [mem.about, a.aboutAppend].filter(Boolean).join(' ')
         changed = true
       }
-      if (typeof j.aboutAppend === 'string' && j.aboutAppend) {
-        upd.about = [mem.about, j.aboutAppend].filter(Boolean).join(' ')
-        changed = true
-      }
-      changed ? updateMemory(upd) : fallback()
-    }).catch(fallback)
+      if (changed) updateMemory(upd)
+      // Question two of two, and only when it is still unanswered.
+      if (keeperMsg.next === 'where' && !(a.where || mem.where)) askQuestion(memId, 'where', null)
+    }).catch(() => {})
   }
 
   // ---- Sending ------------------------------------------------------------
@@ -349,9 +419,10 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       const full = push({ kind, src: URL.createObjectURL(file), ...(kind === 'user-photo' ? { state: 'sending' } : {}) })
       if (kind === 'user-photo') {
         blobs.current[full.id] = file
-        uploadPhoto(file)
+        upPending.current[full.id] = uploadPhoto(file)
           .then(src => { delete blobs.current[full.id]; patch(full.id, { src, state: undefined }) })
           .catch(() => patch(full.id, { state: 'failed' }))
+          .finally(() => { delete upPending.current[full.id] })
       }
       // ponytail: videos stay as blob URLs (uploadPhoto is photo-only); real video upload later
     }
@@ -384,56 +455,106 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   }
 
   // Mic: hold records, slide left cancels, release sends a voice note.
-  // A denied mic or an empty recording surfaces the calm failed state (5.1),
-  // never silence.
+  // Every failure surfaces a row that NAMES its reason (5.1), never silence.
+  // A failed row is meta and has no src, so it can never join a bundle.
+  const failedVoice = reason => {
+    vlog(`row-failed ${reason}`)
+    return push({ kind: 'user-voice', duration: 0, state: 'failed', reason, meta: true })
+  }
+
   const micDown = async e => {
+    // Own the gesture completely: preventDefault kills the iOS long-press
+    // callout, stopPropagation keeps the pane pager from stealing the pointer
+    // capture mid-hold (that steal is what ends a hold as a pointercancel).
     e.preventDefault()
+    e.stopPropagation()
     try { e.currentTarget.setPointerCapture?.(e.pointerId) } catch {}
+    setArmed(false)
     recX.current = e.clientX
     const token = {}
     micToken.current = token
+    let h
     try {
-      const h = await startRecording()
-      // released while the permission prompt was up: stop and discard quietly
-      if (micToken.current !== token) { h.stop(); return }
-      recHandle.current = h
-    } catch {
-      // meta: nothing was recorded, so this state row never joins a bundle
-      if (micToken.current === token) push({ kind: 'user-voice', duration: 0, state: 'failed', meta: true })
+      h = await startRecording()
+    } catch (err) {
+      if (micToken.current === token) failedVoice(err?.reason || REASON.RECORDER)
+      micToken.current = null
       return
     }
+    // Released while the permission prompt was up: stop, keep nothing, say so
+    // only if the hold was long enough to have meant a recording.
+    if (micToken.current !== token) { h.stop(); vlog('released-before-start'); return }
+    recHandle.current = h
     setRec({ t0: Date.now(), elapsed: 0, cancel: false })
   }
   const micMove = e => {
+    e.stopPropagation()
     if (recHandle.current) setRec(r => r && { ...r, cancel: e.clientX - recX.current < -60 })
   }
-  const micUp = async () => {
+  // pointercancel is a release, not a discard: iOS fires it for gestures the
+  // system claims, and the audio recorded up to that point is real.
+  const micUp = async e => {
     micToken.current = null
     const h = recHandle.current
     recHandle.current = null
     if (!h) return
-    const cancelled = !!rec?.cancel
+    const cancelled = !!recRef.current?.cancel && e?.type !== 'pointercancel'
     setRec(null)
-    const { blobUrl, duration, blob } = await h.stop()
-    if (cancelled) return
-    if (!blob || !blob.size) { push({ kind: 'user-voice', duration: 0, state: 'failed', meta: true }); return }
-    if (duration < 1) return // an accidental tap, nothing recorded yet
+    vlog(e?.type === 'pointercancel' ? 'gesture-cancel keep-audio' : 'gesture-end')
+    const { blobUrl, duration, blob, ms } = await h.stop()
+    if (cancelled) { vlog('slide-cancel discard'); return }
+    if (!blob || !blob.size) {
+      if (ms >= MIN_HOLD_MS) failedVoice(REASON.EMPTY)
+      else vlog('tap-not-hold discard')
+      return
+    }
     // Optimistic: the voice message lands NOW with its blob URL; the durable
     // src swaps in when the upload lands. A failed upload keeps the blob for
     // this session; after a reload the row degrades to the quiet state.
     const full = push({ kind: 'user-voice', src: blobUrl, duration })
     blobs.current[full.id] = blob
-    uploadAudio(blob)
-      .then(src => { delete blobs.current[full.id]; patch(full.id, { src, upload: undefined }) })
-      .catch(() => patch(full.id, { upload: 'failed' }))
-    transcribe(blob).then(t => { if (t) patch(full.id, { transcript: t }) })
+    sendAudio(full.id, blob)
+    txPending.current[full.id] = transcribe(blob)
+      .then(t => { if (t) applyTranscript(full.id, t); return t })
+      .finally(() => { delete txPending.current[full.id] })
   }
+
+  const sendAudio = (msgId, blob) => {
+    upPending.current[msgId] = uploadAudio(blob)
+      .then(src => { delete blobs.current[msgId]; vlog('upload-ok'); patch(msgId, { src, upload: undefined }) })
+      .catch(e => { vlog(`upload-failed ${e?.message || e}`); patch(msgId, { upload: 'failed' }) })
+      .finally(() => { delete upPending.current[msgId] })
+    return upPending.current[msgId]
+  }
+
+  // A transcript that lands after the memory was synthesised enriches it with
+  // ONE guarded update. Never a re-synthesis, never a loop.
+  const applyTranscript = (msgId, text) => {
+    const m = patch(msgId, { transcript: text })
+    if (!m?.memId || !m.synthesized || m.txMerged) return
+    patch(msgId, { txMerged: true })
+    const mem = memoriesRef.current.find(x => x.id === m.memId)
+    if (!mem) return
+    updateMemory({
+      ...mem,
+      about: [mem.about, text].filter(Boolean).join(' '),
+      voice: (mem.voice || []).map(v => (v.src === m.src ? { ...v, transcript: text } : v)),
+    })
+  }
+
+  // Retry: a failed UPLOAD re-sends the blob we kept; a failed RECORDING has
+  // nothing to send, so the tap arms the mic and the label says to hold it.
   const retryVoice = msg => {
     const blob = blobs.current[msg.id]
-    if (!blob) return
-    uploadAudio(blob)
-      .then(src => { delete blobs.current[msg.id]; patch(msg.id, { src, upload: undefined, state: undefined }) })
-      .catch(() => patch(msg.id, { upload: 'failed' }))
+    if (msg.upload === 'failed' && blob) {
+      vlog('retry-upload')
+      patch(msg.id, { upload: undefined })
+      sendAudio(msg.id, blob)
+      return
+    }
+    vlog('retry-arm')
+    setArmed(true)
+    setTimeout(() => setArmed(false), 4000)
   }
   useEffect(() => {
     if (!rec) return
@@ -453,6 +574,9 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
         setPrompt(null)
       }
       if (promptRef.current) return
+      // The keeper never stacks two asks: a pending interview question holds
+      // the proactive nudge back (it is re-evaluated on the next tick).
+      if (pendingEnrichRef.current) return
       const p = evaluate({ personId: person.id, memories: memoriesRef.current })
       if (p) { markShown(person.id, p); setPrompt(p) }
     }
@@ -508,13 +632,15 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
         )
       case 'user-video':
         return <div className="right"><VideoMsg msg={m} /></div>
-      case 'user-voice':
+      case 'user-voice': {
+        const why = voiceReason(m)
         return (
           <div className="right">
             <VoiceMsg msg={m} onRetry={() => retryVoice(m)} />
-            {m.state === 'failed' && <span className="type-label state error">{FAILED_SEND}</span>}
+            {why && <span className="type-label state error">{why}</span>}
           </div>
         )
+      }
       case 'memory-card': {
         const mem = memories.find(x => x.id === m.memoryId)
         if (!mem) return null
@@ -635,9 +761,11 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
               <Send size={22} />
             </button>
           ) : (
-            <button className="bar-icon swap-in" aria-label="Record a voice note"
+            <button className={`bar-icon swap-in${armed ? ' armed' : ''}`}
+              aria-label="Record a voice note"
               onPointerDown={micDown} onPointerMove={micMove}
-              onPointerUp={micUp} onPointerCancel={micUp}>
+              onPointerUp={micUp} onPointerCancel={micUp}
+              onContextMenu={e => e.preventDefault()}>
               <Mic size={22} />
             </button>
           )}
