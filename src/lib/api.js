@@ -100,6 +100,42 @@ export async function upsertCard(personId, card) {
   }
 }
 
+// Profile settings (avatar URL, later: music pref etc.) — dual-backend like
+// cards. Remote: Supabase `profiles` table (person_id pk, data jsonb). Dev:
+// /__profiles middleware, src/data/profiles.json. → object or null; a missing
+// table or endpoint must never break anything.
+export async function loadProfile(personId) {
+  try {
+    if (remote) {
+      const r = await ok(await fetch(
+        `${SB_URL}/rest/v1/profiles?person_id=eq.${personId}&select=data`,
+        { headers: sbHeaders }))
+      const rows = await r.json()
+      return rows[0]?.data || null
+    }
+    const r = await fetch(`/__profiles?person=${personId}`)
+    return r.ok ? await r.json() : null
+  } catch { return null }
+}
+
+export async function upsertProfile(personId, data) {
+  const merged = { ...(await loadProfile(personId)), ...data }
+  if (remote) {
+    await ok(await fetch(`${SB_URL}/rest/v1/profiles`, {
+      method: 'POST',
+      headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify({ person_id: personId, data: merged }),
+    }))
+  } else {
+    await fetch('/__profiles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ person: personId, data: merged }),
+    }).catch(() => {})
+  }
+  return merged
+}
+
 export async function removeCard(personId, id) {
   if (remote) {
     await ok(await fetch(`${SB_URL}/rest/v1/cards?person_id=eq.${personId}&id=eq.${id}`, {

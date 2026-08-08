@@ -1,6 +1,8 @@
-// Profile picture store — the chosen URL per person, localStorage-backed.
-// Changes broadcast as a window CustomEvent 'memmory:avatar' { personId, url }.
-import { uploadPhoto } from './api.js'
+// Profile picture store. The pointer lives in the profiles backend (Supabase
+// table / dev middleware) so it follows the person across devices and deploys;
+// localStorage is only the synchronous cache in front of it. Changes broadcast
+// as a window CustomEvent 'memmory:avatar' { personId, url }.
+import { uploadPhoto, loadProfile, upsertProfile } from './api.js'
 
 const key = pid => 'memmory.avatar.' + pid
 
@@ -9,6 +11,20 @@ export const getAvatar = pid => localStorage.getItem(key(pid)) || null
 export function setAvatar(pid, url) {
   localStorage.setItem(key(pid), url)
   window.dispatchEvent(new CustomEvent('memmory:avatar', { detail: { personId: pid, url } }))
+  // data: URLs are the offline fallback and too big for a jsonb row; they stay local.
+  if (!url.startsWith('data:')) upsertProfile(pid, { avatar: url }).catch(() => {})
+}
+
+// Pull the durable pointers into the local cache (App calls this once on
+// mount). Anything the backend knows wins over a stale or missing cache.
+export async function syncAvatars(personIds) {
+  for (const pid of personIds) {
+    const p = await loadProfile(pid)
+    if (p?.avatar && p.avatar !== localStorage.getItem(key(pid))) {
+      localStorage.setItem(key(pid), p.avatar)
+      window.dispatchEvent(new CustomEvent('memmory:avatar', { detail: { personId: pid, url: p.avatar } }))
+    }
+  }
 }
 
 // Picked image file → centered-square 256px jpeg blob (cheap to store and load).

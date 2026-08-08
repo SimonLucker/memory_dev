@@ -9,7 +9,7 @@ import Profile from './components/Profile.jsx'
 import { PERSONS } from './data/persons.js'
 import { resolvePerson } from './lib/people.js'
 import { deriveEdges } from './lib/edges.js'
-import { getAvatar } from './lib/avatar.js'
+import { getAvatar, syncAvatars } from './lib/avatar.js'
 import * as api from './lib/api.js'
 
 // Resolve plain names to {id,name}: reuse the id of any existing person with the
@@ -248,6 +248,7 @@ export default function App() {
   useEffect(() => {
     const bump = () => setAvatarTick(t => t + 1)
     window.addEventListener('memmory:avatar', bump)
+    syncAvatars(PERSONS.map(p => p.id)) // durable pointers → local cache
     return () => window.removeEventListener('memmory:avatar', bump)
   }, [])
   const avatarSrc = getAvatar(person.id) || person.photo // avatarTick re-reads on change

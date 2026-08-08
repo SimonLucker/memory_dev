@@ -7,3 +7,4 @@ dist/
 _to_delete/
 supabase/.temp/
 _sync/
+src/data/profiles.json

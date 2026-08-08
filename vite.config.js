@@ -67,6 +67,26 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })
 
+    // Profile settings (avatar URL etc.), one JSON file for all persons.
+    // GET /__profiles?person=p1 → object|null. POST { person, data }.
+    server.middlewares.use('/__profiles', async (req, res) => {
+      try {
+        const file = join(root, 'src/data', 'profiles.json')
+        const readAll = () => { try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return {} } }
+        if (req.method === 'GET') {
+          const person = new URL(req.url, 'http://x').searchParams.get('person') || ''
+          res.setHeader('Content-Type', 'application/json')
+          return res.end(JSON.stringify(readAll()[person] || null))
+        }
+        if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+        const { person, data } = JSON.parse(await readBody(req))
+        const all = readAll()
+        all[person] = data
+        writeFileSync(file, JSON.stringify(all, null, 2) + '\n')
+        res.end('ok')
+      } catch (e) { res.statusCode = 500; res.end(String(e)) }
+    })
+
     // Serve photos straight from disk. Vite's own public-file serving relies on a
     // watcher-fed file list, and the watcher deliberately ignores public/photos
     // (uploads must not trigger reloads) — so photos uploaded mid-session fell

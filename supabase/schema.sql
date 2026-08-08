@@ -47,3 +47,16 @@ create policy "anon read photos" on storage.objects
 drop policy if exists "anon upload photos" on storage.objects;
 create policy "anon upload photos" on storage.objects
   for insert to anon with check (bucket_id = 'photos');
+
+-- Profile settings: avatar URL and future per-person preferences.
+create table if not exists public.profiles (
+  person_id text primary key,
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+drop policy if exists "anon full access profiles" on public.profiles;
+create policy "anon full access profiles" on public.profiles
+  for all to anon using (true) with check (true);
