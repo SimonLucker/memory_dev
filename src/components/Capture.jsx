@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/capture.css'
 import { Camera, Mic, Send, Play, Pause, Moment as MomentIcon } from './Icons.jsx'
 import {
-  appendMessage, updateMessage, seedThreadFromMemories, deriveOpenWindow, isCapture,
+  appendMessage, updateMessage, loadThread, syncThread, deriveOpenWindow, isCapture,
   monthKey, whenToTs, monthLabel, metaLine, fmtDur, WAVE,
 } from '../lib/thread.js'
 import { evaluate, markShown, dismiss as dismissPrompt } from '../lib/keeper.js'
@@ -184,19 +184,27 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
   }, [thread])
   const pendingEnrichRef = useRef(pendingEnrich); pendingEnrichRef.current = pendingEnrich
 
-  // Load (seed) the thread per person + daily greeting.
+  // Per person: render the local cache instantly, then reconcile with the
+  // backend in the background (seeding when both stores are empty). The merged
+  // thread only ever appends/patches rows the cache already keyed, so the list
+  // never clears while the user watches; deriveOpenWindow recomputes from it.
   useEffect(() => {
-    let msgs = seedThreadFromMemories(person.id, memoriesRef.current)
-    const key = `memmory.greet.${person.id}`
-    const today = new Date().toDateString()
-    if (msgs.length && localStorage.getItem(key) !== today) {
-      localStorage.setItem(key, today)
-      msgs = [...msgs, appendMessage(person.id, {
-        kind: 'keeper', text: GREETING.replace('Simon', person.name.split(' ')[0]),
-      })]
-    }
-    setThread(msgs)
+    let live = true
+    setThread(loadThread(person.id))
     setPrompt(null)
+    syncThread(person.id, memoriesRef.current).then((msgs) => {
+      if (!live) return
+      // Daily greeting, deduped by its deterministic id: durable in the
+      // thread itself, so neither a reload nor a second device re-greets.
+      const gid = `greet_${new Date().toISOString().slice(0, 10)}`
+      if (msgs.length && !msgs.some((m) => m.id === gid)) {
+        msgs = [...msgs, appendMessage(person.id, {
+          id: gid, kind: 'keeper', text: GREETING.replace('Simon', person.name.split(' ')[0]),
+        })]
+      }
+      setThread(msgs)
+    })
+    return () => { live = false }
   }, [person.id])
 
   // Keep the thread pinned to the bottom.

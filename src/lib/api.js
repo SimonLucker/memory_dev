@@ -100,6 +100,47 @@ export async function upsertCard(personId, card) {
   }
 }
 
+// Capture thread — dual-backend like cards. Remote: Supabase `threads` table
+// (person_id, id, data jsonb), ONE row per message. Dev: the /__threads
+// middleware, JSON files src/data/threads-<pid>.json. → messages ordered by
+// ts, [] on any failure (an unreachable backend must never break Capture).
+export async function loadThreadRemote(personId) {
+  try {
+    let msgs
+    if (remote) {
+      const r = await ok(await fetch(
+        `${SB_URL}/rest/v1/threads?person_id=eq.${personId}&select=data`,
+        { headers: sbHeaders }))
+      msgs = (await r.json()).map(row => row.data)
+    } else {
+      const r = await fetch(`/__threads?person=${personId}`)
+      msgs = r.ok ? await r.json() : []
+    }
+    return msgs.sort((a, b) => a.ts - b.ts)
+  } catch { return [] }
+}
+
+// Bulk upsert in ONE request: Supabase merges an array insert on the
+// (person_id, id) key; the dev middleware does the same per message.
+export async function upsertThreadMsgs(personId, msgs) {
+  if (!msgs.length) return
+  if (remote) {
+    await ok(await fetch(`${SB_URL}/rest/v1/threads`, {
+      method: 'POST',
+      headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify(msgs.map(m => ({ person_id: personId, id: m.id, data: m }))),
+    }))
+  } else {
+    await fetch('/__threads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ person: personId, upsertMany: msgs }),
+    }).catch(() => {})
+  }
+}
+
+export const upsertThreadMsg = (personId, msg) => upsertThreadMsgs(personId, [msg])
+
 // Profile settings (avatar URL, later: music pref etc.) — dual-backend like
 // cards. Remote: Supabase `profiles` table (person_id pk, data jsonb). Dev:
 // /__profiles middleware, src/data/profiles.json. → object or null; a missing

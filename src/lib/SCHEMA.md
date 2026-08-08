@@ -76,9 +76,27 @@ node's three strongest connections via `strongestEdges(nodeId, edges, n = 3)`.
 
 ## Thread message model (`lib/thread.js`)
 
-One Capture thread per person, persisted to localStorage under
-`memmory.thread.<personId>` (prototype only; swap the `save` helper for the
-`api.js` backend when threads go real).
+One Capture thread per person. localStorage (`memmory.thread.<personId>`) is
+the synchronous cache and render source; the durable store is the `api.js`
+thread backend — Supabase table `threads` (person_id, id, data jsonb, one row
+per message) or, in dev, `src/data/threads-<pid>.json` via the `/__threads`
+vite middleware (`loadThreadRemote` / `upsertThreadMsg` / `upsertThreadMsgs`).
+
+Sync rule (`syncThread(personId, memories)`): fetch remote, union with the
+local cache by message id; on a conflicting id the local copy wins when its
+`ts` is same-or-newer (it carries this device's patches); order by `ts`
+(stable). The merge is written back to the cache and local-only durable
+messages are pushed up in one bulk upsert. When BOTH stores are empty the
+thread is seeded via `seedThreadFromMemories` and the seeds pushed — seed ids
+derive from memory ids (`seed_<memoryId>`), so two empty devices seeding the
+same memories converge instead of doubling the history. The daily keeper
+greeting carries the deterministic id `greet_<YYYY-MM-DD>` for the same reason.
+
+Blob-src exception: `appendMessage`/`updateMessage` push each durable message
+to the backend fire-and-forget, EXCEPT rows whose `src` is a `blob:` or
+`data:` URL (meaningless off-device). Those reach the backend only when the
+upload-swap patches in the durable src — that patch goes through
+`updateMessage`, which pushes it.
 
 ```
 Message = {
@@ -95,10 +113,11 @@ Message = {
 }
 ```
 
-API: `loadThread(personId)` · `appendMessage(personId, msg)` ·
-`updateMessage(personId, id, patch)` · `monthKey(ts)` (sticky month groups) ·
-`seedThreadFromMemories(personId, memories)` builds a plausible history (one
-`memory-card` message at each memory's own date; no-op if a thread exists).
+API: `loadThread(personId)` (cache) · `syncThread(personId, memories)` ·
+`appendMessage(personId, msg)` · `updateMessage(personId, id, patch)` ·
+`monthKey(ts)` (sticky month groups) · `seedThreadFromMemories(personId,
+memories)` builds a plausible history (one `memory-card` message at each
+memory's own date; no-op if a thread exists).
 
 ## Keeper engine (`lib/keeper.js`, spec 6.7 + 6.8)
 

@@ -1,7 +1,15 @@
-// Per-person Capture thread store. Prototype-only persistence: localStorage
-// under memmory.thread.<personId>. See src/lib/SCHEMA.md for the message model.
+// Per-person Capture thread store. localStorage (memmory.thread.<personId>) is
+// the synchronous cache and render source; every durable message is also
+// pushed to the api.js thread backend, and syncThread() merges the two on
+// load. See src/lib/SCHEMA.md for the message model and the merge rule.
+
+import { loadThreadRemote, upsertThreadMsg, upsertThreadMsgs } from './api.js'
 
 const KEY = (personId) => `memmory.thread.${personId}`
+
+// blob:/data: srcs are meaningless off this device; those rows reach the
+// backend only after the upload-swap patches in a durable src.
+const durable = (m) => !/^(blob|data):/.test(m.src || '')
 
 // Sticky month-group key for a timestamp: "2026-07".
 export const monthKey = (ts) => {
@@ -47,7 +55,6 @@ export function loadThread(personId) {
 }
 
 function save(personId, msgs) {
-  // ponytail: localStorage only, swap for the api.js backend when threads go real
   try { localStorage.setItem(KEY(personId), JSON.stringify(msgs)) } catch {}
 }
 
@@ -61,6 +68,7 @@ export function appendMessage(personId, msg) {
   }
   msgs.push(full)
   save(personId, msgs)
+  if (durable(full)) upsertThreadMsg(personId, full).catch(() => {}) // fire-and-forget
   return full
 }
 
@@ -71,6 +79,8 @@ export function updateMessage(personId, id, patch) {
   if (i < 0) return null
   msgs[i] = { ...msgs[i], ...patch }
   save(personId, msgs)
+  // The upload-swap patch (blob: → durable src) rides this same push.
+  if (durable(msgs[i])) upsertThreadMsg(personId, msgs[i]).catch(() => {})
   return msgs[i]
 }
 
@@ -104,7 +114,9 @@ export function deriveOpenWindow(msgs) {
 
 // Build a plausible historical thread from existing memories: one memory-card
 // message at each memory's own date, so the thread scrolls through months of
-// history with sticky month groups. No-op when a thread already exists.
+// history with sticky month groups. Seed ids derive from memory ids, so two
+// devices seeding the same memories produce IDENTICAL rows and the sync union
+// can never double the history. No-op when a thread already exists.
 export function seedThreadFromMemories(personId, memories) {
   const existing = loadThread(personId)
   if (existing.length) return existing
@@ -113,4 +125,33 @@ export function seedThreadFromMemories(personId, memories) {
     .sort((a, b) => a.ts - b.ts)
   save(personId, msgs)
   return msgs
+}
+
+// Reconcile the local cache with the backend: union by message id; on a
+// conflicting id the local copy wins when its ts is same-or-newer (it carries
+// this device's patches). Local-only durable messages are pushed up in ONE
+// bulk call. When BOTH stores are empty the thread is seeded from the
+// memories and the seeds pushed. Returns the merged, ts-ordered thread —
+// always usable, even fully offline (loadThreadRemote resolves [] then).
+export async function syncThread(personId, memories) {
+  const remoteMsgs = await loadThreadRemote(personId)
+  // Read local AFTER the await: anything appended while the fetch was in
+  // flight is included, so saving the merge can never drop a fresh message.
+  const local = loadThread(personId)
+  if (!remoteMsgs.length && !local.length) {
+    const seeds = seedThreadFromMemories(personId, memories)
+    upsertThreadMsgs(personId, seeds).catch(() => {})
+    return seeds
+  }
+  const byId = new Map(remoteMsgs.map((m) => [m.id, m]))
+  const localOnly = []
+  for (const m of local) {
+    const r = byId.get(m.id)
+    if (!r) { byId.set(m.id, m); if (durable(m)) localOnly.push(m) }
+    else if (m.ts >= r.ts) byId.set(m.id, m)
+  }
+  const merged = [...byId.values()].sort((a, b) => a.ts - b.ts) // stable sort
+  save(personId, merged)
+  upsertThreadMsgs(personId, localOnly).catch(() => {})
+  return merged
 }

@@ -35,6 +35,22 @@ drop policy if exists "anon full access cards" on public.cards;
 create policy "anon full access cards" on public.cards
   for all to anon using (true) with check (true);
 
+-- Capture threads: one jsonb thread message per row, same pattern as cards
+-- (see src/lib/SCHEMA.md for the message shape and the sync/merge rule).
+create table if not exists public.threads (
+  person_id text not null,
+  id text not null,
+  data jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (person_id, id)
+);
+
+alter table public.threads enable row level security;
+
+drop policy if exists "anon full access threads" on public.threads;
+create policy "anon full access threads" on public.threads
+  for all to anon using (true) with check (true);
+
 -- Public photo bucket: uploaded memory photos, served via public URLs.
 insert into storage.buckets (id, name, public)
   values ('photos', 'photos', true)

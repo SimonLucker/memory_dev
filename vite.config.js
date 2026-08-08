@@ -67,6 +67,30 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })
 
+    // Capture thread persistence, mirroring /__cards: per-person files, one
+    // message object per array entry. GET /__threads?person=p1 → messages
+    // ordered by ts. POST { person, upsert: msg } or { person, upsertMany: [msgs] }.
+    server.middlewares.use('/__threads', async (req, res) => {
+      try {
+        const fileOf = (p) => join(root, 'src/data', `threads-${String(p).replace(/[^\w-]/g, '')}.json`)
+        const readMsgs = (p) => { try { return JSON.parse(readFileSync(fileOf(p), 'utf8')) } catch { return [] } }
+        if (req.method === 'GET') {
+          const person = new URL(req.url, 'http://x').searchParams.get('person') || ''
+          res.setHeader('Content-Type', 'application/json')
+          return res.end(JSON.stringify(readMsgs(person).sort((a, b) => a.ts - b.ts)))
+        }
+        if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+        const { person, upsert, upsertMany } = JSON.parse(await readBody(req))
+        const msgs = readMsgs(person)
+        for (const m of [...(upsertMany || []), ...(upsert ? [upsert] : [])]) {
+          const i = msgs.findIndex((x) => x.id === m.id)
+          i === -1 ? msgs.push(m) : (msgs[i] = m)
+        }
+        writeFileSync(fileOf(person), JSON.stringify(msgs, null, 2) + '\n')
+        res.end('ok')
+      } catch (e) { res.statusCode = 500; res.end(String(e)) }
+    })
+
     // Profile settings (avatar URL etc.), one JSON file for all persons.
     // GET /__profiles?person=p1 → object|null. POST { person, data }.
     server.middlewares.use('/__profiles', async (req, res) => {
@@ -222,6 +246,6 @@ export default defineConfig(({ mode }) => {
     // HTTPS=1 (npm run dev:phone): self-signed cert so Safari on the phone grants
     // mic access — getUserMedia needs a secure context off localhost.
     plugins: [react(), devApi(env), ...(process.env.HTTPS ? [basicSsl()] : [])],
-    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/cards-*.json', '**/src/data/layout-*.json', '**/public/photos/**'] } },
+    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/cards-*.json', '**/src/data/threads-*.json', '**/src/data/layout-*.json', '**/public/photos/**'] } },
   }
 })
