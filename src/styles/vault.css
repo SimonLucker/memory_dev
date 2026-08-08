@@ -14,9 +14,11 @@
 }
 
 /* View toggle: a 30px circle in the top-right corner of the pane, the mirror
-   of the avatar circle top-left. Tapping it folds it out width-wise (anchored
-   top right) into the [ List | Cortex ] pill; the .vault-fold spacer below
-   grows in flow so nothing underneath is overlapped. Token motion only. */
+   of the avatar circle top-left. Tapping it folds out into the
+   [ List | Cortex ] pill BELOW the chrome row, right-aligned under the
+   toggle, so the open pill never sits over the avatar or the pane dots.
+   The .vault-fold spacer below grows in flow so nothing underneath is
+   overlapped. Token motion only. */
 .vault-toggle {
   position: absolute;
   top: calc(var(--space-md) + env(safe-area-inset-top));
@@ -31,9 +33,11 @@
   transform-origin: top right;
   transition: width var(--motion-normal) var(--ease),
     height var(--motion-normal) var(--ease),
+    top var(--motion-normal) var(--ease),
     background var(--motion-fast) var(--ease);
 }
 .vault-toggle.open {
+  top: calc(56px + env(safe-area-inset-top) + var(--space-xs));
   width: 172px;
   height: 46px;
   background: var(--surface-glass);
@@ -83,12 +87,12 @@
 }
 
 /* In-flow spacer under the chrome: grows with the fold-out so the search row
-   (or heat pill) is pushed down rather than overlapped. */
+   (or heat pill) is pushed down below the open pill rather than overlapped. */
 .vault-fold {
   height: 0;
   transition: height var(--motion-normal) var(--ease);
 }
-.vault-fold.open { height: 22px; }
+.vault-fold.open { height: calc(var(--space-xs) + 46px + var(--space-sm)); }
 
 /* Cortex mode: cortexDeep owns the WHOLE pane, chrome band included — no dawn
    strip, no hard edge (mockup v-cortex). The toggle goes glassOnDusk. */

@@ -24,7 +24,11 @@ export const spanOf = members => {
 }
 
 // Cover = first photo of the first selected memory; when that memory has no
-// photos, the first member that has one.
+// photos, the first member that has one. Stores the raw memory-relative/stored
+// path as-is (never resolve to an absolute URL here — that would freeze a
+// Supabase Storage host or dev-server origin into the card and go stale
+// across environments). Resolution happens once, at render, via
+// lib/photos.js#photoSrc.
 export const coverOf = members => members.find(m => m.photos?.length)?.photos[0] || null
 
 // Hard filters live client-side; only the theme goes to the LLM.

@@ -205,8 +205,17 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     if (el) el.scrollTop = el.scrollHeight
   }, [thread.length, prompt, lastCap?.id, !!momentMsg])
 
+  // Coming back online re-kicks everything that gave up while the network was
+  // gone, so the user never has to hunt for failed rows and tap them.
   useEffect(() => {
-    const on = () => setOnline(true), off = () => setOnline(false)
+    const on = () => {
+      setOnline(true)
+      for (const m of threadRef.current) {
+        if (m.kind === 'user-photo' && m.state === 'failed') retryPhoto(m)
+        else if (m.kind === 'user-voice' && m.upload === 'failed') retryVoice(m)
+      }
+    }
+    const off = () => setOnline(false)
     window.addEventListener('online', on); window.addEventListener('offline', off)
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off) }
   }, [])
@@ -223,6 +232,15 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       voice: msgs.filter(m => m.kind === 'user-voice' && m.src && m.upload !== 'failed')
         .map(m => ({ src: m.src, duration: m.duration || 0, ...(m.transcript ? { transcript: m.transcript } : {}) })),
     }
+  }
+
+  // An upload that only lands after the memory was saved (retries can run for
+  // ~15s, the save waits 4) still has to reach it: every captured row carries
+  // its memId, so the durable srcs are simply re-read into the memory.
+  const refreshMedia = memId => {
+    const mem = memoriesRef.current.find(m => m.id === memId)
+    if (!mem) return
+    updateMemory({ ...mem, ...mediaOf(threadRef.current.filter(m => m.memId === memId).map(m => m.id)) })
   }
 
   const bundleOf = (msgs, name) => ({
@@ -247,9 +265,9 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
     // The memory-card message is the window boundary: it MUST land in the
     // thread on every save, or the bundle would re-bundle after a reload.
     push({ kind: 'memory-card', memoryId: memory.id })
-    // Voice rows remember where they landed, so a transcript arriving after
-    // synthesis knows which memory to enrich.
-    msgs.filter(m => m.kind === 'user-voice').forEach(m => patch(m.id, { memId: memory.id }))
+    // Every captured row remembers where it landed: a transcript arriving after
+    // synthesis knows which memory to enrich, and so does a late upload.
+    msgs.forEach(m => patch(m.id, { memId: memory.id }))
     synthesizeInto(memory.id, msgs, name)
   }
 
@@ -419,22 +437,30 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
       const full = push({ kind, src: URL.createObjectURL(file), ...(kind === 'user-photo' ? { state: 'sending' } : {}) })
       if (kind === 'user-photo') {
         blobs.current[full.id] = file
-        upPending.current[full.id] = uploadPhoto(file)
-          .then(src => { delete blobs.current[full.id]; patch(full.id, { src, state: undefined }) })
-          .catch(() => patch(full.id, { state: 'failed' }))
-          .finally(() => { delete upPending.current[full.id] })
+        upPending.current[full.id] = sendPhoto(full.id, file)
       }
       // ponytail: videos stay as blob URLs (uploadPhoto is photo-only); real video upload later
     }
     if (kind === 'user-photo') maybeSuggest()
   }
+  // uploadPhoto already retries with backoff; the row stays 'sending' (5.1: the
+  // quiet label) for the whole ladder and only fails once it is exhausted.
+  const sendPhoto = (msgId, blob) => {
+    upPending.current[msgId] = uploadPhoto(blob)
+      .then(src => {
+        delete blobs.current[msgId]
+        const m = patch(msgId, { src, state: undefined })
+        if (m?.memId) refreshMedia(m.memId)
+      })
+      .catch(() => patch(msgId, { state: 'failed' }))
+      .finally(() => { delete upPending.current[msgId] })
+    return upPending.current[msgId]
+  }
   const retryPhoto = msg => {
     const blob = blobs.current[msg.id]
     if (!blob) return
     patch(msg.id, { state: 'sending' })
-    uploadPhoto(blob)
-      .then(src => { delete blobs.current[msg.id]; patch(msg.id, { src, state: undefined }) })
-      .catch(() => patch(msg.id, { state: 'failed' }))
+    sendPhoto(msg.id, blob)
   }
 
   // Camera: tap opens the photo picker, hold (400ms) the video picker.
@@ -521,7 +547,12 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
 
   const sendAudio = (msgId, blob) => {
     upPending.current[msgId] = uploadAudio(blob)
-      .then(src => { delete blobs.current[msgId]; vlog('upload-ok'); patch(msgId, { src, upload: undefined }) })
+      .then(src => {
+        delete blobs.current[msgId]
+        vlog('upload-ok')
+        const m = patch(msgId, { src, upload: undefined })
+        if (m?.memId) refreshMedia(m.memId)
+      })
       .catch(e => { vlog(`upload-failed ${e?.message || e}`); patch(msgId, { upload: 'failed' }) })
       .finally(() => { delete upPending.current[msgId] })
     return upPending.current[msgId]

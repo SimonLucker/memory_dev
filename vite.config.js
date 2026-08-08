@@ -79,7 +79,8 @@ const devApi = (env) => ({
         res.setHeader('Content-Type',
           name.endsWith('.png') ? 'image/png'
             : name.endsWith('.m4a') ? 'audio/mp4'
-              : name.endsWith('.webm') ? 'audio/webm' : 'image/jpeg')
+              : name.endsWith('.wav') ? 'audio/wav'
+                : name.endsWith('.webm') ? 'audio/webm' : 'image/jpeg')
         res.end(buf)
       } catch { next() }
     })
@@ -100,7 +101,7 @@ const devApi = (env) => ({
       if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
       try {
         const ct = req.headers['content-type'] || ''
-        const ext = ct.includes('mp4') ? 'm4a' : 'webm'
+        const ext = ct.includes('mp4') ? 'm4a' : ct.includes('wav') ? 'wav' : 'webm'
         const name = `voice_${Date.now()}.${ext}`
         writeFileSync(join(root, 'public/photos', name), await readBody(req))
         res.end(JSON.stringify({ path: `photos/${name}` }))

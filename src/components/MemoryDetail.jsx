@@ -3,7 +3,7 @@ import '../styles/memory.css'
 import { AppleMusic, Camera, Close, Mic, Pause, Person, Pin, Play, Plus, Spotify, Transcript } from './Icons.jsx'
 import { appleMusicSearchUrl, findTrack, uploadPhoto } from '../lib/api.js'
 import { getSettings, personIdFromMemoryId } from '../lib/settings.js'
-import { encodePhoto } from '../lib/photos.js'
+import { encodePhoto, photoSrc, onPhotoError } from '../lib/photos.js'
 import { startRecording, transcribe } from '../lib/voice.js'
 import { REGISTRY } from '../lib/people.js'
 import { whenToTs, fmtDur, WAVE } from '../lib/thread.js'
@@ -235,10 +235,13 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
 
   const media = item =>
     item.type === 'photo' ? (
-      <img src={item.src} alt="" className={fresh === item.src ? 'rise' : undefined} draggable={false} />
+      <img src={photoSrc(item.src)} alt="" className={fresh === item.src ? 'rise' : undefined}
+        draggable={false} onError={onPhotoError} />
     ) : (
       <>
-        {item.poster ? <img src={item.poster} alt="" draggable={false} /> : <span className="md-vfill" />}
+        {item.poster
+          ? <img src={photoSrc(item.poster)} alt="" draggable={false} onError={onPhotoError} />
+          : <span className="md-vfill" />}
         <span className="md-vplay"><Play size={18} /></span>
         <span className="md-vdur type-label">{fmtDur(item.duration)}</span>
       </>
@@ -342,8 +345,8 @@ export default function MemoryDetail({ memory, onClose, updateMemory, openSlides
             }
           }}>
           {items[viewer].type === 'photo'
-            ? <img src={items[viewer].src} alt="" />
-            : <video src={items[viewer].src} poster={items[viewer].poster} controls autoPlay playsInline
+            ? <img src={photoSrc(items[viewer].src)} alt="" onError={onPhotoError} />
+            : <video src={items[viewer].src} poster={photoSrc(items[viewer].poster)} controls autoPlay playsInline
                 onClick={e => e.stopPropagation()} />}
         </div>
       )}

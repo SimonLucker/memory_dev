@@ -6,6 +6,7 @@ import { whenToTs } from '../lib/thread.js'
 import { CARDS_EMPTY, CARD_GENERATING, GIFTS_PLACEHOLDER } from '../lib/copy.js'
 import { loadCards, upsertCard, removeCard } from '../lib/api.js'
 import { weaveCard, candidatesFor, coverOf } from '../lib/cards.js'
+import { photoSrc, onPhotoError } from '../lib/photos.js'
 
 const monthYear = ts => new Date(ts).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
@@ -153,7 +154,7 @@ export default function Cards({ memories, person, openMemory }) {
     return (
       <div className="cd">
         <div className="cd-cover">
-          {weaving.cover ? <img src={weaving.cover} alt="" /> : <div className="cd-blank" />}
+          {weaving.cover ? <img src={photoSrc(weaving.cover)} alt="" onError={onPhotoError} /> : <div className="cd-blank" />}
         </div>
         <div className="cd-skel" />
         <div className="cd-skel cd-skel-short" />
@@ -173,7 +174,7 @@ export default function Cards({ memories, person, openMemory }) {
           <Close size={20} />
         </button>
         <div className="cd-cover">
-          {open.cover ? <img src={open.cover} alt="" /> : <div className="cd-blank" />}
+          {open.cover ? <img src={photoSrc(open.cover)} alt="" onError={onPhotoError} /> : <div className="cd-blank" />}
           <div className="cd-scrim">
             <h3 className="type-headline">{open.title}</h3>
             <span className="type-label">{open.span}</span>
@@ -188,7 +189,7 @@ export default function Cards({ memories, person, openMemory }) {
         )}
         {photos.length > 0 && (
           <div className="cd-masonry">
-            {photos.map(p => <img key={p} src={p} alt="" />)}
+            {photos.map(p => <img key={p} src={photoSrc(p)} alt="" onError={onPhotoError} />)}
           </div>
         )}
         <p className="type-label cd-quiet">Memories</p>
@@ -223,7 +224,7 @@ export default function Cards({ memories, person, openMemory }) {
                 onPointerDown={startPress(c)} onPointerUp={cancelPress}
                 onPointerLeave={cancelPress} onPointerCancel={cancelPress}
                 onContextMenu={e => { e.preventDefault(); setMenu({ card: c, confirm: false }) }}>
-                {c.cover ? <img src={c.cover} alt="" /> : <div className="cd-blank" />}
+                {c.cover ? <img src={photoSrc(c.cover)} alt="" onError={onPhotoError} /> : <div className="cd-blank" />}
                 <div className="cd-scrim">
                   <h3 className="type-headline">{c.title}</h3>
                   <span className="type-label">{c.span}</span>

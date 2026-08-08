@@ -52,6 +52,11 @@
 }
 .cd-cover .cd-blank { aspect-ratio: 4 / 4.4; }
 
+/* A photo that failed to load (see onPhotoError in lib/photos.js) keeps its
+   normal img sizing but paints as a neutral cream block, never the browser's
+   broken-image glyph. */
+.photo-broken { background: var(--surface-cream); }
+
 /* Grid: big covers, radius lg, newest first, one per row on the phone column */
 .cd-grid {
   display: flex;

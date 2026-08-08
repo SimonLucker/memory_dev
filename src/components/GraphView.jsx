@@ -22,6 +22,13 @@ const INTRO_STAGGER = 400
 const INTRO_TOTAL = INTRO_MS + INTRO_STAGGER
 const easeOut = p => 1 - (1 - p) ** 3
 
+// Labels: quiet map (spec 6.3). Motion tokens only (motion-fast = 200ms).
+// They wait for every node to finish arriving, then fade in; a pan/zoom
+// bumps the quiet mark forward so they hide while moving and only settle
+// back once the camera has been still for MOTION_FAST.
+const MOTION_FAST = 200
+const CAM_EPS = 0.5
+
 // stable 0..1 per id (FNV-1a) → depth jitter + breathing phase
 function hash01(id) {
   let h = 2166136261
@@ -137,6 +144,8 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
   const introRef = useRef(0)      // performance.now() when the entrance began
   const introFadeRef = useRef(0)  // 0→1, gates lines
   const labelsRef = useRef({ at: 0, items: [], prev: new Set() })
+  const quietRef = useRef(Infinity)   // labels may start fading in once now() passes this
+  const prevCamRef = useRef(null)     // last frame's {x,y,k}, to detect pan/zoom
 
   // Physics: only matters for unseeded data (warmup). Seeded layouts stay put;
   // motion afterwards is the home-wobble loop in framePre, not the sim.
@@ -161,6 +170,8 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
     fitRef.current.done = false
     introRef.current = 0
     labelsRef.current = { at: 0, items: [], prev: new Set() }
+    quietRef.current = Infinity
+    prevCamRef.current = null
   }, [graphData])
 
   // Parallax kept from v1: far (small) nodes lag the camera. Selected node
@@ -223,9 +234,22 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
       fg.zoom(F.k, 0)
       F.done = true
       introRef.current = performance.now()
+      // labels stay quiet until every node has finished arriving (spec: only
+      // after the fit/engine settle, never mid-entrance)
+      quietRef.current = introRef.current + INTRO_TOTAL
     }
     const c = fg.screen2GraphCoords(size.w / 2, size.h / 2)
     if (c && Number.isFinite(c.x) && Number.isFinite(c.y)) camRef.current = c
+    // a real pan/zoom (not the internal breathing/wobble, which never moves
+    // the camera) pushes the quiet mark forward: labels hide, then re-fade
+    // MOTION_FAST after the camera has been still again
+    if (prevCamRef.current) {
+      const pc = prevCamRef.current
+      const moved = Math.abs(camRef.current.x - pc.x) > CAM_EPS ||
+        Math.abs(camRef.current.y - pc.y) > CAM_EPS || Math.abs(k - pc.k) > 0.002
+      if (moved) quietRef.current = performance.now() + MOTION_FAST
+    }
+    prevCamRef.current = { x: camRef.current.x, y: camRef.current.y, k }
     const el = introRef.current ? performance.now() - introRef.current : -1
     introFadeRef.current = el < 0 ? 0 : Math.min(1, el / INTRO_TOTAL)
     const t = performance.now()
@@ -454,8 +478,9 @@ export default function GraphView({ memories, edges, layout, visibleIds, selecte
         el.style.opacity = 1
       }
     }
-    const introEl = introRef.current ? performance.now() - introRef.current : -1
-    const fade = introEl < 0 ? 0 : Math.max(0, Math.min(1, (introEl - INTRO_TOTAL * 0.7) / 500))
+    // quiet map: hidden until settled (post-entrance, post-pan/zoom), then a
+    // plain MOTION_FAST fade-in — never mid-motion, never mid-arrival
+    const fade = Math.min(1, (performance.now() - quietRef.current) / MOTION_FAST)
     if (fade <= 0) return
     const dpr = window.devicePixelRatio || 1
     ctx.save()

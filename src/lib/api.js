@@ -115,9 +115,24 @@ export async function removeCard(personId, id) {
   }
 }
 
+// Mobile networks drop uploads constantly; the field build made the user tap
+// retry until one got through. Every upload now walks this ladder first and
+// only rejects (→ tap-to-retry) once it is exhausted.
+// ponytail: fixed delays, no jitter or queue — add both if uploads ever batch.
+const RETRY_MS = [1000, 4000, 10000]
+async function withRetry(attempt) {
+  for (let i = 0; ; i++) {
+    try { return await attempt() } catch (e) {
+      if (i >= RETRY_MS.length) throw e
+      await new Promise(r => setTimeout(r, RETRY_MS[i]))
+    }
+  }
+}
+
 // → the src to store in memory.photos: a public URL (remote) or a
 // bundle-relative path (dev).
-export async function uploadPhoto(blob) {
+export const uploadPhoto = blob => withRetry(() => putPhoto(blob))
+async function putPhoto(blob) {
   if (remote) {
     const name = `new_${Date.now()}.${blob.type.includes('png') ? 'png' : 'jpg'}`
     await ok(await fetch(`${SB_URL}/storage/v1/object/photos/${name}`, {
@@ -133,9 +148,12 @@ export async function uploadPhoto(blob) {
 
 // → the durable src to store for a voice note, following the photo pattern:
 // Storage public URL (remote) or a bundle-relative path (dev middleware).
-// Extension follows the recorded type (iOS records audio/mp4 → .m4a).
-export async function uploadAudio(blob) {
-  const ext = (blob.type || '').includes('mp4') ? 'm4a' : 'webm'
+// Extension follows the recorded type (iOS records audio/mp4 → .m4a, the
+// WebAudio fallback in voice.js produces audio/wav → .wav).
+export const uploadAudio = blob => withRetry(() => putAudio(blob))
+async function putAudio(blob) {
+  const type = blob.type || ''
+  const ext = type.includes('mp4') ? 'm4a' : type.includes('wav') ? 'wav' : 'webm'
   if (remote) {
     const name = `voice_${Date.now()}.${ext}`
     await ok(await fetch(`${SB_URL}/storage/v1/object/photos/${name}`, {

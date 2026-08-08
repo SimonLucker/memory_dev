@@ -82,6 +82,19 @@ const music = (v) => {
 
 // ---- The deterministic fallback (what save produces instantly) --------------
 
+// "Wednesday morning" — the shape of every clock-derived name. A Moment is
+// auto-named with one of these, and the field bug was that name being handed to
+// the model as "they named this moment X" and then winning over the synthesised
+// title, so a memory about last Saturday stayed titled by the save clock.
+// Used in three places: the auto-name never leaks into the prompt, never beats
+// a real title, and a model that returns this shape is not believed.
+export const CLOCK_TITLE_RE = /^(mon|tues|wednes|thurs|fri|satur|sun)day (morning|afternoon|evening|night)$/i
+// A moment name the user actually chose, or '' for the clock default.
+export const chosenName = (n) => {
+  const s = String(n || '').trim()
+  return s && !CLOCK_TITLE_RE.test(s) ? s : ''
+}
+
 const two = (n) => String(n).padStart(2, '0')
 // "Friday night" — the clock title. Only ever a fallback, never a synthesis result.
 export const nameFromTime = (ts = Date.now()) => {
@@ -104,7 +117,8 @@ export function fallbackDraft(bundle = {}, momentName) {
   const texts = bundle.texts || []
   const ts = bundle.timestamps?.[0] || Date.now()
   return {
-    what: momentName || titleFromTexts(texts, ts),
+    // The auto clock name is not a title: the first words beat it.
+    what: chosenName(momentName) || titleFromTexts(texts, ts),
     where: '',
     who: [],
     feeling: [],
@@ -126,9 +140,11 @@ Reply with ONE JSON object and nothing else. Shape:
  "class": string, "about": string, "music": {"name": string, "artist": string}|null}
 
 Rules:
-- "what": a short human title, at most 6 words, taken from what actually
-  happened ("Morning gym session", "Pizza at Luca's"). Never a weekday plus a
-  time of day unless the fragments contain no words at all.
+- "what": a short human title, at most 6 words, describing WHAT HAPPENED, in
+  words taken from the fragments themselves ("Morning gym session", "Pizza at
+  Luca's", "Rollercoasters with Amber"). A weekday plus a time of day
+  ("Wednesday morning", "Friday night") is NEVER a valid title: it says nothing
+  about the moment and will be rejected. Never title by the clock or the date.
 - "where": the place if they named one, otherwise null. Never invent a place.
 - "who": first names of people who were there, other than the user. Empty array
   if they were alone or nobody is named. Never guess.
@@ -140,8 +156,14 @@ Rules:
   writing ("Walked over to the gym before dinner. The squats felt strong.").
   Synthesise, never concatenate or quote the fragments back. Keep the concrete
   details: what was said, what was eaten, what was done, why it mattered.
-  No em dashes, no exclamation marks, no emoji.
+  When the fragments put the events on another day ("last Saturday",
+  "yesterday"), tell it on that day, counting back from the capture date given
+  below. No em dashes, no exclamation marks, no emoji.
 - "music": only when a song is explicitly mentioned, otherwise null.`
+
+// Relative-time words the fragments may use. Surfaced to the model with the
+// capture date so "last saturday" lands in the story as Saturday.
+const RELATIVE_RE = /\b(?:(?:last|this|next)\s+(?:night|week|weekend|month|year|monday|tuesday|wednesday|thursday|friday|saturday|sunday|morning|afternoon|evening)|yesterday|today|tonight|earlier today|the other day|a few days ago|\d+\s+(?:days?|weeks?|months?)\s+ago)\b/gi
 
 // bundle: { texts[], voiceTranscripts[], photoCount, videoCount, timestamps[],
 //           momentName?, priorAnswers? } in capture order.
@@ -152,15 +174,24 @@ export async function synthesizeMemory(bundle = {}, opts = {}) {
     texts: [], voiceTranscripts: [], photoCount: 0, videoCount: 0,
     timestamps: [], ...bundle,
   }
-  const momentName = opts.momentName || b.momentName || ''
+  // Only a name the user typed. The auto clock name must never reach the model
+  // (it parroted it straight back) nor outrank a synthesised title.
+  const momentName = chosenName(opts.momentName || b.momentName)
   const fallback = fallbackDraft(b, momentName)
   const hasWords = b.texts.some(Boolean) || b.voiceTranscripts.some(Boolean)
   // Nothing but media: there is no story to write, the fallback is honest.
   if (!hasWords) return fallback
 
   const when = b.timestamps?.[0] ? new Date(b.timestamps[0]) : new Date()
+  const said = [...b.texts, ...b.voiceTranscripts].filter(Boolean).join(' ')
+  const relative = [...new Set((said.match(RELATIVE_RE) || []).map(s => s.toLowerCase()))]
   const lines = [
-    `Local time of the moment: ${when.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}.`,
+    `Captured on ${when.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}.`,
+    // The events are not always the capture: "last saturday" means the story
+    // happened days earlier, even though `when` stays the capture time.
+    relative.length
+      ? `They referred to the time as: ${relative.join(', ')}. Work out the real day from the capture date and tell the story on that day.`
+      : '',
     momentName ? `They named this moment "${momentName}".` : '',
     b.texts.length ? `Typed, in order:\n${b.texts.map(t => `- ${t}`).join('\n')}` : '',
     b.voiceTranscripts.filter(Boolean).length
@@ -185,6 +216,9 @@ export async function synthesizeMemory(bundle = {}, opts = {}) {
   const about = str(j.about, 1200)
   // A synthesis that produced neither a title nor a story is not a synthesis.
   if (!what && !about) return fallback
+  // A clock title is what the model returns when it ignored the content. It is
+  // indistinguishable from the fallback, so treat it as no synthesis at all.
+  if (CLOCK_TITLE_RE.test(what)) return fallback
 
   const cls = CLASSES.find(c => c.toLowerCase() === str(j.class, 20).toLowerCase())
   return {
