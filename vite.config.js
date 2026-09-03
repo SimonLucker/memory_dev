@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import basicSsl from '@vitejs/plugin-basic-ssl'
-import { writeFileSync, readFileSync } from 'fs'
+import { writeFileSync, readFileSync, mkdirSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
@@ -111,6 +111,59 @@ const devApi = (env) => ({
       } catch (e) { res.statusCode = 500; res.end(String(e)) }
     })
 
+    // v3 relational rows (data/api.js loadSpace / upsert / remove in dev).
+    // Files src/data/db/<table>.json hold what the app wrote; the v2 memory
+    // JSONs (converted with fromV2) and Isabel's bundled seed are merged under
+    // them so a persona's space is complete from one GET. Db rows win by key.
+    // GET /__db?space=<pid> → { people, memories, moments, links, questions, recaps }
+    // POST { table, upsert: [rows] } or { table, delete: id | {memory_id, person_id} }
+    server.middlewares.use('/__db', async (req, res) => {
+      try {
+        const TABLES = ['people', 'memories', 'moments', 'memory_people', 'questions', 'recaps']
+        const KEY = { people: 'people', memories: 'memories', moments: 'moments', memory_people: 'links', questions: 'questions', recaps: 'recaps' }
+        const fileOf = (t) => join(root, 'src/data/db', `${t}.json`)
+        const readRows = (t) => { try { return JSON.parse(readFileSync(fileOf(t), 'utf8')) } catch { return [] } }
+        const keyOf = (t, r) => t === 'memory_people' ? `${r.memory_id}|${r.person_id}` : r.id
+        if (req.method === 'GET') {
+          const pid = new URL(req.url, 'http://x').searchParams.get('space') || ''
+          // The whole "database": every persona's bundle, then the db files.
+          const { PERSONS, bundledSpace } = await server.ssrLoadModule('/src/data/personas.js')
+          const space = {}
+          for (const t of TABLES) {
+            const rows = new Map()
+            for (const p of PERSONS) {
+              const seed = bundledSpace(p.id)
+              for (const r of t === 'memory_people' ? seed.links : Object.values(seed[KEY[t]])) rows.set(keyOf(t, r), r)
+            }
+            for (const r of readRows(t)) rows.set(keyOf(t, r), r)
+            space[KEY[t]] = [...rows.values()].filter((r) => !r._deleted)
+          }
+          // Filter the same way the remote query does.
+          const mine = new Set(space.links.filter((l) => l.person_id === pid).map((l) => l.memory_id))
+          space.memories = space.memories.filter((m) => m.owner_id === pid || mine.has(m.id))
+          const ids = new Set(space.memories.map((m) => m.id))
+          for (const k of ['moments', 'links', 'questions', 'recaps']) space[k] = space[k].filter((r) => ids.has(r.memory_id))
+          const linked = new Set(space.links.map((l) => l.person_id))
+          space.people = space.people.filter((p) => p.space_id === pid || p.is_user || linked.has(p.id))
+          res.setHeader('Content-Type', 'application/json')
+          return res.end(JSON.stringify(space))
+        }
+        if (req.method !== 'POST') { res.statusCode = 405; return res.end() }
+        const { table, upsert, delete: del } = JSON.parse(await readBody(req))
+        if (!TABLES.includes(table)) { res.statusCode = 400; return res.end('unknown table') }
+        const rows = new Map(readRows(table).map((r) => [keyOf(table, r), r]))
+        for (const r of upsert || []) rows.set(keyOf(table, r), r)
+        // A tombstone, not a removal: bundled rows would come back on the next GET.
+        if (del != null) {
+          const key = typeof del === 'object' ? keyOf(table, del) : del
+          rows.set(key, { ...(typeof del === 'object' ? del : { id: del }), _deleted: true })
+        }
+        mkdirSync(join(root, 'src/data/db'), { recursive: true })
+        writeFileSync(fileOf(table), JSON.stringify([...rows.values()], null, 2) + '\n')
+        res.end('ok')
+      } catch (e) { res.statusCode = 500; res.end(String(e)) }
+    })
+
     // Serve photos straight from disk. Vite's own public-file serving relies on a
     // watcher-fed file list, and the watcher deliberately ignores public/photos
     // (uploads must not trigger reloads) — so photos uploaded mid-session fell
@@ -118,7 +171,8 @@ const devApi = (env) => ({
     server.middlewares.use('/photos', (req, res, next) => {
       try {
         const name = decodeURIComponent((req.url || '').split('?')[0]).replace(/^\//, '')
-        if (!name || name.includes('..') || name.includes('/')) return next()
+        // One folder level is allowed (photos/isabel/...), never a path walk.
+        if (!name || name.includes('..') || name.split('/').length > 2) return next()
         const buf = readFileSync(join(root, 'public/photos', name))
         res.setHeader('Content-Type',
           name.endsWith('.png') ? 'image/png'
@@ -246,6 +300,6 @@ export default defineConfig(({ mode }) => {
     // HTTPS=1 (npm run dev:phone): self-signed cert so Safari on the phone grants
     // mic access — getUserMedia needs a secure context off localhost.
     plugins: [react(), devApi(env), ...(process.env.HTTPS ? [basicSsl()] : [])],
-    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/cards-*.json', '**/src/data/threads-*.json', '**/src/data/layout-*.json', '**/public/photos/**'] } },
+    server: { watch: { ignored: ['**/src/data/memories*.json', '**/src/data/cards-*.json', '**/src/data/threads-*.json', '**/src/data/layout-*.json', '**/src/data/db/**', '**/public/photos/**'] } },
   }
 })

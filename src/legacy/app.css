@@ -1,0 +1,136 @@
+/* Legacy (v2.5) shell: phone column, three-pane pager, chrome (avatar + pane dots), Profile sheet mount.
+   Loaded only with ?legacy=1; restores the v2 type roles the legacy sheets read. */
+:root {
+  --type-display: var(--legacy-display); --type-headline: var(--legacy-headline);
+  --type-body: var(--legacy-body); --type-label: var(--legacy-label);
+}
+body { color: var(--text-primary); }
+
+/* Phone column: full viewport on phones, centered phone-proportioned column on desktop. */
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  background: var(--surface-cream);
+}
+.phone {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100%;
+  overflow: hidden;
+}
+@media (min-width: 431px) {
+  .phone { box-shadow: var(--shadow-card); }
+}
+
+/* Chrome: avatar top left, pane dots top center. Nothing else. */
+.chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 56px;
+  padding-top: env(safe-area-inset-top);
+  pointer-events: none;
+}
+.avatar {
+  pointer-events: auto;
+  position: absolute;
+  left: var(--space-md);
+  top: var(--space-md);
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.pane-dots {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  top: var(--space-md);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 30px;
+}
+.pane-dots button {
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pane-dots button::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  opacity: 0.35;
+  transition: all var(--motion-fast) var(--ease);
+}
+.pane-dots button.active::before {
+  width: 9px;
+  height: 9px;
+  opacity: 1;
+}
+
+/* Three-pane horizontal pager. Panes track the finger 1:1 (JS sets transform),
+   settle in 200ms after a swipe, 600ms after a dot tap. */
+.pager {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  will-change: transform;
+}
+/* touch-action on .pager does NOT cover nested scroll containers (.pane,
+   .cap-thread, .vault-list, ...): a touch starting inside one lets the browser
+   claim even a horizontal swipe for scrolling and kill the pointer stream with
+   a pointercancel mid-gesture. Every descendant declares pan-y itself. */
+.pager * { touch-action: pan-y; }
+/* The one browser-scrolled horizontal strip inside the pager keeps pan-x;
+   the pager ignores gestures starting on it (see onPointerDown). */
+.pager .cortex-values { touch-action: pan-x; }
+.pane {
+  flex: 0 0 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Profile sheet: slides up over the current pane, xl top radius, 600ms. */
+.profile-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: var(--space-xxl);
+  z-index: 20;
+  background: var(--surface-cream);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-card);
+  transform: translateY(105%);
+  transition: transform var(--motion-normal) var(--ease);
+  overflow-y: auto;
+}
+.profile-sheet.open { transform: none; }
+
+/* Full-screen overlays (memory detail, slideshow) mount above the pager. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+}

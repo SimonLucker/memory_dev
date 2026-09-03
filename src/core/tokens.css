@@ -1,0 +1,102 @@
+/* Memmory design tokens, design-foundation-v3.md section 2.9. Exact values, do not edit. */
+/* Geist, self-hosted (variable weight file, latin subset) so the one allowed font never fails to load. */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/geist.woff2') format('woff2');
+}
+
+:root {
+  /* gallery */
+  --ground: #101014; --surface: #1D1D25; --surface-deep: #14141A;
+  --hairline: rgba(255,255,255,0.14); --scrim: rgba(11,11,15,0.66);
+  --text: #FFFFFF;
+  /* dawn (capture sheet) */
+  --dawn-top: #C8D4EC; --dawn-mid: #F5D6BC; --dawn-bot: #E0C5DC;
+  --dawn-text: #1F2937; --dawn-white: #FFFFFF; --dawn-glass: rgba(255,255,255,0.72);
+  /* functional */
+  --error: #DC6B5E; --spotify: #1DB954;
+  /* scale */
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px;
+  --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px; --radius-xl: 32px; --radius-pill: 999px;
+  --type-display: 600 30px/1.1 'Geist'; --type-headline: 600 20px/1.15 'Geist';
+  --type-body: 400 16px/1.45 'Geist'; --type-label: 600 12px/1.3 'Geist';
+  --motion-fast: 200ms; --motion-normal: 600ms; --motion-slow: 900ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Not in 2.9: helpers the shell needs. */
+  --photo-scrim: linear-gradient(180deg, rgba(11,11,15,0.25), rgba(11,11,15,0) 30% 55%, rgba(11,11,15,0.72));
+  --font: 'Geist', -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif;
+  --tabbar-h: calc(56px + env(safe-area-inset-bottom));
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font: var(--type-body);
+  font-family: var(--font);
+  color: var(--text);
+  background: #000; /* the page outside the phone column, not an app background */
+  -webkit-font-smoothing: antialiased;
+}
+button {
+  font: var(--type-label);
+  font-family: var(--font);
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+input, textarea { font: var(--type-body); font-family: var(--font); color: inherit; }
+img, video { display: block; max-width: 100%; }
+h1, h2, h3, p { margin: 0; }
+[hidden] { display: none !important; }
+
+/* The four type roles (2.3). Nothing between them exists. */
+.t-display { font: var(--type-display); font-family: var(--font); letter-spacing: -0.5px; }
+.t-headline { font: var(--type-headline); font-family: var(--font); letter-spacing: -0.3px; }
+.t-body { font: var(--type-body); font-family: var(--font); letter-spacing: 0; }
+.t-label { font: var(--type-label); font-family: var(--font); letter-spacing: 0.4px; }
+
+/* Breathing Dawn gradient: the Capture sheet (and the legacy app). Reduced motion: static. */
+.bg-dawn {
+  background: linear-gradient(180deg, var(--dawn-top), var(--dawn-mid), var(--dawn-bot));
+  background-size: 100% 140%;
+  animation: dawn-breathe 60s var(--ease) infinite;
+}
+@keyframes dawn-breathe {
+  0%, 100% { background-position: 50% 0%; }
+  50% { background-position: 50% 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-dawn { animation: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ---- legacy (v2.5) ----
+   Variables and type classes the capture engine, Profile and the ?legacy=1
+   surfaces still read. The v3 gallery never uses these. Delete with legacy/. */
+:root {
+  --dusk-top: #7A85A6; --dusk-mid: #8D7A93; --dusk-bot: #6E5F80;
+  --surface-white: #FFFFFF; --surface-cream: #FAF7F2;
+  --surface-glass: rgba(255,255,255,0.72); --surface-glass-dusk: rgba(255,255,255,0.14);
+  --text-primary: #1F2937; --text-secondary: #6B7280; --text-tertiary: #9CA3AF;
+  --border: rgba(255,255,255,0.6); --border-soft: rgba(0,0,0,0.04);
+  --heat-1: #C8D4EC; --heat-2: #E8CFC4; --heat-3: #F5D6BC; --heat-4: #ECB890; --heat-5: #DC8C5E;
+  --space-xxl: 48px;
+  --legacy-display: 600 36px/1.2 'Geist'; --legacy-headline: 600 22px/1.2 'Geist';
+  --legacy-body: 400 16px/1.5 'Geist'; --legacy-label: 500 13px/1.5 'Geist';
+  --shadow-raised: 0 2px 6px rgba(0,0,0,0.05);
+  --shadow-bubble: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-card: 0 8px 20px rgba(0,0,0,0.08);
+  --cortex-top: #58607A; --cortex-mid: #665869; --cortex-bot: #4F455C;
+}
+.type-display { font: var(--legacy-display); font-family: var(--font); letter-spacing: -0.2px; }
+.type-headline { font: var(--legacy-headline); font-family: var(--font); letter-spacing: -0.2px; }
+.type-body { font: var(--legacy-body); font-family: var(--font); }
+.type-label { font: var(--legacy-label); font-family: var(--font); }

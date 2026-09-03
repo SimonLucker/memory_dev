@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101014">
+<title>Memmory · Visual Roadmap 2026-08-21</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #101014;
+    --surface: #17171c;
+    --surface-2: #1e1e26;
+    --ink: #f2f0ec;
+    --line: rgba(255,255,255,0.14);
+    --phone-bg: #0b0b0f;
+    --card: #1d1d25;
+    --card-deep: #14141a;
+    --dawn-top: #C8D4EC; --dawn-mid: #F5D6BC; --dawn-bot: #E0C5DC;
+    --slate: #1F2937;
+    --spotify: #1DB954;
+    --t-display: clamp(2rem, 5.4vw, 3.6rem);
+    --t-headline: clamp(1.35rem, 2.6vw, 1.9rem);
+    --t-body: clamp(1rem, 1.3vw, 1.12rem);
+    --t-label: clamp(0.78rem, 0.95vw, 0.86rem);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { min-height: 100lvh; background: var(--bg); }
+  body {
+    min-height: 100lvh;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, p, li { text-wrap: pretty; }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  svg { display: block; }
+  .display { font-size: var(--t-display); font-weight: 500; line-height: 1.05; letter-spacing: -0.025em; }
+  .headline { font-size: var(--t-headline); font-weight: 600; line-height: 1.15; letter-spacing: -0.018em; }
+  .body { font-size: var(--t-body); line-height: 1.62; max-width: 36em; }
+  .label { font-size: var(--t-label); font-weight: 500; letter-spacing: 0.04em; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 5vw; }
+  section { padding: 9vh 0; }
+  section + section { border-top: 1px solid var(--line); }
+  section > .headline { margin-bottom: 1.2vh; }
+  .section-intro { margin-bottom: 4vh; }
+
+  .hero { padding: 12vh 0 9vh; }
+  .hero .display { max-width: 20em; margin: 2vh 0 3.5vh; }
+  .hero .body + .body { margin-top: 1.5vh; }
+
+  .panel { background: var(--surface); border-radius: 22px; }
+
+  .split { display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: clamp(28px, 5vw, 76px); align-items: start; }
+  .split.rev { grid-template-columns: 1fr minmax(300px, 400px); }
+  .split.rev .phone { order: 2; }
+  .spec h2 { margin-bottom: 3vh; }
+  .spec-grid { display: grid; grid-template-columns: 130px 1fr; gap: 14px 22px; }
+  .spec-grid .k { font-size: var(--t-label); font-weight: 600; letter-spacing: 0.04em; padding-top: 3px; }
+  .spec-grid .v { font-size: var(--t-body); line-height: 1.55; }
+  .spec-grid .v b { font-weight: 600; }
+
+  /* ---------- Phone frame ---------- */
+  .phone {
+    width: 100%;
+    max-width: 375px;
+    aspect-ratio: 375 / 812;
+    border-radius: 48px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: var(--phone-bg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .phone.light { background: linear-gradient(180deg, var(--dawn-top), var(--dawn-mid) 55%, var(--dawn-bot)); color: var(--slate); }
+
+  .statusbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 28px 0; font-size: 13px; font-weight: 600; flex: none; }
+  .statusbar .glyphs { display: flex; align-items: center; gap: 6px; }
+  .statusbar svg { height: 11px; width: auto; }
+  .phone.player .statusbar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; color: #fff; }
+
+  .homebar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 118px; height: 4px; border-radius: 2px; background: #fff; z-index: 4; }
+  .phone.light .homebar { background: var(--slate); }
+
+  .screen { flex: 1; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 11px; overflow: hidden; position: relative; }
+
+  .p-toprow { display: flex; justify-content: space-between; align-items: center; padding: 2px 2px 0; }
+  .p-wordmark { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .p-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+
+  .p-greeting { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.08; padding: 0 2px; }
+
+  .p-hero { position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4 / 3.6; }
+  .latest-l { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; padding: 2px 2px 0; }
+  .latest-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .latest-row .sq { border-radius: 14px; overflow: hidden; aspect-ratio: 1; }
+  .latest-row .sq img { width: 100%; height: 100%; object-fit: cover; }
+  .p-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .p-hero .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,15,0.25), rgba(11,11,15,0) 30% 55%, rgba(11,11,15,0.72)); }
+  .p-hero .inner { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; }
+  .p-hero .toprow { display: flex; justify-content: space-between; align-items: center; }
+  .p-herotext .t { font-size: 20px; font-weight: 600; line-height: 1.15; color: #fff; }
+  .p-herotext .m { font-size: 12.5px; font-weight: 500; margin-top: 4px; color: #fff; }
+
+  .p-play { width: 42px; height: 42px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: none; }
+  .p-play svg { width: 16px; height: 16px; margin-left: 2px; }
+
+  .avstack { display: flex; }
+  .avstack img { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #0b0b0f; object-fit: cover; }
+  .avstack img + img { margin-left: -8px; }
+  .tile-cap .avstack img { width: 17px; height: 17px; border-width: 1.5px; }
+
+  .stack3 { display: flex; flex-direction: column; gap: 8px; }
+  .p-row { display: flex; gap: 11px; align-items: center; background: var(--card); border-radius: 18px; padding: 9px; }
+  .p-row img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex: none; }
+  .p-row .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+  .p-row .ttl { font-size: 13.5px; line-height: 1.3; margin-top: 2px; }
+
+  .p-nav { background: var(--phone-bg); border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-around; padding: 10px 26px 24px; position: relative; flex: none; }
+  .p-nav .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; }
+  .p-nav .tab svg { width: 22px; height: 22px; }
+  .p-nav .tab .dot { width: 4px; height: 4px; border-radius: 50%; background: #fff; }
+  .p-nav .tab .dot.off { background: transparent; }
+  .p-capture { position: absolute; left: 50%; top: -22px; transform: translateX(-50%); width: 54px; height: 54px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 8px 18px rgba(0,0,0,0.45); }
+  .p-capture svg { width: 20px; height: 20px; }
+
+  /* detail header */
+  .p-back { width: 32px; height: 32px; border-radius: 50%; background: var(--card); display: grid; place-items: center; flex: none; }
+  .p-back svg { width: 15px; height: 15px; }
+  .p-head { display: flex; align-items: center; gap: 12px; padding: 2px 0; }
+  .p-headtext .t { font-size: 22px; font-weight: 600; letter-spacing: -0.4px; line-height: 1.1; }
+  .p-headtext .m { font-size: 12px; font-weight: 500; margin-top: 3px; }
+
+  /* memories grid */
+  .p-title { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; padding: 0 2px; }
+  .p-count { font-size: 12px; font-weight: 500; margin-top: -7px; padding: 0 2px; }
+  .tile-wide { border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 9.5; }
+  .tile-wide img { width: 100%; height: 100%; object-fit: cover; }
+  .tile-cap { padding: 7px 2px 0; }
+  .tile-cap .t { font-size: 14px; font-weight: 600; }
+  .tile-cap .m { font-size: 11.5px; font-weight: 500; display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+  .tile-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile-sq { border-radius: 18px; overflow: hidden; aspect-ratio: 1; }
+  .tile-sq img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* story slots */
+  .slot-hero { border-radius: 20px; overflow: hidden; aspect-ratio: 16 / 10.5; position: relative; }
+  .slot-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .slot-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .slot-sq { border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 11; position: relative; }
+  .slot-sq img { width: 100%; height: 100%; object-fit: cover; }
+  .p-badge { position: absolute; left: 8px; bottom: 8px; display: flex; align-items: center; gap: 5px; background: rgba(11,11,15,0.66); border-radius: 999px; padding: 3px 9px 3px 3px; }
+  .p-badge img { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; }
+  .p-badge span { font-size: 10px; font-weight: 600; color: #fff; }
+
+  .slot-card { background: var(--card); border-radius: 20px; padding: 14px 15px; display: flex; flex-direction: column; gap: 11px; }
+  .voice-row { display: flex; align-items: center; gap: 12px; }
+  .voice-play { width: 32px; height: 32px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: none; }
+  .voice-play svg { width: 12px; height: 12px; margin-left: 1.5px; }
+  .wave { display: flex; align-items: center; gap: 2.6px; height: 22px; flex: 1; }
+  .wave i { width: 2px; border-radius: 1px; background: #fff; display: block; }
+  .voice-dur { font-size: 12px; font-weight: 600; }
+  .card-l { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+  .card-t { font-size: 15.5px; line-height: 1.4; margin-top: 3px; }
+
+  .inline-row { display: flex; gap: 12px; align-items: center; background: var(--card); border-radius: 18px; padding: 10px 14px 10px 10px; }
+  .inline-row .icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .inline-row .l { font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+  .inline-row .t { font-size: 13.5px; margin-top: 2px; }
+  .spotify-mark { width: 26px; height: 26px; }
+  .rel-thumbs { display: flex; flex: none; }
+  .rel-thumbs img { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; border: 2px solid var(--card); }
+  .rel-thumbs img + img { margin-left: -12px; }
+
+  .q-head { display: flex; align-items: center; gap: 9px; }
+  .q-mic { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); display: grid; place-items: center; flex: none; }
+  .q-mic svg { width: 13px; height: 13px; }
+  .q-head span { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+  .quote { font-size: 17px; line-height: 1.35; letter-spacing: -0.2px; }
+  .q-inputrow { display: flex; align-items: center; gap: 10px; background: var(--card-deep); border-radius: 999px; padding: 6px 6px 6px 14px; }
+  .q-inputrow .ph { font-size: 13px; flex: 1; }
+  .q-inputrow .mic svg { width: 15px; height: 15px; }
+  .q-save { background: #fff; color: #101014; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 8px 16px; flex: none; }
+
+  .people-row { display: flex; gap: 7px; overflow: hidden; }
+  .pchip { display: flex; align-items: center; gap: 6px; background: var(--card); border-radius: 999px; padding: 5px 12px 5px 5px; flex: none; }
+  .pchip.textonly { padding: 5px 13px; }
+  .pchip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+  .pchip span { font-size: 12px; font-weight: 600; }
+  .pchip.on { background: #fff; }
+  .pchip.on span { color: #101014; }
+  .recap-pill { display: inline-flex; align-items: center; gap: 9px; background: var(--card); border-radius: 999px; padding: 4px 16px 4px 4px; align-self: flex-start; }
+  .recap-pill .p-play { width: 30px; height: 30px; }
+  .recap-pill .p-play svg { width: 11px; height: 11px; }
+  .recap-pill span { font-size: 12px; font-weight: 600; }
+
+  /* recap player */
+  .phone.player .screen { padding: 0; }
+  .player-img { position: absolute; inset: 0; }
+  .player-img img { width: 100%; height: 100%; object-fit: cover; }
+  .player-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.08) 26% 60%, rgba(0,0,0,0.55)); }
+  .player-progress { position: absolute; top: 46px; left: 14px; right: 14px; display: flex; gap: 4px; }
+  .player-progress i { flex: 1; height: 2.5px; border-radius: 2px; background: rgba(255,255,255,0.35); }
+  .player-progress i.on { background: #fff; }
+  .player-caption { position: absolute; left: 16px; bottom: 92px; display: flex; align-items: center; gap: 8px; background: rgba(11,11,15,0.62); border-radius: 999px; padding: 4px 14px 4px 4px; }
+  .player-caption img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+  .player-caption span { font-size: 13px; font-weight: 600; color: #fff; }
+  .player-song { position: absolute; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 8px; }
+  .player-song .spotify-mark { width: 15px; height: 15px; }
+  .player-song span { font-size: 10.5px; font-weight: 600; letter-spacing: 0.6px; color: #fff; }
+
+  /* capture (dawn) */
+  .phone.light .screen { gap: 10px; }
+  .cap-head { display: flex; justify-content: space-between; align-items: center; padding-top: 2px; }
+  .cap-head .close { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .cap-head .close svg { width: 14px; height: 14px; }
+  .cap-head .t { font-size: 16px; font-weight: 600; color: var(--slate); }
+  .cap-head .av { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; }
+  .cap-head .av img { width: 100%; height: 100%; object-fit: cover; }
+  .bub { max-width: 78%; border-radius: 18px; padding: 10px 14px; font-size: 14px; line-height: 1.4; color: var(--slate); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .bub.me { background: #fff; align-self: flex-end; border-bottom-right-radius: 8px; }
+  .bub.photo { padding: 0; overflow: hidden; width: 62%; margin-top: auto; }
+  .bub.photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  .cap-form { align-self: stretch; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.72); border-radius: 999px; padding: 6px 6px 6px 15px; font-size: 12.5px; font-weight: 500; color: var(--slate); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .cap-form b { font-weight: 600; background: #fff; border-radius: 999px; padding: 7px 13px; margin-left: auto; }
+  .cap-actions { display: flex; justify-content: center; gap: 22px; padding: 14px 0 6px; }
+  .cap-act { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .cap-act .btn { width: 58px; height: 58px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
+  .cap-act .btn svg { width: 26px; height: 26px; }
+  .cap-act span { font-size: 11px; font-weight: 600; color: var(--slate); }
+  .cap-input { margin-top: 4px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 999px; padding: 12px 16px; font-size: 14px; color: var(--slate); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .cap-input .mic { margin-left: auto; }
+  .cap-input .mic svg { width: 16px; height: 16px; }
+
+  /* loop */
+  .loop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .loop .step { background: var(--surface); border-radius: 20px; padding: 22px 20px 24px; }
+  .loop .step .n { width: 27px; height: 27px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-size: var(--t-label); font-weight: 600; }
+  .loop .step .t { font-size: var(--t-body); font-weight: 600; margin-top: 16px; }
+  .loop .step .d { font-size: var(--t-label); line-height: 1.55; margin-top: 8px; font-weight: 400; letter-spacing: 0; }
+
+  /* copy section */
+  .rules { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 4vh; }
+  .rules .rule { background: var(--surface); border-radius: 20px; padding: 22px 24px; }
+  .rules .rule .t { font-size: var(--t-body); font-weight: 600; }
+  .rules .rule .d { font-size: var(--t-label); line-height: 1.6; margin-top: 8px; letter-spacing: 0; }
+  .rules .rule:last-child { grid-column: 1 / -1; }
+  .rules .rule:last-child .d { max-width: 52em; }
+  .copytable { padding: 10px 0; overflow: hidden; }
+  .copytable .cr { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding: 13px 26px; }
+  .copytable .cr:nth-child(even) { background: var(--surface-2); }
+  .copytable .cr.h p { font-size: var(--t-label); font-weight: 600; letter-spacing: 0.04em; }
+  .copytable .cr p { font-size: var(--t-body); line-height: 1.45; }
+  .copytable .cr .new { font-weight: 600; }
+
+  /* journeys */
+  .jlist { display: grid; gap: 14px; }
+  .jrow { display: grid; grid-template-columns: 44px 210px 1fr; gap: 20px; align-items: start; background: var(--surface); border-radius: 20px; padding: 22px 24px; }
+  .jrow .n { width: 27px; height: 27px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-size: var(--t-label); font-weight: 600; margin-top: 1px; }
+  .jrow .t { font-size: var(--t-body); font-weight: 600; padding-top: 2px; }
+  .jrow .d { font-size: var(--t-body); line-height: 1.55; }
+
+
+  footer { padding: 9vh 0 13vh; border-top: 1px solid var(--line); text-align: center; }
+  footer .ns-title { font-size: var(--t-headline); font-weight: 600; letter-spacing: -0.018em; }
+  footer .ns-body { font-size: var(--t-body); line-height: 1.62; max-width: 26em; margin: 2.5vh auto 0; }
+
+  @media (max-width: 900px) {
+    .split, .split.rev { grid-template-columns: 1fr; }
+    .split.rev .phone { order: -1; }
+    .phone { margin: 0 auto; }
+    .loop, .rules { grid-template-columns: 1fr; }
+    .jrow { grid-template-columns: 44px 1fr; }
+    .jrow .d { grid-column: 2; }
+    .copytable .cr { grid-template-columns: 1fr; gap: 6px; padding: 13px 20px; }
+    .copytable .cr.h { display: none; }
+    .spec-grid { grid-template-columns: 108px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="i-play"><path d="M8 5.2v13.6L19.5 12z" fill="#101014"/></g>
+    <g id="i-back"><path d="M14.5 5l-7 7 7 7" fill="none" stroke="#f2f0ec" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-down"><path d="M5 9.5l7 7 7-7" fill="none" stroke="#1F2937" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-mic"><rect x="9" y="2.5" width="6" height="11.5" rx="3" fill="none" stroke="#f2f0ec" stroke-width="1.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5" fill="none" stroke="#f2f0ec" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="i-mic-dark"><rect x="9" y="2.5" width="6" height="11.5" rx="3" fill="none" stroke="#1F2937" stroke-width="1.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5" fill="none" stroke="#1F2937" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="i-home"><path d="M4 10.6L12 4l8 6.6V20h-5.4v-5.2h-5.2V20H4z" fill="none" stroke="#f2f0ec" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-grid"><rect x="4" y="4" width="7" height="7" rx="2" fill="#f2f0ec"/><rect x="13" y="4" width="7" height="7" rx="2" fill="#f2f0ec"/><rect x="4" y="13" width="7" height="7" rx="2" fill="#f2f0ec"/><rect x="13" y="13" width="7" height="7" rx="2" fill="#f2f0ec"/></g>
+    <g id="i-plus"><path d="M12 4.5v15M4.5 12h15" stroke="#101014" stroke-width="2.4" stroke-linecap="round"/></g>
+    <g id="i-cam"><path d="M4 7.5h3l1.6-2.3a1.5 1.5 0 0 1 1.2-.7h4.4a1.5 1.5 0 0 1 1.2.7L17 7.5h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5z" fill="none" stroke="#1F2937" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="#1F2937" stroke-width="1.7"/></g>
+    <g id="i-spotify"><circle cx="12" cy="12" r="12" fill="#1DB954"/><path d="M6.6 9.6c3.6-1.05 7.6-.6 10.7 1.25" fill="none" stroke="#101014" stroke-width="1.9" stroke-linecap="round"/><path d="M7.1 12.4c3-.85 6.3-.4 8.9 1.05" fill="none" stroke="#101014" stroke-width="1.7" stroke-linecap="round"/><path d="M7.6 15.1c2.45-.65 4.95-.3 7 .85" fill="none" stroke="#101014" stroke-width="1.5" stroke-linecap="round"/></g>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <div class="hero">
+    <p class="label">Memmory · Visual product roadmap · 2026-08-21</p>
+    <h1 class="display">The app no longer opens into a chat. It&nbsp;opens into your memories.</h1>
+    <p class="body">That is the whole redesign. You still capture in the same chat as today, and you open it with the plus button. Every other screen shows what you get back: memories, stories and recaps. Every mockup on this page is a real screen in the Expo MVP (<span class="label">app/</span>).</p>
+    <p class="body">Every exact value for your AI (colors, type, component specs, copy): <a class="label" href="design-foundation.md" download>design-foundation.md</a>. Load it into your coding tool next to your task.</p>
+  </div>
+
+  <!-- THE LOOP -->
+  <section>
+    <h2 class="headline">The loop</h2>
+    <p class="body section-intro">How the app works, in five steps.</p>
+    <div class="loop">
+      <div class="step"><p class="n">1</p><p class="t">Capture</p><p class="d">Tap plus and send a photo, a voice note or a few words. Two&nbsp;taps from&nbsp;anywhere.</p></div>
+      <div class="step"><p class="n">2</p><p class="t">Add context</p><p class="d">The app asks one question inside the memory. You&nbsp;answer by typing or&nbsp;speaking.</p></div>
+      <div class="step"><p class="n">3</p><p class="t">It understands</p><p class="d">It reads what you said, where you were and who was there, and connects it to older&nbsp;memories.</p></div>
+      <div class="step"><p class="n">4</p><p class="t">It gives back</p><p class="d">A story to scroll. A recap to watch. A shared memory that grows.</p></div>
+      <div class="step"><p class="n">5</p><p class="t">You return</p><p class="d">Home shows what is new since last time, so there is always a reason to come back.</p></div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section>
+    <div class="split">
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#f2f0ec"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#f2f0ec"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#f2f0ec"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#f2f0ec"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#f2f0ec" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#f2f0ec"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#f2f0ec"/></svg></span></div>
+        <div class="screen">
+          <div class="p-toprow"><span class="p-wordmark">Memmory</span><span class="p-avatar">S</span></div>
+          <p class="p-greeting">Good morning.</p>
+          <div class="p-hero">
+            <img src="images/tag-cover.jpg" alt="">
+            <div class="shade"></div>
+            <div class="inner">
+              <div class="toprow">
+                <span class="avstack">
+                  <img src="images/mem-13.jpg" alt=""><img src="images/tag-leo.jpg" alt=""><img src="images/mem-08.jpg" alt=""><img src="images/mem-11.jpg" alt="">
+                </span>
+                <span class="p-play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span>
+              </div>
+              <div class="p-herotext">
+                <p class="t">The house in Greece</p>
+                <p class="m">7 people · July 12–19</p>
+              </div>
+            </div>
+          </div>
+          <div class="stack3">
+            <div class="p-row"><img src="images/mem-03.jpg" alt=""><div><p class="lbl">A year ago today</p><p class="ttl">That evening in Valldemossa</p></div></div>
+            <div class="p-row"><img src="images/mem-12.jpg" alt=""><div><p class="lbl">A question for you</p><p class="ttl">What did you and Marco talk about after Sofia left?</p></div></div>
+          </div>
+          <p class="latest-l">Latest</p>
+          <div class="latest-row">
+            <div class="sq"><img src="images/mem-01.jpg" alt=""></div>
+            <div class="sq"><img src="images/siv-1.jpg" alt=""></div>
+            <div class="sq"><img src="images/mem-05.jpg" alt=""></div>
+          </div>
+        </div>
+        <div class="p-nav">
+          <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg>Home<span class="dot"></span></div>
+          <span class="p-capture"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span>
+          <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg>Memories<span class="dot off"></span></div>
+        </div>
+        <span class="homebar"></span>
+      </div>
+      <div class="spec">
+        <h2 class="headline">Home. What is waiting for you.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">The first screen. The top card is always something that came back: a finished recap, a year-ago memory, a question, something new in a shared memory. At&nbsp;the bottom, your latest memories.</p>
+          <p class="k">Purpose</p><p class="v">The first thing you see is what you get back, never an input field.</p>
+          <p class="k">Interaction</p><p class="v">Tap the big card to watch the recap. Tap&nbsp;any card to open its memory. The&nbsp;plus button opens Capture.</p>
+          <p class="k">System</p><p class="v">The cards are built from what you have captured plus the demo content, newest first.</p>
+          <p class="k">Feeling</p><p class="v">There is something here for me.</p>
+          <p class="k">MVP status</p><p class="v"><b>Built.</b> app/home.tsx. The big card and the cards below use demo content; the Latest row mixes your real memories with the demo ones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMORIES -->
+  <section>
+    <div class="split rev">
+      <div class="spec">
+        <h2 class="headline">Memories. Photographs, not a list.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">Every memory is shown as a photo. Your&nbsp;own memories sit two by two; a shared memory gets the full width and shows the people in it. No&nbsp;labels, no counts, no file details.</p>
+          <p class="k">Purpose</p><p class="v">Replace the archive list. Shared memories live here too, not in their own tab.</p>
+          <p class="k">Interaction</p><p class="v">Tap any photo to open the memory as a story.</p>
+          <p class="k">System</p><p class="v">Your real memories come first, then the demo ones. The&nbsp;layout rule is automatic: a memory with several people gets the wide format.</p>
+          <p class="k">Feeling</p><p class="v">This is where my memories live.</p>
+          <p class="k">MVP status</p><p class="v"><b>Built.</b> app/memories.tsx replaces app/archive.tsx, which is deleted.</p>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#f2f0ec"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#f2f0ec"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#f2f0ec"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#f2f0ec"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#f2f0ec" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#f2f0ec"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#f2f0ec"/></svg></span></div>
+        <div class="screen">
+          <p class="p-title">Memories</p>
+          <p class="p-count">12 memories</p>
+          <div>
+            <div class="tile-wide"><img src="images/tag-cover.jpg" alt=""></div>
+            <div class="tile-cap"><p class="t">The house in Greece</p><p class="m"><span class="avstack"><img src="images/mem-13.jpg" alt=""><img src="images/tag-leo.jpg" alt=""><img src="images/mem-08.jpg" alt=""></span> 7 people · July 12–19</p></div>
+          </div>
+          <div class="tile-pair">
+            <div>
+              <div class="tile-sq"><img src="images/mem-12.jpg" alt=""></div>
+              <div class="tile-cap"><p class="t">Dinner at Marco's</p><p class="m">June 14 · Amsterdam</p></div>
+            </div>
+            <div>
+              <div class="tile-sq"><img src="images/vf-grandma-boat-poster.jpg" alt=""></div>
+              <div class="tile-cap"><p class="t">Grandma's laughter</p><p class="m">May 3 · Stockholm</p></div>
+            </div>
+          </div>
+          <div class="tile-pair">
+            <div>
+              <div class="tile-sq"><img src="images/siv-1.jpg" alt=""></div>
+              <div class="tile-cap"><p class="t">Siv after the groomer</p><p class="m">May 18</p></div>
+            </div>
+            <div>
+              <div class="tile-sq"><img src="images/mem-01.jpg" alt=""></div>
+              <div class="tile-cap"><p class="t">Morning swim</p><p class="m">May 24</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="p-nav">
+          <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg>Home<span class="dot off"></span></div>
+          <span class="p-capture"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg></span>
+          <div class="tab"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg>Memories<span class="dot"></span></div>
+        </div>
+        <span class="homebar"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMORY STORY -->
+  <section>
+    <div class="split">
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#f2f0ec"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#f2f0ec"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#f2f0ec"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#f2f0ec"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#f2f0ec" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#f2f0ec"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#f2f0ec"/></svg></span></div>
+        <div class="screen">
+          <div class="p-head">
+            <span class="p-back"><svg viewBox="0 0 24 24"><use href="#i-back"/></svg></span>
+            <div class="p-headtext"><p class="t">Dinner at Marco's</p><p class="m">June 14 · Amsterdam</p></div>
+          </div>
+          <div class="slot-hero"><img src="images/mem-12.jpg" alt=""></div>
+          <div class="slot-card">
+            <div class="voice-row">
+              <span class="voice-play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span>
+              <span class="wave"><i style="height:8px"></i><i style="height:14px"></i><i style="height:19px"></i><i style="height:11px"></i><i style="height:16px"></i><i style="height:7px"></i><i style="height:13px"></i><i style="height:18px"></i><i style="height:9px"></i><i style="height:15px"></i><i style="height:12px"></i><i style="height:17px"></i><i style="height:8px"></i><i style="height:14px"></i><i style="height:10px"></i><i style="height:16px"></i></span>
+              <span class="voice-dur">0:19</span>
+            </div>
+            <div><p class="card-l">What you said</p><p class="card-t">Best pasta of my life. Marco finally met Sofia.</p></div>
+          </div>
+          <div class="inline-row">
+            <svg class="spotify-mark" viewBox="0 0 24 24"><use href="#i-spotify"/></svg>
+            <div><p class="l">Playing then</p><p class="t">Caruso · Lucio Dalla</p></div>
+          </div>
+          <div class="inline-row">
+            <span class="rel-thumbs"><img src="images/rest-1.jpg" alt=""><img src="images/rest-2.jpg" alt=""><img src="images/rest-3.jpg" alt=""></span>
+            <div><p class="l">Related memories</p><p class="t">3 earlier nights with Marco</p></div>
+          </div>
+          <div class="slot-card">
+            <div class="q-head"><span class="q-mic"><svg viewBox="0 0 24 24"><use href="#i-mic"/></svg></span><span>A question for you</span></div>
+            <p class="quote">What did you and Marco talk about after Sofia left?</p>
+            <div class="q-inputrow"><span class="ph">What do you remember?</span><span class="mic"><svg viewBox="0 0 24 24"><use href="#i-mic"/></svg></span><span class="q-save">Save</span></div>
+          </div>
+        </div>
+        <span class="homebar"></span>
+      </div>
+      <div class="spec">
+        <h2 class="headline">A memory is a story you scroll.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">One scrolling page, built from blocks: a large photo on top, pairs of smaller photos, your voice note with what you said in text, the song, related memories, and one question at the end.</p>
+          <p class="k">Purpose</p><p class="v">A memory should read like a story, not like a list of files.</p>
+          <p class="k">Interaction</p><p class="v">Tap a photo to see it full screen. Tap&nbsp;play to hear the voice note. Answer the question by typing or speaking, then tap Save.</p>
+          <p class="k">System</p><p class="v">The app builds this page automatically (src/lib/story.ts): what you captured first comes first. When you answer the question, it is saved into the memory right away, and the confirmation is one word: Saved.</p>
+          <p class="k">Feeling</p><p class="v">Tell it a little more and the memory gets better. Never "please provide more data".</p>
+          <p class="k">MVP status</p><p class="v"><b>Built.</b> app/memory/[id].tsx renders live clusters and demo memories through the same composer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTIVE -->
+  <section>
+    <div class="split rev">
+      <div class="spec">
+        <h2 class="headline">Shared memories. Everyone adds to the same story.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">The same story view plus three things: a row with the people, small badges on the photos showing who generated each moment, and a button for the recap. That&nbsp;is everything the shared view adds. No&nbsp;feeds, no threads.</p>
+          <p class="k">Purpose</p><p class="v">Seven people can add photos and voice notes, and it still reads as one story.</p>
+          <p class="k">Interaction</p><p class="v">Everyone is selected by default. The row scrolls; tap a person to see only their moments, tap Everyone to come back. Tap&nbsp;Watch the story for the recap.</p>
+          <p class="k">System</p><p class="v">The same page, filtered by person. It is always one story, never separate feeds.</p>
+          <p class="k">Feeling</p><p class="v">This is where our shared memories become one story.</p>
+          <p class="k">MVP status</p><p class="v"><b>Built, seeded.</b> One shared memory ships in the app, the same Greece story the pitch tells. Real&nbsp;multi-user sync comes after the MVP.</p>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#f2f0ec"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#f2f0ec"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#f2f0ec"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#f2f0ec"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#f2f0ec" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#f2f0ec"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#f2f0ec"/></svg></span></div>
+        <div class="screen">
+          <div class="p-head">
+            <span class="p-back"><svg viewBox="0 0 24 24"><use href="#i-back"/></svg></span>
+            <div class="p-headtext"><p class="t">The house in Greece</p><p class="m">July 12–19 · Paros, Greece</p></div>
+          </div>
+          <div class="people-row">
+            <span class="pchip on textonly"><span>Everyone</span></span>
+            <span class="pchip"><img src="images/mem-01.jpg" alt=""><span>You</span></span>
+            <span class="pchip"><img src="images/mem-13.jpg" alt=""><span>Elena</span></span>
+            <span class="pchip"><img src="images/tag-leo.jpg" alt=""><span>Leo</span></span>
+            <span class="pchip"><img src="images/mem-08.jpg" alt=""><span>Jonas</span></span>
+            <span class="pchip"><img src="images/mem-11.jpg" alt=""><span>Sam</span></span>
+          </div>
+          <span class="recap-pill"><span class="p-play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Watch the story</span></span>
+          <div class="slot-hero">
+            <img src="images/tag-cover.jpg" alt="">
+            <span class="p-badge"><img src="images/mem-01.jpg" alt=""><span>You</span></span>
+          </div>
+          <div class="slot-pair">
+            <div class="slot-sq"><img src="images/mem-13.jpg" alt=""><span class="p-badge"><img src="images/mem-13.jpg" alt=""><span>Elena</span></span></div>
+            <div class="slot-sq"><img src="images/mem-09.jpg" alt=""><span class="p-badge"><img src="images/mem-13.jpg" alt=""><span>Elena</span></span></div>
+          </div>
+          <div class="slot-card">
+            <div class="voice-row">
+              <span class="voice-play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span>
+              <span class="wave"><i style="height:10px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:18px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:7px"></i><i style="height:17px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:16px"></i></span>
+              <span class="voice-dur">0:32</span>
+            </div>
+            <div><p class="card-l">Jonas said</p><p class="card-t">We have been on this terrace for three hours and nobody has looked at a phone once.</p></div>
+          </div>
+          <div class="slot-pair">
+            <div class="slot-sq"><img src="images/mem-04.jpg" alt=""><span class="p-badge"><img src="images/tag-leo.jpg" alt=""><span>Leo</span></span></div>
+            <div class="slot-sq"><img src="images/mem-06.jpg" alt=""><span class="p-badge"><img src="images/mem-08.jpg" alt=""><span>Jonas</span></span></div>
+          </div>
+        </div>
+        <span class="homebar"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECAP -->
+  <section>
+    <div class="split">
+      <div class="phone player">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#fff" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#fff"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#fff"/></svg></span></div>
+        <div class="screen">
+          <div class="player-img"><img src="images/mem-13.jpg" alt=""></div>
+          <div class="player-scrim"></div>
+          <div class="player-progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="player-caption"><img src="images/mem-13.jpg" alt=""><span>Elena</span></div>
+          <div class="player-song"><svg class="spotify-mark" viewBox="0 0 24 24"><use href="#i-spotify"/></svg><span>Ta Paidia tou Peiraia · Melina Mercouri</span></div>
+        </div>
+        <span class="homebar"></span>
+      </div>
+      <div class="spec">
+        <h2 class="headline">The recap. A short film of the memory.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">A full screen player. Photos slowly zoom, your voice notes play over the pictures, and text you wrote appears as quotes on top of photos and videos. The song runs underneath. Captions only name the person.</p>
+          <p class="k">Purpose</p><p class="v">Prove that something beautiful comes back. The&nbsp;moment the product stops being an idea.</p>
+          <p class="k">Interaction</p><p class="v">It plays itself, like a story on Instagram. Tap&nbsp;right to move on, left to go back, close or finish to exit.</p>
+          <p class="k">System</p><p class="v">It advances by itself on a timeline, with progress bars at the top.</p>
+          <p class="k">Feeling</p><p class="v">It feels like my memory, not a slideshow. It&nbsp;ends without a slogan: the last thing you see is just the last moment.</p>
+          <p class="k">Next</p><p class="v">Simon is cutting a test recap to show the format, one that could work in the MVP. Later idea: tag your friends in the recap, and it is sent straight to them.</p>
+          <p class="k">MVP status</p><p class="v"><b>Built, composed by hand.</b> app/recap/[id].tsx plays hand-built sequences for Greece and Marco's. The&nbsp;app composing recaps by itself, and real film rendering, come after the raise.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPTURE -->
+  <section>
+    <div class="split rev">
+      <div class="spec">
+        <h2 class="headline">Capture. The same chat, opened with the plus button.</h2>
+        <div class="spec-grid">
+          <p class="k">Screen</p><p class="v">The chat works exactly like today: write, hold to record a voice note, camera, photo library, the 30 second window that groups everything into one memory, Save now. It&nbsp;opens on top of the app and keeps its light colors; the rest of the app is dark.</p>
+          <p class="k">Purpose</p><p class="v">Chatting is still the fastest way to capture. But it is something you do, not where you live: the app never opens into it.</p>
+          <p class="k">Interaction</p><p class="v">Everything you send within a short window becomes one memory.</p>
+          <p class="k">System</p><p class="v">The captured memory shows up under Memories as a story, built the same way as everything else.</p>
+          <p class="k">Feeling</p><p class="v">Two taps in, two taps out.</p>
+          <p class="k">Open question</p><p class="v">Two big buttons above the input: hold one to record a voice note, tap the other for the camera. Typing stays in the bar below. More&nbsp;intuitive when you land here; to test in the MVP.</p>
+          <p class="k">MVP status</p><p class="v"><b>Built.</b> app/chat.tsx opens as a modal; the capture engine is untouched.</p>
+        </div>
+      </div>
+      <div class="phone light">
+        <div class="statusbar"><span>9:41</span><span class="glyphs"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1F2937"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1F2937"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="#1F2937"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1F2937"/></svg><svg viewBox="0 0 26 12"><rect x="0.75" y="0.75" width="21" height="10.5" rx="3" fill="none" stroke="#1F2937" stroke-width="1.2"/><rect x="2.75" y="2.75" width="14" height="6.5" rx="1.6" fill="#1F2937"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#1F2937"/></svg></span></div>
+        <div class="screen">
+          <div class="cap-head"><span class="close"><svg viewBox="0 0 24 24"><use href="#i-down"/></svg></span><span class="t">Capture</span><span class="av"><img src="images/founder.jpg" alt=""></span></div>
+          <p class="bub photo me"><img src="images/mem-12.jpg" alt=""></p>
+          <p class="bub me">Best pasta of my life. Marco finally met Sofia.</p>
+          <p class="cap-form">2 moments · one memory<b>Save now</b></p>
+          <div class="cap-actions">
+            <span class="cap-act"><span class="btn"><svg viewBox="0 0 24 24"><use href="#i-mic-dark"/></svg></span><span>Hold to talk</span></span>
+            <span class="cap-act"><span class="btn"><svg viewBox="0 0 24 24"><use href="#i-cam"/></svg></span><span>Camera</span></span>
+          </div>
+          <p class="cap-input">What do you want to keep?<span class="mic"><svg viewBox="0 0 24 24"><use href="#i-mic-dark"/></svg></span></p>
+        </div>
+        <span class="homebar"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE WORDS -->
+  <section>
+    <h2 class="headline">The words</h2>
+    <p class="body section-intro">Keep the language simple and let what comes back carry the feeling. The&nbsp;less the app talks about itself, the more intelligent it feels.</p>
+    <div class="rules">
+      <div class="rule"><p class="t">It never talks about itself</p><p class="d">No "Memmory asks", "Memmory wove", "Memmory kept". Write what the user sees: "A question for you", "Related memories", "Saved".</p></div>
+      <div class="rule"><p class="t">Plain beats poetic</p><p class="d">The richer memory is visible on screen. It does not need announcing. When in doubt, write the shortest true sentence.</p></div>
+      <div class="rule"><p class="t">People's words carry the feeling</p><p class="d">"Best pasta of my life. Marco finally met Sofia." is the strongest line in the product. Nothing we write should compete with it.</p></div>
+      <div class="rule"><p class="t">One idea per line</p><p class="d">Never a headline plus an explanation plus an emotional conclusion in the same place. Strong screens are allowed to just end.</p></div>
+      <div class="rule"><p class="t">Three words, used precisely</p><p class="d">A memory is the thing. A story is how a memory reads. A recap is the film. No&nbsp;other synonyms, anywhere in the UI.</p></div>
+    </div>
+    <div class="copytable panel">
+      <div class="cr h"><p>What it said</p><p>What it should say</p></div>
+      <div class="cr"><p>Waiting for you.</p><p class="new">Good morning.</p></div>
+      <div class="cr"><p>The story of Greece is ready. Woven from 7 perspectives</p><p class="new">The house in Greece · 7 people · July 12–19</p></div>
+      <div class="cr"><p>12 memories kept</p><p class="new">12 memories</p></div>
+      <div class="cr"><p>Memmory asks</p><p class="new">A question for you</p></div>
+      <div class="cr"><p>Heard, word for word</p><p class="new">What you said</p></div>
+      <div class="cr"><p>The song that was playing</p><p class="new">Playing then</p></div>
+      <div class="cr"><p>Tell me, and I will keep it · Keep it</p><p class="new">What do you remember? · Save</p></div>
+      <div class="cr"><p>Kept. The memory just got richer.</p><p class="new">Saved.</p></div>
+      <div class="cr"><p>Watch the story Memmory made</p><p class="new">Watch the story</p></div>
+      <div class="cr"><p>The story through Elena's eyes</p><p class="new">Elena's memories</p></div>
+      <div class="cr"><p>Seven people. One story.</p><p class="new">Nothing. The story just ends.</p></div>
+    </div>
+  </section>
+
+  <!-- JOURNEYS -->
+  <section>
+    <h2 class="headline">Five flows to test</h2>
+    <p class="body section-intro">Each one works from start to finish in the MVP. Test them in this order.</p>
+    <div class="jlist">
+      <div class="jrow"><span class="n">1</span><p class="t">Capture a memory</p><p class="d">Tap plus, send a photo and a voice note, tap Save now. Open&nbsp;Memories: the moment is already a story with a big photo, the text of what you said, and one question at the end.</p></div>
+      <div class="jrow"><span class="n">2</span><p class="t">Explore a memory</p><p class="d">Open Dinner at Marco's. Scroll the story, tap a photo to see it full screen, play the voice note, see the song and the related memories.</p></div>
+      <div class="jrow"><span class="n">3</span><p class="t">Open a shared memory</p><p class="d">Open The house in Greece. Seven people, and each moment is marked with who generated it. Tap&nbsp;Elena and see the same week through only her moments.</p></div>
+      <div class="jrow"><span class="n">4</span><p class="t">Watch a recap</p><p class="d">From Home or from the memory itself. Photos slowly zoom, Jonas's voice note plays, the song runs, and it ends on the last moment.</p></div>
+      <div class="jrow"><span class="n">5</span><p class="t">Come back tomorrow</p><p class="d">Open the app the next day. Home shows what is new: a finished story, a year ago today, a question, Elena's new photos. Never an empty input field.</p></div>
+    </div>
+  </section>
+
+  
+
+  <footer>
+    <p class="ns-title">North star</p>
+    <p class="ns-body">This is not a place where you store photos. This is a place where your memories become something.</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+/* Memory story (5.3, 5.4) and the photo viewer. Prefix st-. Ground painted here: the origin layer is transparent. */
+.st {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: calc(var(--space-md) + env(safe-area-inset-top)) var(--space-md) calc(var(--space-lg) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--ground);
+  color: var(--text);
+}
+.st > * { flex-shrink: 0; }
+
+/* The signature animation: the hero image flies from the tile (WAAPI, set in index.jsx) while the
+   ground darkens and the header and blocks settle in. The page itself never scales. */
+.st-grow { animation: st-ground var(--motion-normal) var(--ease); }
+.st-grow > :not(.st-hero), .st-grow .st-badge { animation: st-in var(--motion-normal) var(--ease) 300ms backwards; }
+.st-grow .st-hero { overflow: visible; z-index: 2; background: transparent; }
+.st-grow .st-hero img { position: absolute; top: 0; left: 0; }
+@keyframes st-ground { from { background-color: transparent; } to { background-color: var(--ground); } }
+@keyframes st-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes st-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .st-grow { animation: st-fade var(--motion-slow) var(--ease); }
+  .st-grow > *, .st-grow .st-badge { animation: none; }
+}
+
+/* Header: 32px surface back circle, title 22/600, meta 12/500. */
+.st-head { display: flex; align-items: center; gap: 12px; padding: 2px 0; }
+.st-back {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.st-headtext { min-width: 0; }
+.st-title { font: 600 22px/1.1 var(--font); letter-spacing: -0.4px; }
+.st-meta { font: 500 12px/1.3 var(--font); margin-top: 3px; }
+
+/* Shared: people row (a chip cut at the edge says it scrolls) and the recap pill. */
+.st-people {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(-1 * var(--space-md));
+  padding: 0 var(--space-md);
+}
+.st-people::-webkit-scrollbar { display: none; }
+.st-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 5px 12px 5px 5px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font: 600 12px/1.3 var(--font);
+  color: var(--text);
+  transition: background var(--motion-fast) var(--ease), color var(--motion-fast) var(--ease);
+}
+.st-chip-text { padding: 5px 13px; }
+.st-chip.on { background: #FFFFFF; color: var(--ground); }
+.st-recap {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 9px;
+  padding: 4px 16px 4px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font: 600 12px/1.3 var(--font);
+  color: var(--text);
+}
+
+/* Photo blocks: hero 16:10.5 radius 20, pairs 16:11 radius 18, lone photo full width. */
+.st-photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--text);
+}
+.st-photo img, .st-photo video { width: 100%; height: 100%; object-fit: cover; }
+.st-photo img.photo-broken { visibility: hidden; }
+.st-hero { aspect-ratio: 16 / 10.5; border-radius: 20px; }
+.st-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.st-sq { aspect-ratio: 16 / 11; border-radius: var(--radius-md); }
+.st-lone { aspect-ratio: 16 / 11; border-radius: var(--radius-md); }
+.st-video { aspect-ratio: 16 / 10.5; border-radius: 20px; }
+.st-video-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-radius: var(--radius-pill);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+}
+.st-video-dur {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--scrim);
+  font: 600 11px/1.3 var(--font);
+}
+
+/* Badge: who generated the moment. Scrim pill, bottom left, inset 8, avatar 16 + name 10/600. */
+.st-badge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 3px;
+  border-radius: var(--radius-pill);
+  background: var(--scrim);
+  font: 600 10px/1.3 var(--font);
+  color: var(--text);
+}
+.st-badge .app-avatar { font-size: 8px; background: var(--surface-deep); }
+.st-chip .app-avatar { background: var(--surface-deep); }
+.st-chip.on .app-avatar { color: var(--ground); background: #FFFFFF; }
+
+/* Cards: surface, radius 20, padding 14. Labels 11/600, text 15.5/400. */
+.st-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 14px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden; /* the question card animates its height */
+}
+.st-lbl { display: block; font: 600 11px/1.3 var(--font); letter-spacing: 0.4px; }
+.st-txt { font: 400 15.5px/1.45 var(--font); }
+.st-voice .st-voice-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.st-play {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1px;
+}
+.st-play-30 { width: 30px; height: 30px; }
+.st-wave { display: flex; align-items: center; gap: 2.6px; height: 22px; flex: 1; }
+.st-wave i { display: block; width: 2px; border-radius: 1px; background: #FFFFFF; }
+.st-dur { font: 600 12px/1.3 var(--font); }
+
+/* Rows: song and related. Surface, radius 18, label 11/600 + line 13.5/400. */
+.st-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 10px 14px 10px 10px;
+  color: var(--text);
+}
+.st-row-main { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; text-align: left; color: var(--text); }
+.st-row > span:last-child, .st-row-main > span:last-child { min-width: 0; }
+.st-line { display: block; font: 400 13.5px/1.3 var(--font); margin-top: 2px; }
+.st-spotify {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.st-spotify.on { background: var(--spotify); }
+.st-open { width: 44px; height: 44px; margin: -10px -10px -10px 0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text); }
+.st-thumbs { display: flex; flex-shrink: 0; }
+.st-thumbs img { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; border: 2px solid var(--surface); background: var(--surface-deep); }
+.st-thumbs img + img { margin-left: -12px; }
+
+/* Question card: mic chip 26, question 17/400, surfaceDeep pill input with mic and a white Save pill. */
+.st-question { gap: 11px; }
+.st-qhead { display: flex; align-items: center; gap: 9px; }
+.st-qmic {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.st-q { font: 400 17px/1.35 var(--font); letter-spacing: -0.2px; }
+.st-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-deep);
+}
+.st-input input { flex: 1; min-width: 0; border: none; outline: none; background: none; font: 400 13px/1.3 var(--font); color: var(--text); }
+.st-input input::placeholder { color: var(--text); }
+.st-mic { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-pill); color: var(--text); touch-action: none; }
+.st-mic.rec { background: var(--error); }
+.st-save { flex-shrink: 0; padding: 8px 16px; border-radius: var(--radius-pill); background: #FFFFFF; color: var(--ground); font: 600 12px/1.3 var(--font); }
+
+/* Viewer: edge to edge on ground, one photo per screen, swipe moves the strip.
+   Close circle top right, progress segments (like the recap) top center. */
+.st-viewer { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+.st-vclose { position: absolute; top: calc(var(--space-md) + env(safe-area-inset-top)); right: var(--space-md); z-index: 1; }
+.st-vpos { position: absolute; top: calc(var(--space-md) + 15px + env(safe-area-inset-top)); left: calc(var(--space-md) + 44px); right: calc(var(--space-md) + 44px); display: flex; gap: 4px; }
+.st-vpos i { flex: 1; height: 2.5px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); }
+.st-vpos i.on { background: #FFFFFF; }
+.st-strip { display: flex; height: 100%; transition: transform var(--motion-fast) var(--ease); }
+.st-strip img { width: 100%; height: 100%; flex-shrink: 0; object-fit: contain; }

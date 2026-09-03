@@ -2,7 +2,7 @@
 // table / dev middleware) so it follows the person across devices and deploys;
 // localStorage is only the synchronous cache in front of it. Changes broadcast
 // as a window CustomEvent 'memmory:avatar' { personId, url }.
-import { uploadPhoto, loadProfile, upsertProfile } from './api.js'
+import { uploadPhoto, loadProfile, upsertProfile } from '../data/api.js'
 
 const key = pid => 'memmory.avatar.' + pid
 

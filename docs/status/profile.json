@@ -1,0 +1,84 @@
+{
+  "score": 5.5,
+  "round": 1,
+  "pass": false,
+  "errors": 0,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "blocker",
+      "text": "The portrait never renders: .pf-portrait computes to 76x0 in every shot (probe: h=0). Root cause: .pf is a flex column with height:100% and overflow-y:auto, so every child is a shrinkable flex item; the portrait has overflow:hidden which makes its automatic minimum size 0, and it collapses. Spec 5.6 lists the portrait first; the mock has a 72px photo above the name. The avatar edit flow is equally blind: after picking a file, Save/Cancel appear under the header with no picture (docs/shots/critic/pf-avatar-picked.png), and after saving the new photo is still invisible (docs/shots/critic/pf-avatar-saved.png). Fix: give every .pf child flex-shrink:0 (or make .pf display:block and keep flex only where needed), then verify .pf-portrait is 76x76 in the probe.",
+      "shot": "docs/shots/profile/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "text": "Answering a question is broken by the same flex-shrink bug: tapping a question keeps the row at min-height 48 while its content (label 16 + input 23 + actions 24 + gaps) needs about 75px; the input and the Save/Skip buttons render outside the row and are painted over by the next white row, so the user sees a bold label, no input, no placeholder and no actions (docs/shots/critic/pf-question-edit.png). Typing puts the text on the row's bottom edge and Save stays hidden (docs/shots/critic/pf-question-typed.png). Also give the input a placeholder from the copy bank (What do you remember? exists) so an empty edit state reads as an input.",
+      "shot": "docs/shots/critic/pf-question-typed.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "text": "Contract violation: src/profile/index.jsx lines 31 and 117 read and write localStorage directly (memmory.profile.questions.<pid>) for the three question answers. ARCHITECTURE.md section 5: modules never write to storage except through the actions they are given; Profile is given setSetting. Route the answers through settings (setSetting('questions', {...}) or one key per question) and read them from settings.",
+      "shot": "docs/shots/critic/pf-question-saved.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "text": "The gauge does not read as a gauge. The v2 mock (memmory-design-v2/design-direction-v2.html .gauge) draws a pale #EFE9E0 track for the full arc and paints the heat gradient only up to the value, needle plus value word plus streak line. Built version paints the full heat arc always, so the arc says nothing and only a small needle carries the value; with the streak line gone the card is mostly empty white (128px art in a 132px tall card). Restore the track + partial heat arc; keep the value word; if the streak line has to be truthful, draw the card tighter (padding 14, art 116x64 like the mock) so it is not a white void.",
+      "shot": "docs/shots/profile/glenn-phone-x2-morning.png"
+    },
+    {
+      "rank": 5,
+      "severity": "nit",
+      "text": "Copy convention: ARCHITECTURE.md 7 says copy only from core/copy.js, one flat export per string. Profile hardcodes Top people, View all people, People, Questions, the three question strings, Quiet week, Warm week, Big capture buttons, Music opens in, Face ID, Sign out, Viewing as, Save, Cancel, Skip, Saving. Move them to core/copy.js (ask the integrator to add the block) and import.",
+      "shot": "docs/shots/critic/pf-bottom.png"
+    },
+    {
+      "rank": 6,
+      "severity": "nit",
+      "text": "Row titles (Marco, Jonas, Sam, Big capture buttons, Face ID, Sign out) are 16/400; spec 2.3 body role says 500 for row titles. The mock's .prow span is weight 500. Set .pf-row .t-body to font-weight 500.",
+      "shot": "docs/shots/profile/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 7,
+      "severity": "nit",
+      "text": "Off-token color: the switch off track is #D9D3CA, which exists nowhere in the token sheet. Use the cream #FAF7F2 track inside the white row with a slate 1.5px ring, or the dawn-glass token, so the profile stays inside the palette. Same review for the gauge end stop #DC8C5E: it is the v2 heat scale, so allowed as a data color, but note it in a comment.",
+      "shot": "docs/shots/critic/pf-bottom.png"
+    },
+    {
+      "rank": 8,
+      "severity": "nit",
+      "text": "Perf: the Top people avatars for Jonas and Sam load /photos/isabel/mem-08.jpg (900x1128, 174KB) and mem-11.jpg (900x1161, 182KB) to draw two 26px circles; 350KB for 52px of pixels. The seed's people.avatar_url points at full memory photos. Data-owner request: give people a 128px portrait like portrait-p1..p4.jpg, or have core Avatar accept a thumb variant.",
+      "shot": "docs/shots/profile/people-phone-x2-morning.png"
+    },
+    {
+      "rank": 9,
+      "severity": "nit",
+      "text": "Gauge uses Date.now() for 'today' while the rest of the app runs on the frozen showcase now; the Profile contract has no now prop, so either ask the integrator for now on Profile or compute the week from db's newest memory. Also the value word appears without a streak line for every demo persona, so the mock's two-line state is never seen; if a truthful line is wanted, ask for a copy bank string like 'Nothing kept this week' as the quiet-state second line.",
+      "shot": "docs/shots/profile/default-desktop-x2-morning.png"
+    }
+  ],
+  "shots": [
+    "docs/shots/profile/default-phone-x2-morning.png",
+    "docs/shots/profile/glenn-phone-x2-morning.png",
+    "docs/shots/profile/people-phone-x2-morning.png",
+    "docs/shots/profile/default-phoneSmall-x2-morning.png",
+    "docs/shots/profile/default-desktop-x2-morning.png",
+    "docs/shots/profile/glenn-phone-x2-evening.png",
+    "docs/shots/critic/pf-bottom.png",
+    "docs/shots/critic/pf-glenn-bottom.png",
+    "docs/shots/critic/pf-reduced.png",
+    "docs/shots/critic/pf-switch-glenn.png",
+    "docs/shots/critic/pf-close.png",
+    "docs/shots/critic/pf-apple.png",
+    "docs/shots/critic/pf-question-edit.png",
+    "docs/shots/critic/pf-question-typed.png",
+    "docs/shots/critic/pf-avatar-picked.png",
+    "docs/shots/critic/pf-avatar-saved.png",
+    "docs/shots/critic/pf-p3.png",
+    "docs/shots/critic/pf-p3-bottom.png"
+  ],
+  "notes": "Full gauntlet: 30 shots, 0 failed, 0 console errors, 0 page errors, 0 failed requests; readyMs 924 to 1607 (well under 2500). Contract: props match ARCHITECTURE.md 5 exactly (App still passes memories, ignored); imports only core/, data/select.js, lib/ and own folder; no cards, insights, cardCount or Cortex references remain; the insights view is gone. The one contract breach is the direct localStorage read/write for question answers (issue 3). What works and was verified by my own shots: cream #FAF7F2 sheet with radius 32 top corners, all text rgb(31,41,55) full saturation, only 30/20/16/12 plus the 16/600 title, rows radius 12 / cards 18 / pills, 1.5px chevrons from core Icons, no emoji, PRIVACY_ROW verbatim, fact line and counts correct for p5 (12/9), p1 (44/13) and an empty persona p3 (0/0, no Top people section, clean), People sub-view with back chevron and all 9 people sorted, Big capture buttons switch wired to setSetting (builder's bigbuttons-off shot plus capture/index.jsx reads settings.bigButtons), music segmented switches to Apple Music, Face ID toggles, persona tap on Glenn closes the sheet and Home shows Glenn (state personId p1), reduced-motion renders identically, desktop centers the phone column. What does not: the portrait is 0px tall in every one of the 30 shots and in the avatar flow, and the question edit state overflows its row; both come from one CSS root cause (.pf flex column with shrinkable children). Perf: 5.3MB transfer is Home behind the sheet plus the vite dev chunk, not profile; profile's own cost is the two full-size memory photos used as 26px avatars. The roadmap reference could not be shot with tools/shot.mjs (it prefixes the dev base to file:// targets, as the builder reported) and it has no Profile section; I judged against the v2 Profile mock in memmory-design-v2/design-direction-v2.html, which spec 5.6 names as unchanged. Side effect cleaned up: my avatar test wrote src/data/profiles.json and public/photos/new_1788420191143.jpg; I reset profiles.json to {} and deleted the file. Score 5.5: the static composition is calm and mostly on-token (would sit around 7.5 with the portrait and gauge fixed), but the sheet ships without its anchor element and with a broken interaction, which is programmer-art territory.",
+  "updated": "2026-09-03T07:24:54Z"
+}

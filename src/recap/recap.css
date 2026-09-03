@@ -1,0 +1,145 @@
+/* Recap player, spec 5.5. Full screen on ground, the photo fills, overlays on a scrim. Prefix rc-. */
+.rc {
+  position: absolute;
+  inset: 0;
+  background: var(--ground);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Two stacked layers: the beat before (still, fully zoomed) under the current one fading in 900ms. */
+.rc-layer { position: absolute; inset: 0; }
+.rc-in { animation: rc-fade var(--motion-slow) var(--ease); }
+@keyframes rc-fade { from { opacity: 0; } }
+.rc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: rc-zoom var(--ms, 5s) var(--ease) forwards; /* --ms set per beat inline */
+}
+.rc-under .rc-img { animation: none; transform: scale(1.08); }
+@keyframes rc-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.rc-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.08) 26% 60%, rgba(0,0,0,0.55));
+}
+/* A quote beat adds a middle band so the words never land on a bright photo (rule 5). */
+.rc-q .rc-scrim {
+  background:
+    linear-gradient(180deg, rgba(11,11,15,0) 18%, rgba(11,11,15,0.6) 34% 66%, rgba(11,11,15,0) 82%),
+    linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.08) 26% 60%, rgba(0,0,0,0.55));
+}
+
+/* A written moment as a quote: 20/600 white, centered, four lines at most, moves up 12px on entry. */
+.rc-quote {
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  animation: rc-rise var(--motion-normal) var(--ease);
+}
+@keyframes rc-rise { from { opacity: 0; transform: translateY(calc(-50% + 12px)); } }
+
+/* Progress: one segment per beat, 2.5px, gap 4, white at 0.35, played solid, the current one filling. */
+.rc-progress {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 14px;
+  right: 14px;
+  display: flex;
+  gap: 4px;
+}
+.rc-progress i {
+  flex: 1;
+  height: 2.5px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.35);
+  overflow: hidden;
+}
+.rc-progress i.rc-on { background: #FFFFFF; }
+.rc-progress b {
+  display: block;
+  height: 100%;
+  background: #FFFFFF;
+  border-radius: inherit;
+  transform-origin: left;
+  animation: rc-fill var(--ms, 5s) linear forwards; /* --ms set per beat inline */
+}
+@keyframes rc-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.rc-close {
+  position: absolute;
+  top: calc(30px + env(safe-area-inset-top));
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Caption pill: 24px avatar + first name, on the scrim, bottom left. */
+.rc-caption {
+  position: absolute;
+  left: var(--space-md);
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px 4px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--scrim);
+  font: 600 13px/1.3 var(--font);
+  color: var(--text);
+  animation: rc-up var(--motion-normal) var(--ease); /* keyed per beat: the name moves in with its photo */
+}
+@keyframes rc-up { from { opacity: 0; transform: translateY(12px); } }
+
+/* Song credit: Spotify mark 15px + "Title · Artist" 10.5/600, bottom center. */
+.rc-song {
+  position: absolute;
+  left: var(--space-md);
+  right: var(--space-md);
+  bottom: calc(30px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font: 600 10.5px/1.3 var(--font);
+  letter-spacing: 0.6px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.rc-spot {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--spotify);
+  color: var(--ground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Reduced motion: no zoom, no rise, opacity only. The crossfade and the progress fill keep their
+   length (!important beats tokens.css's global 0.01ms rule by specificity). */
+@media (prefers-reduced-motion: reduce) {
+  .rc-img, .rc-under .rc-img { animation: none; transform: none; }
+  .rc-quote, .rc-caption { animation: rc-fade var(--motion-normal) var(--ease); }
+  .rc-in { animation-duration: var(--motion-slow) !important; }
+  .rc-progress b { animation-duration: var(--ms, 5s) !important; }
+}

@@ -1,0 +1,103 @@
+{
+  "score": 6.5,
+  "round": 1,
+  "pass": false,
+  "errors": 0,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "text": "Every p5 shot shows the keeper greeting 'Keep a moment, Isabel.' twice, stacked. src/data/threads-p5.json carries greet_2026-09-03 and greet_2026-09-04 (the file keeps collecting real-clock greetings because the dev thread middleware writes through in showcase mode). Delete the stale row and make showcase runs read-only for thread and db writes. Core-owned data, but the user sees it on the capture sheet.",
+      "shot": "docs/shots/capture/open-phone-x2-morning.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "text": "Tapping Save now in the forming showcase scene persisted a real memory (p5_mtl76njs5vp 'Thursday morning') into the p5 dev db and four rows into the checked-in src/data/threads-p5.json; after that, every open shot showed orphan 'Saved as one memory' and 'Who was with you?' bubbles with no card (the bundled Isabel space does not contain the memory). I restored the file and deleted the memory by hand. Showcase scenes must never write (guard addMemory/appendMessage behind the showcase flag or make /__threads and /__db no-ops when ?showcase is set).",
+      "shot": "docs/shots/capture/critic-open-top.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "text": "The sticky month pill collides with the card beneath it: 'May 2026' sits on top of 'Grandma's laughter' (title unreadable) in big-buttons-off, on 'Siv after the groomer' in open/recording, on 'Morning swim' at phoneSmall, and 'September 2026' sits on the 'Keep a moment, Isabel.' bubble in forming evening and after a save. Either give the thread top padding equal to the pill height plus 8, or drop the sticky positioning (v2 glass pill or not, rule 15 says no colliding elements).",
+      "shot": "docs/shots/capture/big-buttons-off-phone-x2-morning.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "text": "Gray text tiers on the Dawn sheet: month pills, memory card meta ('Jun 14 · Amsterdam'), the forming line '2 moments · one memory', the voice duration and the Moment icon all render #6B7280, the placeholder #9CA3AF. Spec 2.2 and rule 3: Dawn text is slate #1F2937 at full saturation, hierarchy by size and weight only. The reference forming bar is slate at 500.",
+      "shot": "docs/shots/capture/forming-phone-x2-morning.png"
+    },
+    {
+      "rank": 5,
+      "severity": "major",
+      "text": "A short thread is top-anchored: after the mic smoke and save the four rows sit under the header and 300px of empty gradient separate them from the dock. The reference pins the conversation to the bottom, just above the forming bar and buttons (photo bubble margin-top:auto). Use justify-content:flex-end or margin-top:auto on the first group so the latest rows always sit above the dock.",
+      "shot": "docs/shots/capture/smoke-saved.png"
+    },
+    {
+      "rank": 6,
+      "severity": "major",
+      "text": "The thread hard-clips under the transparent header: in every open/recording shot a memory card is sliced flat at y=160 right beneath 'Capture' with no fade and no spacing, reading as unfinished. Give .cs-body a mask-image fade (16 to 24px) or a glass header background, and 8px of thread top padding so the first card never touches the header.",
+      "shot": "docs/shots/capture/open-phone-x2-morning.png"
+    },
+    {
+      "rank": 7,
+      "severity": "major",
+      "text": "Perf: 5.3MB transferred on every capture shot. The twelve 56px memory card thumbnails load the 900px Isabel originals (mem-01 332KB, tag-cover 281KB, mem-05 265KB ...) with loading=auto, so about 2.5MB of images are fetched for cards that are scrolled off screen. Convention (ARCHITECTURE 7): loading=\"lazy\" below the fold. memories-p2.json (180KB) also loads for a p5 session (core).",
+      "shot": "docs/shots/capture/open-phone-x2-morning.json"
+    },
+    {
+      "rank": 8,
+      "severity": "nit",
+      "text": "Label text is 13/500 (legacy .type-label) on the forming bar, month pills, meta and Save now. Rule 4: four sizes 30/20/16/12, label is 12/600. The new v3 forming line and Save now should use --type-label.",
+      "shot": "docs/shots/capture/forming-phone-x2-morning.png"
+    },
+    {
+      "rank": 9,
+      "severity": "nit",
+      "text": "The forming bar carries an extra unlabeled gray target icon (Moment, 36px) right of Save now; the reference bar ends with Save now. The target is 36px (rule 12: 44px) and the icon has no visible meaning. Hide it or give it its label.",
+      "shot": "docs/shots/capture/forming-phone-x2-morning.png"
+    },
+    {
+      "rank": 10,
+      "severity": "nit",
+      "text": "A memory saved inside the frozen showcase clock (now=2026-09-04, Friday) was titled 'Thursday morning' and dated 'Sep 3': the engine uses the real Date.now() instead of the app's now. The save path should read the same clock as the greeting.",
+      "shot": "docs/shots/capture/critic-forming-saved.png"
+    },
+    {
+      "rank": 11,
+      "severity": "nit",
+      "text": "Recording state feedback is faint: the pressed big mic only shifts white to cream and the bar shows a small dot, 0:03 and a five-bar wave. No 'slide left to cancel' hint. An AAA hold-to-talk state should be unmistakable at a glance.",
+      "shot": "docs/shots/capture/recording-phone-x2-morning.png"
+    },
+    {
+      "rank": 12,
+      "severity": "nit",
+      "text": "The keeper greeting 'Keep a moment, Isabel.' is not in the v3 copy bank (first launch line is 'What do you want to remember? Send a photo, voice note or thought.') and is an imperative (rule 13: questions never demands). The evening 'How do you feel today?' prompt lands inside the forming window between the photos and the forming bar, reading as part of the memory.",
+      "shot": "docs/shots/capture/forming-phoneSmall-x3-evening.png"
+    },
+    {
+      "rank": 13,
+      "severity": "nit",
+      "text": "Header avatar renders the initial 'I' on a white circle; the reference shows a photo avatar. p5 has no portrait by design (core), so either add a portrait for the demo world or accept the initial.",
+      "shot": "docs/shots/capture/open-phone-x2-morning.png"
+    }
+  ],
+  "shots": [
+    "docs/shots/ref-roadmap.png",
+    "docs/shots/capture/summary.json",
+    "docs/shots/capture/open-phone-x2-morning.png",
+    "docs/shots/capture/forming-phone-x2-morning.png",
+    "docs/shots/capture/recording-phone-x2-morning.png",
+    "docs/shots/capture/big-buttons-off-phone-x2-morning.png",
+    "docs/shots/capture/default-phoneSmall-x2-morning.png",
+    "docs/shots/capture/default-desktop-x2-morning.png",
+    "docs/shots/capture/forming-phoneSmall-x3-evening.png",
+    "docs/shots/capture/smoke-saved.png",
+    "docs/shots/capture/critic-forming-saved.png",
+    "docs/shots/capture/critic-open-top.png",
+    "docs/shots/capture/critic-open-reduced.png"
+  ],
+  "notes": "Full gauntlet: 50 shots, 0 failed, 0 console/page errors, 0 failed requests, readyMs 929 to 1438. Contract holds: CaptureSheet takes exactly open/person/memories/addMemory/updateMemory/nav/settings; imports only core, data/api.js, lib and its own folder; no localStorage in the frame (the engine's one localStorage write is the pre-existing v2 greeting day key). Measured against spec: close 34px white, title 16/600 slate, avatar 30, big circles 58 with 0 6px 16px rgba(0,0,0,0.10), labels 11/600 slate, gap 32, icons stroke 1.5 round caps, sheet radius 32 top and transform 600ms cubic-bezier(0.4,0,0.2,1), dock padding uses env(safe-area-inset-bottom). Copy verbatim: 'What do you want to keep?', 'Hold to talk', 'Camera', '2 moments · one memory', 'Save now', 'Saved', 'Saved as one memory'. tools/smoke-mic.mjs run by me: ok true, voice failure row lands on a 600ms touch hold of the big mic, Save now adds card + Saved and keeps every earlier row. What I could not verify: real microphone recording, camera tap vs 400ms hold, and the safe-area inset on a real notch device (headless reports 0). The frame itself is close to the mockup; the score is held down by the visible thread defects (duplicate greeting, sticky pill collisions, gray text, top-anchored short thread, hard clip under the header) and by showcase scenes writing real data. Reduced-motion shot renders without errors but tokens.css collapses all durations to 0.01ms rather than swapping movement for opacity (core).",
+  "updated": "2026-09-03T07:24:07Z"
+}

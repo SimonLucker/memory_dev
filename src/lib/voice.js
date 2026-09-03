@@ -23,7 +23,7 @@
 // Every stage lands in voiceLog (also on window.__memmory.voiceLog) so a remote
 // tester can read the exact failure stage out of the console. No UI exposure.
 
-import { transcribe as apiTranscribe } from './api.js'
+import { transcribe as apiTranscribe } from '../data/api.js'
 
 // ---- Diagnostics ring buffer ------------------------------------------------
 

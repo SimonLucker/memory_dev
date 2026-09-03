@@ -1,0 +1,69 @@
+{
+  "score": 7.5,
+  "round": 1,
+  "pass": false,
+  "errors": 0,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "text": "The hero memory (The house in Greece, tag-cover.jpg) appears three times on one screen: as the hero, as the thumb of the 'Elena added to your memory' row, and as the first Latest tile. The mockup shows five distinct photos. homeOf returns the same memory as hero, contributed card and latest[0]; latest must exclude the hero (and cards should prefer non-hero memories). This is store logic (select.js homeOf, integrator) but Home is the screen that shows it; until the selector changes Home may filter latest by hero.id.",
+      "shot": "docs/shots/home/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "text": "Empty persona (p3, the real user's first screen) is a Latest label, three dead tiles and 70% empty ground. The tiles do nothing on tap (stack stays [] after tapping .hm-tile, docs/shots/home-crit-emptytile.json) and carry no demo mark although ARCHITECTURE says 'marked demo'. ARCHITECTURE's zero-memory rule conflicts with spec 5.1 ('real captures mixed with demo content') and the roadmap ('the big card and the cards below use demo content'). Needs an integrator decision: either the demo world's hero and rows fill the screen and open, or the demo tiles open via a db merge and get a mark. A screen that is mostly void with dead tiles cannot ship.",
+      "shot": "docs/shots/home/empty-persona-phone-x2-morning.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "text": "At full scroll the raised plus button (54px, lifted 22px above the tab bar) sits on top of the middle Latest tile: tile bottom at y=772, tab bar top at 788. The middle tile can never be seen whole. .hm has padding-bottom 16 on top of the 56px tab bar padding; it needs to clear the lifted button (about 48px, i.e. 22 lift + 16 gap + rounding).",
+      "shot": "docs/shots/home-crit-scrolled.png"
+    },
+    {
+      "rank": 4,
+      "severity": "major",
+      "text": "Contract: src/home/index.jsx imports PERSONS and bundledSpace from src/data/personas.js, outside the allowed set (src/core, src/data/select.js, src/data/api.js, src/lib, own folder). Home does its own person lookup and owns the zero-memory demo fallback (data logic that ARCHITECTURE 7 says belongs in the store). Fix: App passes the person or db.people carries the avatar; homeOf returns the demo Latest for an empty persona. No localStorage or window writes found in src/home (clean).",
+      "shot": "docs/shots/home/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 5,
+      "severity": "nit",
+      "text": "The four 22px stack avatars load 900px memory photos (mem-13, mem-08, tag-leo, mem-11, about 830 KB) because people.avatar_url in the Isabel seed points at full photos. Data seed issue (integrator): point avatar_url at small crops. Home's own hero (281 KB, 823px) and 48/114px thumbs at 900px are acceptable. The rest of the 5.3 MB transfer is the Memories grid and Capture sheet being mounted alongside Home (core, not Home).",
+      "shot": "docs/shots/home/default-phone-x2-morning.json"
+    },
+    {
+      "rank": 6,
+      "severity": "nit",
+      "text": "Hero card, activity rows and Latest tiles are div onClick with no role=button, tabIndex or key handling; only the play control is a real button. A shipped app makes every tappable card focusable.",
+      "shot": "docs/shots/home/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 7,
+      "severity": "nit",
+      "text": "Latest label letter-spacing is 0.3px (copied from the mockup CSS) while the label role in spec 2.3 is 0.4px; the row labels use 0.4. Pick one, preferably the token.",
+      "shot": "docs/shots/home/default-phone-x2-morning.png"
+    }
+  ],
+  "shots": [
+    "docs/shots/home/summary.json",
+    "docs/shots/home/default-phone-x2-morning.png",
+    "docs/shots/home/default-phoneSmall-x2-morning.png",
+    "docs/shots/home/default-desktop-x2-morning.png",
+    "docs/shots/home/default-phone-x3-morning.png",
+    "docs/shots/home/evening-phone-x2-evening.png",
+    "docs/shots/home/empty-persona-phone-x2-morning.png",
+    "docs/shots/home-crit-afternoon.png",
+    "docs/shots/home-crit-scrolled.png",
+    "docs/shots/home-crit-rm.png",
+    "docs/shots/home-crit-tile.json",
+    "docs/shots/home-crit-emptytile.json",
+    "docs/shots/home-crit-avatar.json",
+    "docs/shots/ref-home-mockup.png",
+    "docs/shots/ref-roadmap.png"
+  ],
+  "notes": "Full gauntlet: 50 shots, 0 failed, 0 console/page errors, 0 failed requests, slowest ready 1416ms. Measured in the DOM at phone x2: wordmark 700 16px ls -0.3, avatar 30px pill surface, greeting 600 30px/33px ls -0.5, hero 358x322 (4:3.6) radius 24 with the photoScrim, stack avatars 22px with 2px #101014 borders overlapping -8, play 42px white with 16px black filled glyph, title 600 20px/23px, meta 500 12.5px reading '7 people \u00b7 July 12\u201319' from data, rows radius 18 padding 9 gap 8 with 48px radius-12 thumbs, label 600 11px ls 0.4, line 400 13.5px, Latest 600 12px, tiles 114px radius 14 gap 8, 12px gap between blocks, 16px edge padding, all text rgb(255,255,255) opacity 1, Geist loaded, no accent, no emoji, copy bank strings verbatim. Side by side with the roadmap Home mockup the hero, stack, play, rows and tiles match to the pixel. Greeting verified for 09:00, 15:00 (own shot) and 21:00. Taps verified via window.__state: play -> recap isa_greece, hero and tile -> story with origin rect, avatar -> sheet 'profile'. Reduced-motion shot renders identically. What keeps it off 8.5 is not the styling but what the screen shows: the same Greece photo three times, the plus button parked on a Latest tile at full scroll, and an empty-persona screen that is mostly void with dead tiles. Two of the four majors (1, 2) need the integrator (homeOf, demo-world merge) and the contract issue (4) needs App to pass the person; the builder can fix 3 and can filter the hero out of Latest locally in the meantime. For the integrator: tools/shot.mjs --scroll is inert for every module because nothing carries [data-scroll]; .app-screen should. Not verified: the entry animation timing itself (only its CSS: 600ms var(--ease) translateY 12 + opacity, opacity-only under reduced motion).",
+  "updated": "2026-09-03T07:08:04Z"
+}

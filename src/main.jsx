@@ -1,8 +1,8 @@
-// tokens.css + app.css load BEFORE App so component sheets (imported inside
-// components) always cascade after the base type roles.
-import './styles/tokens.css'
-import './styles/app.css'
+// tokens.css loads before either app so component sheets cascade after the base.
+import './core/tokens.css'
 import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
 
-createRoot(document.getElementById('root')).render(<App />)
+// ?legacy=1 mounts the v2.5 surfaces (ARCHITECTURE.md: kept, no nav entry).
+const legacy = new URLSearchParams(location.search).get('legacy') === '1'
+;(legacy ? import('./legacy/LegacyApp.jsx') : import('./core/App.jsx'))
+  .then(({ default: App }) => createRoot(document.getElementById('root')).render(<App />))

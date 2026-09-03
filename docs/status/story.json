@@ -1,0 +1,86 @@
+{
+  "score": 8.0,
+  "round": 1,
+  "pass": false,
+  "errors": 0,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "text": "Signature animation scales the whole story page (header, hero, cards, its own ground) from the tile's top-left instead of growing the photo into the hero. At 150ms a 44% miniature page with a readable-sized header sits over the tile and its black ground already covers the neighbouring tile below (Grandma's laughter is half hidden by a black rectangle), so the tile photo never continues into the hero: the hero lands 30px lower than the tile photo it came from. Fix: animate only the hero image from origin (position/size, fixed radius 18 -> 20) while the header and the blocks below fade or slide in over the same 900ms; the page ground must not scale (paint it via the layer, opacity 0 -> 1). See docs/shots/critic/st-grow-150.png vs st-grow-450.png.",
+      "shot": "docs/shots/critic/st-grow-150.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "text": "Answering the question is a hard cut. Tapping Save collapses the 330px question card into a 100px 'Saved.' card instantly and the answer text card is inserted above the Related row, so the Related row jumps up 230px with no motion, then the 'Saved.' card vanishes after 2s with another cut. Spec 2.7: content moves, it does not pop. Keep the question card's box, swap its content to 'Saved.' in place (height transition 600ms var(--ease)), then collapse it with motion. docs/shots/critic/st-saved-300.png (Saved.) and st-saved-done.png (after).",
+      "shot": "docs/shots/critic/st-saved-300.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "text": "The saved answer reads as a stray sentence: 'We talked about the summer in Paros.' lands as an unlabeled surface card between the song row and the Related row, with no trace of the question it answers. In the shared story the same text block gets a 'Sam said' label, in the solo story nothing. Give answer moments a label (the question text at 11/600, or 'What you said' for the viewer's own text) and ask the integrator to place the answer after the song/related rows in storyOf so the story still ends on the person's words. docs/shots/critic/st-saved-done.png.",
+      "shot": "docs/shots/critic/st-saved-done.png"
+    },
+    {
+      "rank": 4,
+      "severity": "nit",
+      "text": "The 'You' chip and the 'You' photo badge render the initial 'I' on a surfaceDeep circle while the mockup shows a portrait; p5 Isabel has photo: null in src/data/personas.js and avatar_url null in the seed. Data task: give Isabel a portrait so You chips and badges match ref-story-4. docs/shots/story/shared-phone-x2-morning.png.",
+      "shot": "docs/shots/story/shared-phone-x2-morning.png"
+    },
+    {
+      "rank": 5,
+      "severity": "nit",
+      "text": "Photo pair gutter is 10px (.st-pair gap) while every other gap on the page is 12; the mockup uses the same gutter as the block gap. Set 12. docs/shots/story/shared-phone-x2-morning.png.",
+      "shot": "docs/shots/story/shared-phone-x2-morning.png"
+    },
+    {
+      "rank": 6,
+      "severity": "nit",
+      "text": "On phoneSmall the song line truncates to 'Ta Paidia tou Peiraia · Melina Merc…' because the 44px chevron hit target eats the row. Let the line wrap to two lines (or shrink the chevron's reserved width to 32) so the artist is never cut. docs/shots/story/shared-end-phoneSmall-x3-evening.png.",
+      "shot": "docs/shots/story/shared-end-phoneSmall-x3-evening.png"
+    },
+    {
+      "rank": 7,
+      "severity": "nit",
+      "text": "Labels (.st-lbl) use letter-spacing 0.5px; the label role in spec 2.3 is 0.4. Also the label/song text card line-height is 1.4 where body is 1.45. docs/shots/story/solo-phone-x2-morning.png.",
+      "shot": "docs/shots/story/solo-phone-x2-morning.png"
+    },
+    {
+      "rank": 8,
+      "severity": "nit",
+      "text": "The viewer has no close affordance, no position indicator and no badge naming who generated the photo; it is a bare contain-fit image on ground. A 32px surface close circle top right (like the recap) and a small '2 of 6' label would make it read as a shipped viewer. docs/shots/story/viewer-phone-x2-morning.png.",
+      "shot": "docs/shots/story/viewer-phone-x2-morning.png"
+    },
+    {
+      "rank": 9,
+      "severity": "nit",
+      "text": "Voice card play button on demo notes is a dead control (no src, tap does nothing, no feedback). Acceptable for demo data but spec 5.3 says the audio is real and playable; the seed should carry an audio file for at least the Marco and Jonas notes. docs/shots/critic/st-solo-tap-voiceplay.png.",
+      "shot": "docs/shots/critic/st-solo-tap-voiceplay.png"
+    }
+  ],
+  "shots": [
+    "docs/shots/story/solo-phone-x2-morning.png",
+    "docs/shots/story/shared-phone-x2-morning.png",
+    "docs/shots/story/shared-filtered-phone-x2-morning.png",
+    "docs/shots/story/viewer-phone-x2-morning.png",
+    "docs/shots/story/default-phoneSmall-x2-morning.png",
+    "docs/shots/story/default-desktop-x2-morning.png",
+    "docs/shots/story/shared-end-phoneSmall-x3-evening.png",
+    "docs/shots/critic/st-shared-scroll900.png",
+    "docs/shots/critic/st-shared-scroll1800.png",
+    "docs/shots/critic/st-shared-tap-elena.png",
+    "docs/shots/critic/st-solo-tap-song.png",
+    "docs/shots/critic/st-solo-save.png",
+    "docs/shots/critic/st-saved-300.png",
+    "docs/shots/critic/st-saved-done.png",
+    "docs/shots/critic/st-grow-150.png",
+    "docs/shots/critic/st-grow-450.png",
+    "docs/shots/critic/st-grow-done.png",
+    "docs/shots/critic/st-viewer-open.png",
+    "docs/shots/critic/st-solo-reduced.png",
+    "docs/shots/story/summary.json"
+  ],
+  "notes": "Full gauntlet: 70 shots, 0 failed, 0 console/page errors, 0 failed requests; slowest ready 1421ms (solo-phoneSmall-x3-morning). Static screens are very close to ref-story-3/4: header 22/600 + 12/500 with a 32px surface back circle, hero 358x235 radius 20, pairs radius 18, voice card with 32px play + WAVE bars + 0:19, 'What you said' 11/600, transcript 15.5/400, song row with 26px green Spotify mark, related row with three 34px radius-10 thumbs and '3 earlier nights with Marco', question card 26px surfaceDeep mic chip, 17/400 question, surfaceDeep pill input with mic + white Save. Shared: Everyone chip white/dark selected, avatar chips 22px, a chip cut at the right edge (scrollWidth 506 in a 390 row), Watch the story pill with 30px white play, scrim badges 16px avatar + 10/600 on every photo, 'Jonas said', 'Leo added the song', 'Elena's memories' meta on filter. All text rgb(255,255,255) opacity 1, icons stroke 1.5, copy bank strings verbatim, no emoji, no em dashes. Contract: props are exactly db personId id filter origin nav answer addMoment; imports only core, data/select.js, data/api.js, lib and its own folder; no window or localStorage writes (getSettings from lib is a read). Verified by script (tools/_critic/story-interact.mjs): grow animation is st-grow 0.9s cubic-bezier(0.4,0,0.2,1) from translate(tile)+scale(0.44); Save shows exactly 'Saved.', the question card is gone, the card disappears after 2s and the answer is a text moment; hero tap opens the viewer and a tap closes it; song tap reached findTrack and flipped to the green pause state. Images are 900px wide, no oversized assets; transferKB ~5.3MB is the Isabel photo set loaded by the tab screens under the story, not story-specific. NOT verified: hold-to-record answer path (no microphone headless), actual audio output of the Apple preview, deleted-memory state. Score 8.0: the static story is AAA, but the two moments that carry the product's feeling, the tile-to-story opening and answering the question, are a scaled miniature page and a hard layout cut respectively; fix ranks 1-3 and this passes.",
+  "updated": "2026-09-03T07:16:19Z"
+}

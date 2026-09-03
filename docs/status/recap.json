@@ -1,0 +1,74 @@
+{
+  "score": 7.5,
+  "round": 1,
+  "pass": false,
+  "errors": 0,
+  "issues": [
+    {
+      "rank": 1,
+      "severity": "major",
+      "text": "Quote beat legibility: the 20/600 white quote sits on a radial scrim (rgba(11,11,15,0.55) to 0 at 72%) that is only as big as the 342x94 text box, so on a bright photo the words land on raw sunset orange (background luminance up to 199/255 behind the top line, about 1.6:1 there; 5.6:1 at the median). Rule 5 says text on photos always sits on a scrim. Fix: while a quote beat plays, add a real middle band to the layer scrim (for example rgba(11,11,15,0.5) across the middle 40% of the height, 600ms in with the quote) or make the radial at least 2x the text box in both axes and 0.7 at center.",
+      "shot": "docs/shots/recap/quote-beat-phone-x3-evening.png"
+    },
+    {
+      "rank": 2,
+      "severity": "major",
+      "text": "Closing flashes beat 0: App renders the popped entry as a fresh <Recap> instance for the 600ms slide-out (layer(leaving) with key 'leaving'), so closing from beat 3 shows the tag-cover photo with an empty progress bar sliding away (shot taken 200ms after tapping close at beat 3), and in the real app the song lookup fires again (/__music requests went 2 to 4 on close) and a second looped Audio can start for 600ms. Owner: core App.jsx, keep the same element instance for the leaving layer (freeze the rendered node, do not re-call layer()). Recap-side mitigation if core will not change: do nothing on mount when the container has class leaving is not possible from props, so this needs the integrator.",
+      "shot": "docs/shots/recap-closing-200ms.png"
+    },
+    {
+      "rank": 3,
+      "severity": "major",
+      "text": "Reduced motion breaks the player: tokens.css's global `* { animation-duration: 0.01ms !important }` collapses the 900ms crossfade to a hard cut and snaps the current progress segment to fully played the moment a beat starts (at beat 1 the second bar reads as done, shot taken 5.3s in with reducedMotion: reduce). Spec 2.7 says movement becomes opacity-only, not removed. Owner: core (scope the rule to transforms, or exclude .rc-layer and .rc-progress b); the recap's own reduced-motion block is correct but cannot beat the !important.",
+      "shot": "docs/shots/recap-rm-mid.png"
+    },
+    {
+      "rank": 4,
+      "severity": "nit",
+      "text": "Spotify mark is faked: a 19px 1.5px line icon clipped inside a 15px green circle. At 3x you can see a dark ring around the disc edge and hairline waves instead of the solid green disc with bold dark bars in the reference (#i-spotify). Core should add a filled Spotify mark to Icons.jsx (the story song row needs it at 26px too); the recap then drops .rc-spot's clipping hack.",
+      "shot": "docs/shots/recap/quote-beat-phone-x3-morning.png"
+    },
+    {
+      "rank": 5,
+      "severity": "nit",
+      "text": "Caption pill hard-swaps its name and avatar the instant a beat changes while the photo behind it is still 900ms into its dissolve (mid-crossfade shot shows 'Elena' over a 55% blended Greece/New York frame). Let the caption move with the content: either key the pill per beat and give it the same 12px rise as the quote, or delay the swap to the crossfade midpoint.",
+      "shot": "docs/shots/recap-crossfade-mid.png"
+    },
+    {
+      "rank": 6,
+      "severity": "nit",
+      "text": "Progress fill has a square leading edge inside a 2px-radius track (visible at 3x on the fifth segment). Round the fill (border-radius: inherit) or clip with the track's radius on both ends.",
+      "shot": "docs/shots/recap/quote-beat-phone-x3-morning.png"
+    },
+    {
+      "rank": 7,
+      "severity": "nit",
+      "text": "Dead air: beat 2 of the Greece recap is 32 seconds on one still photo with a demo voice that has no audio and no transcript shown, half of the 67s film. The brief allowed it, so this is for the data owner: cap a demo-voice beat at 8s in the seed or recapOf, or let the recap show the transcript as the quote when voice.src is null.",
+      "shot": "docs/shots/recap/default-phone-x2-morning.png"
+    },
+    {
+      "rank": 8,
+      "severity": "nit",
+      "text": "Isabel's caption avatar is a dark surface disc with an initial (persona p5 has photo: null) sitting on the scrim pill, which reads flatter than the reference's photo avatar. Data owner: give p5 an avatar_url in the Isabel space. Also, photos are 823x900 and are upscaled about 1.9x on a 2x phone (and further by the 1.08 zoom), so beat 0 looks soft; 1200px-tall seed assets would fix it.",
+      "shot": "docs/shots/recap/default-phone-x2-morning.png"
+    }
+  ],
+  "shots": [
+    "docs/shots/recap/default-phone-x2-morning.png",
+    "docs/shots/recap/quote-beat-phone-x2-morning.png",
+    "docs/shots/recap/marco-phone-x2-morning.png",
+    "docs/shots/recap/default-phoneSmall-x2-morning.png",
+    "docs/shots/recap/default-desktop-x2-morning.png",
+    "docs/shots/recap/quote-beat-phone-x3-evening.png",
+    "docs/shots/recap/quote-beat-phoneSmall-x2-morning.png",
+    "docs/shots/recap/marco-desktop-x2-evening.png",
+    "docs/shots/recap-crossfade-mid.png",
+    "docs/shots/recap-closing-200ms.png",
+    "docs/shots/recap-rm-mid.png",
+    "docs/shots/recap-quote-probe.png",
+    "docs/shots/ref-recap.png",
+    "docs/shots/ref-roadmap.png"
+  ],
+  "notes": "Gauntlet: 30 shots, 0 failed, 0 console/page errors, 0 failed requests, ready 919 to 1249ms (docs/shots/recap/summary.json). Contract: props db id nav onClose as in ARCHITECTURE 5; imports only react, core (Avatar, Icons), data/select, data/api, lib/photos, own folder; no localStorage/window writes (it reads location.search at module scope for showcase freezing, a read only). Verified by my own Playwright probes: progress 2.5px gap 4 white 0.35 / played #fff, current fill linear over the beat via CSS animation; close 32px surface circle with an 18px 1.5px Close; caption 24px avatar + 13/600 Geist on rgba(11,11,15,0.66); credit 10.5/600 letter-spacing 0.6 with a 15px green mark, Spotify green used nowhere else; photo object-fit cover with a 1.0 to 1.08 zoom on the beat length with the one ease; a true two-layer 900ms dissolve (mid frame at opacity 0.55, under layer held at 1.08); tap right advanced 1->2->3, tap left went back, center did nothing; the 8-beat Greece recap ended by itself after 67s with no end card; close pops the stack. Quote beat: 20/600 white centered, two lines, 4-line clamp, enters with a 12px rise. Copy: only names and 'Title · Artist', no emoji, no em dashes. Colors: scrim gradient matches the reference player exactly, ground #101014 behind. Not verified: real song playback and ducking (iTunes CDN unreachable from the sandbox, the player runs silent as specified), video beats (none in the seed), voice beats with real audio (none in the seed). Score 7.5: the mechanics and layout match the mockup closely and it runs clean, but the quote beat fails the scrim rule on bright photos and the exit/reduced-motion behaviour, both rooted in core, are visible defects in this module's experience; not a pass until rank 1 is fixed and the two core issues are resolved or scoped around.",
+  "updated": "2026-09-03T07:16:49Z"
+}

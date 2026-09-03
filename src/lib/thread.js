@@ -3,7 +3,7 @@
 // pushed to the api.js thread backend, and syncThread() merges the two on
 // load. See src/lib/SCHEMA.md for the message model and the merge rule.
 
-import { loadThreadRemote, upsertThreadMsg, upsertThreadMsgs } from './api.js'
+import { loadThreadRemote, upsertThreadMsg, upsertThreadMsgs } from '../data/api.js'
 
 const KEY = (personId) => `memmory.thread.${personId}`
 

@@ -16,7 +16,7 @@
 // field-evidence bug tagged a memory with it because the model was free to
 // invent chips. Anything outside the list is dropped, never mapped.
 
-import { ask } from './api.js'
+import { ask } from '../data/api.js'
 
 export const FEELINGS = [
   'Calm', 'Grateful', 'Happy', 'Excited', 'Proud', 'Cozy', 'Nostalgic', 'Sad',

@@ -6,6 +6,7 @@ export const REGISTRY = [
   { id: 'p2', name: 'Maya' },
   { id: 'p3', name: 'Simon Akkerman', aliases: ['simon a', 'simon akkerman'] },
   { id: 'p4', name: 'Simon Gullstrøm', aliases: ['simon g', 'simon gullstrom', 'simon gullstrøm'] },
+  { id: 'p5', name: 'Isabel' },
 ]
 
 export const firstName = name => name.split(' ')[0]

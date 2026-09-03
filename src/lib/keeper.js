@@ -11,7 +11,7 @@ import {
   NUDGE_CHECK_IN, CHECK_IN_VARIANTS, NUDGE_WORKOUT,
   NUDGE_KNOWN_PLACE, NUDGE_LONG_DWELL, COACHING_PROMPT, ON_THIS_DAY_LABEL,
   QUICK_REPLY_KEEP, QUICK_REPLY_LATER, QUICK_REPLY_ANSWER,
-} from './copy.js'
+} from '../core/copy.js'
 import { whenToTs } from './thread.js'
 
 // Rotation bank for check-ins: never repeat a question within a week.
