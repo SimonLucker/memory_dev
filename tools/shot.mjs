@@ -22,7 +22,16 @@ const flag = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] 
 const has = k => args.includes(k)
 const target = args.find(a => !a.startsWith('--') && !args.includes(`--${a}`) && (args.indexOf(a) === 0 || !args[args.indexOf(a) - 1].startsWith('--')))
 const base = process.env.SHOT_BASE || 'http://127.0.0.1:5173'
-const url = target?.startsWith('http') ? target : base + (target || '/')
+const url = target?.startsWith('http') || target?.startsWith('file:') ? target : base + (target || '/')
+// The dev server dies when the container idles; bring it back rather than fail every shot.
+if (!url.startsWith('file:')) {
+  const up = async () => fetch(base).then(r => r.ok).catch(() => false)
+  if (!(await up())) {
+    const { spawn } = await import('node:child_process')
+    spawn('npx', ['vite', '--port', '5173', '--host', '127.0.0.1'], { detached: true, stdio: 'ignore' }).unref()
+    for (let i = 0; i < 40 && !(await up()); i++) await new Promise(r => setTimeout(r, 500))
+  }
+}
 
 const VP = { phone: [390, 844], phoneSmall: [360, 780], phoneLarge: [430, 932], desktop: [1280, 900] }
 const vpArg = flag('--vp', 'phone')
