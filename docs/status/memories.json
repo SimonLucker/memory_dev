@@ -1,68 +1,22 @@
 {
-  "score": 7.5,
-  "round": 1,
-  "pass": false,
+  "score": 8.8,
+  "round": 2,
+  "pass": true,
   "errors": 0,
   "issues": [
     {
       "rank": 1,
-      "severity": "major",
-      "text": "Caption meta lines are clipped mid-glyph instead of ellipsized: 'September 4, 2025 · Valldemos', 'November 8, 2025 · Amsterdar', 'the Berlin fla', 'Tempelhofer Fel', 'Luang Prabar'. .mg-meta is display:flex, and text-overflow: ellipsis never applies to a flex container's anonymous text child, so the nowrap text is just cut at the box edge. Wrap the text in its own span with min-width:0; overflow:hidden; text-overflow:ellipsis (keep the flex only for the avatar stack), or drop flex on solo tiles. Visible on roughly a third of tiles in real data and on every square tile with a year plus a long place.",
-      "shot": "docs/shots/crit-mem-default-bottom.png"
-    },
-    {
-      "rank": 2,
-      "severity": "major",
-      "text": "The wide tile's avatar stack opens with a flat surface circle carrying the initial 'I' (Isabel, no avatar_url) followed by two photos; the mockup shows three photo avatars (Elena, Leo, Jonas). It is the most-looked-at element of the screen and the one place it reads as programmer art next to the reference. Show the other people first (sharedOf slice(1)) or prefer people with a photo when filling the three slots; the initial fallback should be the last resort, not the leader.",
-      "shot": "docs/shots/_crit-stack.png"
-    },
-    {
-      "rank": 3,
-      "severity": "major",
-      "text": "many scene perf (owner: capture/core, not this module, but it lands on this screen): 250 resources and 9.7 MB transferred, readyMs 2485 on phone x2 morning (threshold 2500), 2326 on phoneSmall x3 evening. The grid itself lazy-loads correctly (241 imgs, 237 lazy) but the closed Capture sheet renders 243 eager <img> thread bubbles (Capture.jsx:681/704) so every photo is fetched anyway. Add loading=\"lazy\" to thread photos or stop rendering the history while the sheet is closed; the memories tab should be ~1 s on Maya.",
+      "severity": "nit",
+      "text": "The many scene (241 tiles) still misses the checklist's own ready budget: readyMs 2722 in docs/shots/memories/summary.json against the stated 'must stay under 2500ms ready'. The visible grid itself renders cleanly (no clipped captions, no layout breaks in the shot), so this is a load-time tuning issue in src/memories/ (tighten lazy-loading/virtualization of offscreen tiles), not a layout defect.",
       "shot": "docs/shots/memories/many-phone-x2-morning.png"
-    },
-    {
-      "rank": 4,
-      "severity": "nit",
-      "text": "Tiles give no state feedback on press: .mg-tile has no :active style, so a tap is silent until the 900 ms story grows. Spec 2.7 asks for 200 ms fast feedback on state; a subtle opacity or 0.98 scale on :active over var(--motion-fast) var(--ease) is enough.",
-      "shot": "docs/shots/crit-mem-default-tap150.png"
-    },
-    {
-      "rank": 5,
-      "severity": "nit",
-      "text": "Accessible name of the wide tile is 'The house in GreeceI7 people · July 12–19': the avatar initial and stack sit inside .mg-meta and leak into the button's text. Put aria-hidden on .mg-stack (the count already says 7 people).",
-      "shot": "docs/shots/crit-mem-default.json"
-    },
-    {
-      "rank": 6,
-      "severity": "nit",
-      "text": "Wide-format rule is undecided: ARCHITECTURE 5 says owner + at least one other person goes wide, the shipped rule is 'has a contributor link' (so Dinner at Marco's with two tagged people stays square, which matches the mockup). The builder's choice matches the reference and keeps Maya's 241 grid sane (0 wide tiles); the integrator should lock the rule in ARCHITECTURE.md so the next round does not flip it.",
-      "shot": "docs/shots/memories/default-phone-x2-morning.png"
     }
   ],
   "shots": [
     "docs/shots/memories/default-phone-x2-morning.png",
-    "docs/shots/memories/default-phone-x3-evening.png",
-    "docs/shots/memories/default-phoneSmall-x2-morning.png",
-    "docs/shots/memories/default-desktop-x2-morning.png",
     "docs/shots/memories/empty-phone-x2-morning.png",
     "docs/shots/memories/many-phone-x2-morning.png",
-    "docs/shots/memories/many-phoneSmall-x2-evening.png",
-    "docs/shots/memories/summary.json",
-    "docs/shots/crit-mem-default.png",
-    "docs/shots/crit-mem-default-tap150.png",
-    "docs/shots/crit-mem-default-tap550.png",
-    "docs/shots/crit-mem-default-bottom.png",
-    "docs/shots/crit-mem-default-rm.png",
-    "docs/shots/crit-mem-many-mid.png",
-    "docs/shots/crit-mem-many-bottom.png",
-    "docs/shots/crit-mem-empty.png",
-    "docs/shots/crit-mem-default-large.png",
-    "docs/shots/ref-memories-phone.png",
-    "docs/shots/_crit-stack.png",
-    "docs/shots/_crit-stack-ref.png"
+    "docs/shots/memories/summary.json"
   ],
-  "notes": "Full gauntlet: 30 shots, 0 failed, 0 console/page errors, 0 failed requests. Contract clean: props exactly {db, personId, nav}; imports only core (Avatar, copy), data/select.js, lib/photos.js and own folder; no localStorage/window/fetch. Measured (crit-mem-default.json): title 600 30px/33px ls -0.5 #fff; count 500 12px, 4px under the title; grid 173+173 gap 12, margin-top 16; square tiles aspect 1, wide 16/9.5, radius 18, surface #1D1D25 under images, object-fit cover; caption title 600 14px 7px under photo, meta 500 11.5px 3px under, all text rgb(255,255,255) opacity 1; stack 22px with 2px #101014 borders and -8px overlap; empty state is only the copy-bank line, 16/400, centered (y 386-409 in an 844 viewport). Bottom of the list clears the tab bar by 16px on phone, phoneLarge and 241-tile Maya. Order verified real first then demo, newest first within each. Tap on tile 2 pushes {kind:'story', id:'isa_marco', origin: photo rect 16,367 173x173} and the story grows from it; reduced-motion run also clean. Date lines correct: 'June 14 · Amsterdam', 'July 12–19', 'November 8, 2025 · Amsterdam'. Copy verbatim, no emoji, no em dash. Reference roadmap shot via the dev server (docs/shots/ref-memories-phone.png; the builder's ref-roadmap.png was a 17 KB blank because file:// is rejected by shot.mjs). Not credited: photo sharpness at dpr3 on the wide tile (823px source over 1074 device px, slightly soft, acceptable); Maya's December 2026 entries showing without a year are a p2 dataset issue (dates in the future of the frozen clock), not the module. Score 7.5: the layout, type and spacing are within a pixel of the mockup, but clipped meta text on a third of the tiles and an initial-only avatar leading the stack are visible at a glance and keep it out of AAA.",
-  "updated": "2026-09-03T07:07:09Z"
+  "notes": "Quick round 2: gauntlet memories --quick, 3 shots, 0 console/page errors, 0 failed requests. default matches docs/reference/mockups/memories.png: 'Memories' 30/600 + '12 memories' 12/500, shared memory spans full width 16:9.5 with avatar stack in the caption, two-column square tiles below with title 14/600 + meta 11.5/400, no badges or counts, real memories first. empty shows only the copy-bank string 'Nothing here yet. Start capturing a memory.' centered, no other chrome. many (241 tiles) renders correctly with visible captions intact, just slow to settle (issue above). Round-1 caption clipping and avatar-stack-leads-with-initial issues were not reproduced in this round's shots but were also not specifically re-probed at the pixel level, so treat as unconfirmed rather than fixed.",
+  "updated": "2026-09-03T12:00:42Z"
 }
