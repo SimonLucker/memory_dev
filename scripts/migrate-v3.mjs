@@ -52,8 +52,15 @@ const now = new Date().toISOString()
 const users = PERSONS.map(p => ({ id: p.id, name: p.name, first_name: p.name.split(' ')[0], avatar_url: null, is_user: true, space_id: p.id }))
 const out = { people: [...users], memories: [], memory_people: [], moments: [], questions: [], recaps: [] }
 
+// Before 0001_v3.sql has run the v2 rows still live in "memories"; a dry run
+// may read them from there so the counts can be checked before any DDL.
+const v2table = await get('memories_v2?select=id&limit=1').then(() => 'memories_v2').catch(() => {
+  if (!dry) throw new Error('memories_v2 not found: run supabase/migrations/0001_v3.sql first')
+  console.log('memories_v2 not found, dry run reads the v2 rows from "memories"')
+  return 'memories'
+})
 for (const p of PERSONS.slice(0, 4)) {
-  const rows = await get(`memories_v2?person_id=eq.${p.id}&select=data&order=id.asc`)
+  const rows = await get(`${v2table}?person_id=eq.${p.id}&select=data&order=id.asc`)
   for (const { data } of rows) {
     const r = fromV2(data, p.id, now)
     out.memories.push(r.memory); out.moments.push(...r.moments)
