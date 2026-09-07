@@ -38,7 +38,8 @@ export function fromV2(v2, ownerId, now = new Date().toISOString()) {
   const startsAt = whenToIso(v2.when)
   const memory = {
     id: v2.id, owner_id: ownerId, title: v2.what || '', place: v2.where || '',
-    starts_at: startsAt, ends_at: null, about: v2.about || '', class: v2.class || null,
+    starts_at: startsAt, ends_at: null,
+    about: v2.about || [v2.summary, v2.why].filter(Boolean).join(' '), class: v2.class || null,
     feeling: v2.feeling || [], music: v2.music || null, importance: v2.importance ?? null,
     cover_moment_id: null, favorite: Boolean(v2.favorite), demo: false, legacy,
     created_at: now, updated_at: now,

@@ -47,6 +47,9 @@ export function useNav(initial = LAUNCH, mirrorHash = true) {
       openProfile: () => set(s => ({ ...s, sheet: 'profile' })),
       closeSheet: () => set(s => ({ ...s, sheet: null })),
       setTab: tab => set(s => ({ ...s, tab })),
+      // Back to the grid from anywhere: App wraps this as showPerson(id), which
+      // also sets the Memories filter (section 3).
+      showMemories: () => set(s => ({ ...s, tab: 'memories', stack: [], sheet: null })),
       // Persona switch (Profile): clears the stack, the sheet closes itself.
       setPerson: personId => set(s => ({ ...s, personId, stack: [], sheet: null })),
     }

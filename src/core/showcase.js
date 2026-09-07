@@ -15,5 +15,6 @@ export function readShowcase(search = location.search) {
   const persona = q.get('persona') || s.persona || 'p5'
   const now = new Date(q.get('now') || s.now || '2026-09-04T09:00')
   if (!scenes[scene]) console.warn(`showcase: no scene "${scene}" in ${module}/showcase.js`)
-  return { module, scene, now, persona, state: { ...LAUNCH, tab: s.tab || 'home', stack: s.stack || [], sheet: s.sheet || null, personId: persona } }
+  // `filter` seeds the Memories grid filter (App), so a scene can show it filtered.
+  return { module, scene, now, persona, filter: s.filter || null, state: { ...LAUNCH, tab: s.tab || 'home', stack: s.stack || [], sheet: s.sheet || null, personId: persona } }
 }

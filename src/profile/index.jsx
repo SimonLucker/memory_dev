@@ -3,7 +3,7 @@
 // switches, privacy, sign out, viewing-as. Props are the whole contract.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './profile.css'
-import { AppleMusic, ChevronDown, ChevronLeft, Spotify } from '../core/Icons.jsx'
+import { AppleMusic, ChevronDown, ChevronLeft, ChevronRight, Spotify } from '../core/Icons.jsx'
 import Avatar, { useAvatarSrc } from '../core/Avatar.jsx'
 import { setAvatar, uploadAvatar } from '../lib/avatar.js'
 import { photoSrc } from '../lib/photos.js'
@@ -75,19 +75,25 @@ function Gauge({ memories, now }) {
   )
 }
 
-const PersonRow = ({ p }) => (
-  <div className="pf-row">
-    <Avatar size={26} person={{ id: p.id, name: p.name, photo: photoSrc(p.avatar_url) }} />
-    <span className="t-body pf-grow">{p.name}</span>
-    <span className="t-label">{p.count}</span>
-  </div>
-)
+const PersonRow = ({ p, nav }) => {
+  const handleClick = () => {
+    if (nav) nav.showPerson(p.id)
+  }
+  return (
+    <button className="pf-row pf-person" onClick={handleClick}>
+      <Avatar size={26} person={{ id: p.id, name: p.name, photo: photoSrc(p.avatar_url) }} />
+      <span className="t-body pf-grow">{p.name}</span>
+      <span className="t-label">{p.count}</span>
+      <ChevronRight size={20} />
+    </button>
+  )
+}
 
 const Switch = ({ on, label, onChange }) => (
   <button className={on ? 'pf-switch on' : 'pf-switch'} role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} />
 )
 
-export default function Profile({ person, persons, db, onClose, switchPerson, settings, setSetting, now = new Date() }) {
+export default function Profile({ person, persons, db, nav, onClose, switchPerson, settings, setSetting, now = new Date() }) {
   const [view, setView] = useState('main') // 'main' | 'people'
   const [editing, setEditing] = useState(null) // question index being edited
   const [draft, setDraft] = useState('')
@@ -135,7 +141,7 @@ export default function Profile({ person, persons, db, onClose, switchPerson, se
           <span className="pf-title">{C.people}</span>
           <span className="pf-close pf-ghost" />
         </header>
-        {people.map(p => <PersonRow key={p.id} p={p} />)}
+        {people.map(p => <PersonRow key={p.id} p={p} nav={nav} />)}
       </div>
     )
   }
@@ -176,7 +182,7 @@ export default function Profile({ person, persons, db, onClose, switchPerson, se
       {people.length > 0 && (
         <>
           <p className="t-label pf-label">{C.topPeople}</p>
-          {people.slice(0, 3).map(p => <PersonRow key={p.id} p={p} />)}
+          {people.slice(0, 3).map(p => <PersonRow key={p.id} p={p} nav={nav} />)}
           {people.length > 3 && (
             <button className="pf-link pf-viewall t-label" onClick={() => setView('people')}>{C.viewAll}</button>
           )}

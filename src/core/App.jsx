@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './app.css'
 import { useNav } from './nav.js'
+import { primeAudio, stopPreview } from './audio.js'
 import { readShowcase } from './showcase.js'
 import { markLoaded, markReady } from './ready.js'
 import TabBar from './TabBar.jsx'
@@ -54,15 +55,23 @@ const mint = pid => `${pid}_${Date.now().toString(36)}${Math.random().toString(3
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
 export default function App() {
-  const { state, nav } = useNav(LAUNCH, !SHOWCASE)
+  const { state, nav: navBase } = useNav(LAUNCH, !SHOWCASE)
   const { personId, tab, stack, sheet } = state
   const person = PERSONS.find(p => p.id === personId) || PERSONS[0]
   const now = useNow()
+
+  // Memories filter lives here so any screen can point the grid at one person.
+  const [memFilter, setMemFilter] = useState(SHOWCASE?.filter || {})
+  const nav = useMemo(() => ({
+    ...navBase,
+    showPerson: id => { setMemFilter({ people: [id] }); navBase.showMemories() },
+  }), [navBase])
 
   // The bundled space paints first; loadSpace replaces what it knows about.
   const [db, setDb] = useState(() => bundledSpace(personId))
   useEffect(() => {
     setDb(bundledSpace(personId))
+    stopPreview()
     if (SHOWCASE) return markLoaded()
     let live = true
     api.loadSpace(personId)
@@ -142,17 +151,27 @@ export default function App() {
     return moment
   }
 
-  // Pushed layers: a popped entry lingers PUSH_MS so it can slide out.
+  // Pushed layers: a popped entry lingers PUSH_MS so it can slide out. A push
+  // that lands inside that window used to cancel the timeout and strand the
+  // leaving layer over the app for good, so every run clears it, pop or not.
   const [leaving, setLeaving] = useState(null)
   const prevStack = useRef(stack)
   useEffect(() => {
     const prev = prevStack.current
     prevStack.current = stack
-    if (prev.length <= stack.length) return
-    setLeaving(prev[prev.length - 1])
+    const popped = prev.length > stack.length
+    if (popped) stopPreview()
+    setLeaving(popped ? prev[prev.length - 1] : null)
+    // The iOS keyboard leaves the window scrolled under the fixed shell, which
+    // moves every hit target off its pixels until the page is put back.
+    if (window.scrollY) window.scrollTo(0, 0)
     const t = setTimeout(() => setLeaving(null), PUSH_MS)
     return () => clearTimeout(t)
   }, [stack])
+
+  // Same restore after the Capture sheet: its text field raises the iOS
+  // keyboard, and Safari scrolls the window to reveal it.
+  useEffect(() => { if (!sheet && window.scrollY) window.scrollTo(0, 0) }, [sheet])
 
   const layer = e => {
     if (e.kind === 'story') return <Story db={db} personId={personId} id={e.id} filter={e.filter || null} origin={e.origin} nav={nav} answer={answer} addMoment={addMoment} />
@@ -166,12 +185,15 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="phone">
+      {/* The first tap buys the audio element its autoplay permission
+          (audio.js). primeAudio is idempotent, so no state and no re-render
+          during a pointerdown, which is what swallows the tap that caused it. */}
+      <div className="phone" onPointerDownCapture={primeAudio}>
         <section className="app-screen" hidden={tab !== 'home'}>
           <Home db={db} personId={personId} now={now} nav={nav} />
         </section>
         <section className="app-screen" hidden={tab !== 'memories'}>
-          <Memories db={db} personId={personId} nav={nav} />
+          <Memories db={db} personId={personId} nav={nav} filter={memFilter} setFilter={setMemFilter} />
         </section>
 
         {stack.map((e, i) => (
@@ -188,7 +210,7 @@ export default function App() {
 
         {profileMounted && (
           <div className={`sheet sheet-profile${sheet === 'profile' ? ' open' : ''}`}>
-            <Profile person={person} persons={PERSONS} db={db} memories={memoriesV2} onClose={nav.closeSheet}
+            <Profile person={person} persons={PERSONS} db={db} memories={memoriesV2} nav={nav} onClose={nav.closeSheet}
               switchPerson={nav.setPerson} settings={settings} setSetting={setSetting} />
           </div>
         )}

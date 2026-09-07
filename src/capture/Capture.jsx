@@ -809,7 +809,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
             </span>
           </div>
         )}
-        <div className={`cap-bar${rec ? ' recording' : ''}`}>
+        <div className={`cap-bar${rec ? ' recording' : ''}${bigButtons ? ' no-icons' : ''}`}>
           {rec ? (
             <>
               <span className={`rec-dot${rec.cancel ? ' cancel' : ''}`} />
@@ -822,9 +822,11 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
             </>
           ) : (
             <>
-              <button className="bar-icon" aria-label="Camera" {...camProps}>
-                <Camera size={22} />
-              </button>
+              {!bigButtons && (
+                <button className="bar-icon" aria-label="Camera" {...camProps}>
+                  <Camera size={22} />
+                </button>
+              )}
               <input ref={inputRef} className="cap-field" value={text}
                 placeholder={INPUT_PLACEHOLDER}
                 onChange={e => setText(e.target.value)}
@@ -837,7 +839,7 @@ export default function Capture({ person, memories, addMemory, openMemory, updat
               onPointerLeave={() => { clearTimeout(sendTimer.current); sendTimer.current = null }}>
               <Send size={22} />
             </button>
-          ) : (
+          ) : !bigButtons && (
             <button className={`bar-icon swap-in${armed ? ' armed' : ''}`}
               aria-label="Record a voice note" {...micProps}>
               <Mic size={22} />

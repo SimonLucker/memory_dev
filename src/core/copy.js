@@ -15,6 +15,9 @@ export const SEE_ALL = 'See all'
 export const MEMORIES_TITLE = 'Memories'
 export const MEMORIES_COUNT = n => `${n} ${n === 1 ? 'memory' : 'memories'}`
 export const MEMORIES_EMPTY = 'Nothing here yet. Start capturing a memory.'
+export const MEMORIES_FILTERED_COUNT = (n, total) => `${n} of ${total} memories`
+export const MEMORIES_NO_MATCH = 'No memories match that.'
+export const CLEAR_FILTER = 'Clear'
 export const TRANSCRIPT_LABEL = 'What you said'
 export const TRANSCRIBING = 'Listening…'
 export const VOICE_OTHER = name => `${name} said`

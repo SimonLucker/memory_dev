@@ -93,6 +93,12 @@
 }
 .pf-row .app-avatar { background: var(--pf-cream); color: var(--dawn-text); }
 .pf-row .t-body { font-weight: 500; }
+.pf-person {
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  text-align: left;
+}
 
 /* The numbers, big */
 .pf-numbers { display: flex; margin-top: var(--space-md); padding: var(--space-md); }

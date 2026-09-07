@@ -10,12 +10,14 @@ import {
   ANSWER_PLACEHOLDER, ANSWER_ACTION, ANSWERED, RECAP_BUTTON, EVERYONE, FILTERED_HEADING,
   FILTERED_HEADING_YOU, DELETED_MEMORY,
 } from '../core/copy.js'
-import { storyOf, momentsOf } from '../data/select.js'
+import { storyOf, momentsOf, recapOf } from '../data/select.js'
 import { findTrack, appleMusicSearchUrl, uploadAudio } from '../data/api.js'
 import { photoSrc, onPhotoError } from '../lib/photos.js'
 import { WAVE, fmtDur } from '../lib/thread.js'
 import { startRecording, transcribe } from '../lib/voice.js'
 import { getSettings } from '../lib/settings.js'
+import { playPreview } from '../core/audio.js'
+import { readShowcase } from '../core/showcase.js'
 import { dateLine, composeFiltered, relatedLine } from './compose.js'
 
 export { default as Viewer } from './Viewer.jsx'
@@ -86,24 +88,40 @@ function Voice({ m, person, personId }) {
 // Text card: an answer is labelled with its question, own words "What you said", others "Sam said".
 function Text({ m, person, personId, question }) {
   const label = question ? question.text : !person || person.id === personId ? TRANSCRIPT_LABEL : VOICE_OTHER(first(person.name))
+  // The migrated v2 story text (memory.about) is the memory's own narrative, not a
+  // second transcript: it shows without a label so two "What you said" cards never stack.
+  const about = m.id.endsWith('_about')
   return (
     <div className="st-card">
-      <p className="st-lbl">{label}</p>
+      {!about && <p className="st-lbl">{label}</p>}
       <p className="st-txt">{m.text || m.transcript}</p>
     </div>
   )
 }
 
-// Song row: Spotify look, the Apple 30s preview plays inline on tap, the chevron opens the track.
+// Song row: Spotify look. Its preview autoplays on open (the phone shell
+// primes the shared audio element on the first tap) unless in showcase mode,
+// where no network call is made at all. Tapping the row toggles pause/resume.
 function Song({ music, people, personId }) {
   const [info, setInfo] = useState(null)
   const [playing, setPlaying] = useState(false)
-  const audio = useRef(null)
-  useEffect(() => { if (info?.previewUrl) audio.current?.play().catch(() => {}) }, [info])
+  const stopRef = useRef(null)
+  useEffect(() => {
+    if (readShowcase()) return
+    let alive = true
+    findTrack(music).then(t => alive && setInfo(t?.previewUrl ? t : { missing: true }))
+    return () => { alive = false }
+  }, [music])
+  useEffect(() => {
+    if (!info?.previewUrl) return
+    stopRef.current = playPreview(info.previewUrl, { volume: 0.6 })
+    setPlaying(true)
+    return () => { stopRef.current?.stop(); stopRef.current = null }
+  }, [info])
   const toggle = () => {
-    const a = audio.current
-    if (a) return a.paused ? a.play().catch(() => {}) : a.pause()
-    if (!info) findTrack(music).then(t => setInfo(t?.previewUrl ? t : { missing: true }))
+    if (!info?.previewUrl) return
+    if (playing) { stopRef.current?.stop(); stopRef.current = null; setPlaying(false) }
+    else { stopRef.current = playPreview(info.previewUrl, { volume: 0.6 }); setPlaying(true) }
   }
   const spotify = getSettings(personId).musicService !== 'apple'
   const url = spotify
@@ -120,7 +138,6 @@ function Song({ music, people, personId }) {
         </span>
       </button>
       <a className="st-open" href={url} target="_blank" rel="noreferrer" aria-label="Open"><ChevronRight size={18} /></a>
-      {info?.previewUrl && <audio ref={audio} src={info.previewUrl} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => setPlaying(false)} />}
     </div>
   )
 }
@@ -273,6 +290,13 @@ export default function Story({ db, personId, id, filter: initial, origin, nav, 
     }
   }
 
+  const hasRecap = recapOf(db, id).length > 0
+  const recap = hasRecap && (
+    <button className="st-recap" onClick={() => nav.openRecap(id)}>
+      <span className="st-play st-play-30"><Play size={12} fill="#000" stroke="none" /></span>{RECAP_BUTTON}
+    </button>
+  )
+
   return (
     <div className="st" ref={root} data-scroll>
       <div className="st-head">
@@ -282,6 +306,7 @@ export default function Story({ db, personId, id, filter: initial, origin, nav, 
           <p className="st-meta">{meta}</p>
         </div>
       </div>
+      {!shared && recap}
       {shared && (
         <>
           <div className="st-people">
@@ -292,9 +317,7 @@ export default function Story({ db, personId, id, filter: initial, origin, nav, 
               </button>
             ))}
           </div>
-          <button className="st-recap" onClick={() => nav.openRecap(id)}>
-            <span className="st-play st-play-30"><Play size={12} fill="#000" stroke="none" /></span>{RECAP_BUTTON}
-          </button>
+          {recap}
         </>
       )}
       {blocks.map(render)}

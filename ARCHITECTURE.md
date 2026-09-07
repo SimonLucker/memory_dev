@@ -51,7 +51,8 @@ state = {
 ```
 
 - Launch is always `tab: 'home'`, empty stack, no sheet. Never the chat.
-- `nav` API handed to every module as props (no context, no router library): `openStory(id, originRect?)`, `openViewer(id, index)`, `openRecap(id)`, `back()`, `openCapture()`, `closeSheet()`, `openProfile()`, `setTab(name)`.
+- `nav` API handed to every module as props (no context, no router library): `openStory(id, originRect?)`, `openViewer(id, index)`, `openRecap(id)`, `back()`, `openCapture()`, `closeSheet()`, `openProfile()`, `setTab(name)`, `showMemories()`, `showPerson(personId)`.
+- `showPerson(personId)` is the one nav call that also writes screen state: it sets the Memories filter to `{ people: [personId] }`, then `showMemories()` (closes the sheet, empties the stack, tab `memories`). The filter itself lives in `App` and reaches the grid as `<Memories filter setFilter />` (`filter` defaults to `{}`, shape `{ people?: string[], q?: string }`); `setFilter` lets the grid clear or widen it.
 - URL hash mirrors the top of the stack for deep links and screenshots: `#/memory/:id`, `#/recap/:id`, `#/memories`, `#/capture`, `#/profile`. On load the hash is applied once. Nothing else is routed.
 - Tab bar (`core/TabBar.jsx`): Home (house icon) · raised capture button (54px white circle, black plus, lifted 22px, shadow `0 8px 18px rgba(0,0,0,0.45)`) · Memories (grid icon). Labels 11/600, active tab 4px dot beneath. Hairline `rgba(255,255,255,0.14)` on the top edge only. Hidden while the stack is non-empty or a sheet is open. Height `56px + env(safe-area-inset-bottom)`; screens pad their bottom by the same amount (`--tabbar-h`).
 - Pushes slide in from the right in 600ms `var(--ease)`; `back()` reverses. The story opened from a tile is the signature 900ms animation: the story module receives `origin` (the tile's rect) and grows from it (transform scale + translate from the rect to full column, hero photo fading from the tile). Reduced motion: opacity only.

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-03T12:02:29.930Z",
+  "updated": "2026-09-07T08:43:13.997Z",
   "passThreshold": 8.5,
   "modules": {
     "core": {
@@ -47,7 +47,7 @@
         "docs/shots/int-p1.png",
         "docs/shots/home/summary.json"
       ],
-      "notes": "Wave 0 integration: build clean (0 warnings), no shim, ?persona= honoured outside showcase, tools/smoke-capture.mjs proves addMemory -> /__db -> reload for p3. Placeholders in home/memories/story/recap. Scored as a shell against ARCHITECTURE.md sections 3 and 5; the visual modules are wave 1."
+      "notes": "Wave 0 integration: build clean (0 warnings), no shim, ?persona= honoured outside showcase, tools/smoke-capture.mjs proves addMemory -> /__db -> reload for p3. Placeholders in home/memories/story/recap. Scored as a shell against ARCHITECTURE.md sections 3 and 5; the visual modules are wave 1. Feedback round 1 (integrator): nav.showPerson(id) sets the Memories filter and jumps to the grid, core/audio.js holds one shared preview element primed by the first pointerdown on .phone (handler is now stateless, so priming can no longer swallow that tap), TabBar's Tab moved to module scope, readShowcase forwards a scene's filter, and the scroll fixes (linger always clears, no blanket touch-action, overscroll contained, window.scrollTo after a pop or sheet close) pass tools/smoke-scroll.mjs."
     },
     "data": {
       "score": 8.5,
@@ -87,7 +87,7 @@
         "docs/shots/int-p1.png",
         "docs/shots/home/empty-persona-phone-x2-morning.png"
       ],
-      "notes": "node src/data/select.test.mjs ok; node tools/smoke-capture.mjs ok (p3 round trip through /__db, cleaned up after); bridge.isUser now reads lib/people.js REGISTRY (p5 Isabel added)."
+      "notes": "node src/data/select.test.mjs ok; node tools/smoke-capture.mjs ok (p3 round trip through /__db, cleaned up after); bridge.isUser now reads lib/people.js REGISTRY (p5 Isabel added). Feedback round 1: storyOf now synthesizes one text block from memory.about (after the hero, or after the last voice block) unless a moment already carries that text, and bridge.fromV2 falls back to summary + why when v2.about is empty, so migrated v2 stories show their text. select.test.mjs covers the new block."
     },
     "home": {
       "score": 9.5,
@@ -181,7 +181,7 @@
         "docs/shots/memories/many-phone-x2-morning.png",
         "docs/shots/memories/summary.json"
       ],
-      "notes": "Quick round 2: gauntlet memories --quick, 3 shots, 0 console/page errors, 0 failed requests. default matches docs/reference/mockups/memories.png: 'Memories' 30/600 + '12 memories' 12/500, shared memory spans full width 16:9.5 with avatar stack in the caption, two-column square tiles below with title 14/600 + meta 11.5/400, no badges or counts, real memories first. empty shows only the copy-bank string 'Nothing here yet. Start capturing a memory.' centered, no other chrome. many (241 tiles) renders correctly with visible captions intact, just slow to settle (issue above). Round-1 caption clipping and avatar-stack-leads-with-initial issues were not reproduced in this round's shots but were also not specifically re-probed at the pixel level, so treat as unconfirmed rather than fixed.",
+      "notes": "Quick round 2: gauntlet memories --quick, 3 shots, 0 console/page errors, 0 failed requests. default matches docs/reference/mockups/memories.png: 'Memories' 30/600 + '12 memories' 12/500, shared memory spans full width 16:9.5 with avatar stack in the caption, two-column square tiles below with title 14/600 + meta 11.5/400, no badges or counts, real memories first. empty shows only the copy-bank string 'Nothing here yet. Start capturing a memory.' centered, no other chrome. many (241 tiles) renders correctly with visible captions intact, just slow to settle (issue above). Round-1 caption clipping and avatar-stack-leads-with-initial issues were not reproduced in this round's shots but were also not specifically re-probed at the pixel level, so treat as unconfirmed rather than fixed. Feedback round 1: search field plus frequency-ranked people/feeling/place chips and a Clear pill, driven by the filter/setFilter props App owns, so Profile can point the grid at one person. Count line switches to 'n of total memories' and a no-match line shows when a filter matches nothing; the strings moved into core/copy.js and the showcase scene filter now arrives from core/showcase.js, not a mount effect.",
       "updated": "2026-09-03T12:00:42Z",
       "history": [
         {
@@ -254,7 +254,7 @@
         "docs/shots/story/viewer-phone-x2-morning.png",
         "docs/shots/story/summary.json"
       ],
-      "notes": "Quick round 2: gauntlet story --quick, 7 shots, 0 console/page errors, 0 failed requests, readyMs 1051-1185. Static composition matches docs/reference/mockups/story.png and shared.png closely: 32px surface back circle + 22/600 title + 12/500 meta; hero 16:10.5 radius 20, voice card (32px play, waveform, duration, 'What you said', transcript), Spotify song row, related-memories row with three stacked thumbs, question card with mic chip, question, surfaceDeep pill input and white Save pill in that capture order. Shared scene: people chip row (Everyone selected white/dark, avatar chips scrolling with a chip cut at the edge), photo scrim badges (avatar + first name), 'Watch the story' pill, other person's voice card labeled 'Jonas said'. Viewer scene: edge-to-edge photo with progress segments and a close control, close to the recap viewer treatment. This round only exercised static quick scenes; the tile-to-story grow animation and the answer-save interaction flagged in round 1 were not re-tested here.",
+      "notes": "Quick round 2: gauntlet story --quick, 7 shots, 0 console/page errors, 0 failed requests, readyMs 1051-1185. Static composition matches docs/reference/mockups/story.png and shared.png closely: 32px surface back circle + 22/600 title + 12/500 meta; hero 16:10.5 radius 20, voice card (32px play, waveform, duration, 'What you said', transcript), Spotify song row, related-memories row with three stacked thumbs, question card with mic chip, question, surfaceDeep pill input and white Save pill in that capture order. Shared scene: people chip row (Everyone selected white/dark, avatar chips scrolling with a chip cut at the edge), photo scrim badges (avatar + first name), 'Watch the story' pill, other person's voice card labeled 'Jonas said'. Viewer scene: edge-to-edge photo with progress segments and a close control, close to the recap viewer treatment. This round only exercised static quick scenes; the tile-to-story grow animation and the answer-save interaction flagged in round 1 were not re-tested here. Feedback round 1: the 'Watch the story' pill now shows for any memory with photo or video moments (solo under the meta line, shared under the people row), the song row autoplays its preview through core/audio.js on open and toggles pause on tap, and the migrated memory.about text renders as its own card. tools/smoke-song.mjs covers the autoplay path.",
       "updated": "2026-09-03T12:00:42Z",
       "history": [
         {
@@ -407,7 +407,7 @@
         "docs/shots/capture/recording-phone-x2-morning.png",
         "docs/shots/capture/summary.json"
       ],
-      "notes": "Quick round 2: gauntlet capture --quick, 5 shots, 0 console/page errors, 0 failed requests, readyMs 1115-1290. Matches docs/reference/mockups/capture.png closely: Dawn gradient sheet radius 32 top corners, header (chevron-down, 'Capture' 16/600 slate, avatar), input pill with camera / 'What do you want to keep?' / mic, two 58px circles labeled 'Hold to talk' and 'Camera'. forming scene shows '2 moments · one memory' + 'Save now' with two stacked full-width photos, matching spec. recording scene shows the mic filled/active with a live waveform and timer replacing the input placeholder. All text is full-saturation slate, no gray tiers observed this round. The round-1 blockers (duplicate greeting, sticky-pill collisions, gray text tiers, top-anchored short thread, showcase writes) were not reproduced in these shots.",
+      "notes": "Quick round 2: gauntlet capture --quick, 5 shots, 0 console/page errors, 0 failed requests, readyMs 1115-1290. Matches docs/reference/mockups/capture.png closely: Dawn gradient sheet radius 32 top corners, header (chevron-down, 'Capture' 16/600 slate, avatar), input pill with camera / 'What do you want to keep?' / mic, two 58px circles labeled 'Hold to talk' and 'Camera'. forming scene shows '2 moments · one memory' + 'Save now' with two stacked full-width photos, matching spec. recording scene shows the mic filled/active with a live waveform and timer replacing the input placeholder. All text is full-saturation slate, no gray tiers observed this round. The round-1 blockers (duplicate greeting, sticky-pill collisions, gray text tiers, top-anchored short thread, showcase writes) were not reproduced in these shots. Feedback round 1: the input bar drops the camera and mic icons while the big Hold to talk / Camera buttons are shown (bigButtons), keeping the text field and the Send action; with big buttons off the bar is unchanged.",
       "updated": "2026-09-03T12:00:42Z",
       "history": [
         {
@@ -467,7 +467,7 @@
         "docs/shots/profile-scroll.png",
         "docs/shots/profile/summary.json"
       ],
-      "notes": "Quick round 2: gauntlet profile --quick, 3 shots plus one extra --scroll 900 shot, 0 console/page errors, 0 failed requests, readyMs 1097-1293. Cream sheet radius 32, white rows, portrait renders at full size (round-1's 0-height portrait bug is gone), name 'Isabel', fact line 'Born July 1992 · Amsterdam · 12 memories', memories/people counts row, Top people list with 'View all people', activity gauge card, three question rows, and on scroll: Big capture buttons switch, Music opens in segmented control, Face ID toggle, the verbatim privacy string, Sign out, and a Viewing as persona picker with five avatars. glenn scene correctly swaps all data (44 memories, 13 people, different top people). people sub-screen lists all 9 people sorted by count with a back chevron. Only static quick scenes checked; the round-1 question-edit overflow and localStorage contract issue were not re-tested this round.",
+      "notes": "Quick round 2: gauntlet profile --quick, 3 shots plus one extra --scroll 900 shot, 0 console/page errors, 0 failed requests, readyMs 1097-1293. Cream sheet radius 32, white rows, portrait renders at full size (round-1's 0-height portrait bug is gone), name 'Isabel', fact line 'Born July 1992 · Amsterdam · 12 memories', memories/people counts row, Top people list with 'View all people', activity gauge card, three question rows, and on scroll: Big capture buttons switch, Music opens in segmented control, Face ID toggle, the verbatim privacy string, Sign out, and a Viewing as persona picker with five avatars. glenn scene correctly swaps all data (44 memories, 13 people, different top people). people sub-screen lists all 9 people sorted by count with a back chevron. Only static quick scenes checked; the round-1 question-edit overflow and localStorage contract issue were not re-tested this round. Feedback round 1: person rows in Top people and View all people are buttons with a chevron that call nav.showPerson(id), opening the Memories grid filtered to that person.",
       "updated": "2026-09-03T12:00:42Z",
       "history": [
         {

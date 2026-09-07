@@ -16,9 +16,13 @@
   overflow: hidden;
   background: var(--ground);
   color: var(--text);
-  touch-action: pan-y; /* the mic slide-to-cancel gesture needs horizontal moves to reach JS */
+  touch-action: pan-y; /* the column itself never pans sideways or pinches */
+  overscroll-behavior: contain; /* no nested scroller may chain out to the document */
 }
-.phone * { touch-action: pan-y; }
+/* No blanket `.phone * { touch-action: pan-y }`: it left every horizontal
+   scroller inside the column (story people row, viewer strip) unable to pan,
+   and the hold controls that must own their gesture declare touch-action:none
+   themselves (capture.css, story.css). */
 
 /* Tab screens: both mounted, the inactive one hidden so scroll positions survive. */
 .app-screen {
@@ -26,6 +30,7 @@
   inset: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior-y: contain;
   padding-bottom: var(--tabbar-h);
 }
 
@@ -123,6 +128,9 @@
   transition: transform var(--motion-normal) var(--ease), visibility 0s var(--motion-normal);
   visibility: hidden;
 }
+/* visibility only lands after the 600ms slide; pointer-events goes the moment
+   the sheet is closed so a closing sheet can never eat the screen's touches. */
+.sheet:not(.open) { pointer-events: none; }
 .sheet.open { transform: none; visibility: visible; transition-delay: 0s; }
 .sheet-profile { background: var(--surface-cream); color: var(--text-primary); overflow-y: auto; }
 /* Profile mounts on open, so it animates in from a keyframe instead of a class change. */

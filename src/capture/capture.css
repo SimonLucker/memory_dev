@@ -356,6 +356,9 @@
   min-height: 48px;
   transition: background var(--motion-fast) var(--ease);
 }
+.cap-bar.no-icons {
+  padding-left: 18px;
+}
 .cap-bar.recording { background: var(--surface-cream); }
 .bar-icon {
   flex-shrink: 0;

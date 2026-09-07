@@ -21,21 +21,24 @@ assert.ok(firstDemo > 0 && mems.slice(firstDemo).every(m => m.demo), 'real befor
 assert.equal(mems[0].id, 'isa_greece')
 assert.ok(memoriesOf(db, 'p5') === mems, 'memoized by db identity')
 
-// storyOf(marco): hero, voice, song, related (3), question last
+// storyOf(marco): hero, voice, memory.about as text (after the voice block), song, related (3), question last
 const marco = storyOf(db, 'isa_marco')
 const kinds = marco.blocks.map(b => b.kind)
-assert.deepEqual(kinds, ['hero', 'voice', 'song', 'related', 'question'])
+assert.deepEqual(kinds, ['hero', 'voice', 'text', 'song', 'related', 'question'])
+assert.equal(marco.blocks[2].moments[0].text, 'Marco cooked. Sofia came for the first time.')
 assert.equal(marco.related.length, 3)
 assert.deepEqual(marco.related.map(m => m.id), ['isa_marco2', 'isa_marco3', 'isa_marco1'], 'two shared people beat one')
 assert.equal(marco.question.text, 'What did you and Marco talk about after Sofia left?')
 assert.equal(marco.shared, false)
 
-// storyOf(greece): hero, pairs, voice, text, lone photo, song after the last media block
+// storyOf(greece): hero, pairs, voice, memory.about as text (after the voice block),
+// pair, text, lone photo, song after the last media block, trailing text, related
 const greece = storyOf(db, 'isa_greece')
-assert.deepEqual(greece.blocks.map(b => b.kind), ['hero', 'pair', 'voice', 'pair', 'text', 'photo', 'song', 'text', 'related'])
+assert.deepEqual(greece.blocks.map(b => b.kind), ['hero', 'pair', 'voice', 'text', 'pair', 'text', 'photo', 'song', 'text', 'related'])
 assert.equal(greece.shared, true)
 assert.equal(greece.blocks[2].by.name, 'Jonas')
 assert.equal(greece.blocks[1].moments.length, 2)
+assert.equal(greece.blocks[3].moments[0].text, 'A week in a house above the harbour with six friends. Long lunches, one terrace, no phones.')
 
 // homeOf at Sept 4 2026, 09:00
 const home = homeOf(db, 'p5', NOW)
@@ -75,6 +78,18 @@ for (const m of [v2.find(x => x.id === 'm001'), v2.find(x => x.videos), v2.find(
   assert.ok(r.people.every(p => p.id.startsWith('p1_') && p.space_id === 'p1'))
   assert.ok(r.links.every(l => l.role === 'tagged'))
 }
+// storyOf on a migrated v2 memory (m001: about set, no text moment) shows the
+// migrated story text as a text block, right after the voice block.
+{
+  const m001 = v2.find(x => x.id === 'm001')
+  const r = fromV2(m001, 'p1', '2026-09-04T09:00:00Z')
+  const d = putRows(emptyDb(), r)
+  const story = storyOf(d, 'm001')
+  assert.deepEqual(story.blocks.map(b => b.kind), ['hero', 'photo', 'voice', 'text', 'song'])
+  assert.equal(story.blocks[3].moments[0].text, m001.about)
+  assert.equal(story.blocks[3].moments[0].generated_by, 'p1')
+}
+
 // A registered persona in who[] becomes a contributor link, not a contact row.
 const shared = fromV2({ id: 'x1', what: 'x', when: '01-02-2026 10:00', who: [{ id: 'p2', name: 'Maya' }, { id: 'p07', name: 'Tom' }] }, 'p1')
 assert.deepEqual(shared.links.map(l => l.role), ['contributor', 'tagged'])

@@ -100,6 +100,16 @@ export const storyOf = memo((db, id) => {
     while (i > 0 && blocks[i - 1].kind === 'text') i--
     blocks.splice(i, 0, { kind: 'song', moments: [], by: db.people[memory.owner_id] || null, music: memory.music })
   }
+  // memory.about is the owner's own words (v2 migration puts the story text
+  // here, not on a moment). Show it once, right after the hero, or after the
+  // last voice block when there is one, unless a moment already carries it.
+  if (memory.about && !momentsOf(db, id).some(m => m.kind === 'text' && m.text === memory.about)) {
+    const aboutMoment = { id: `${id}_about`, kind: 'text', text: memory.about, generated_by: memory.owner_id }
+    let at = blocks.findIndex(b => b.kind === 'hero') + 1
+    const lastVoice = blocks.reduce((last, b, i) => (b.kind === 'voice' ? i : last), -1)
+    if (lastVoice >= 0) at = lastVoice + 1
+    blocks.splice(at, 0, { kind: 'text', moments: [aboutMoment], by: by(aboutMoment) })
+  }
   const related = relatedOf(db, id)
   if (related.length) blocks.push({ kind: 'related', moments: [], by: null, memories: related })
   const question = openQuestion(db, id)
