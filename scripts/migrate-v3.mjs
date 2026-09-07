@@ -31,12 +31,25 @@ async function get(path) {
   if (!r.ok) throw new Error(`GET ${path}: ${r.status} ${(await r.text()).slice(0, 200)}`)
   return r.json()
 }
+// PostgREST bulk inserts need identical keys on every object (PGRST102), so each
+// row is sent with the table's full column set, missing values as null.
+const COLS = {
+  people: ['id', 'name', 'first_name', 'avatar_url', 'is_user', 'space_id', 'created_at'],
+  memories: ['id', 'owner_id', 'title', 'place', 'starts_at', 'ends_at', 'about', 'class', 'feeling', 'music', 'importance', 'cover_moment_id', 'favorite', 'demo', 'legacy', 'created_at', 'updated_at'],
+  moments: ['id', 'memory_id', 'kind', 'src', 'poster', 'duration', 'transcript', 'text', 'generated_by', 'question_id', 'captured_at', 'position', 'demo', 'created_at'],
+  memory_people: ['memory_id', 'person_id', 'role'],
+  questions: ['id', 'memory_id', 'person_id', 'text', 'asked_at', 'answered_at'],
+  recaps: ['id', 'memory_id', 'beats', 'song', 'created_at'],
+}
+// An explicit null would violate the NOT NULL columns, so their defaults are filled in here.
+const DEFAULTS = { created_at: () => now, updated_at: () => now, asked_at: () => now, favorite: () => false, demo: () => false, is_user: () => false, feeling: () => [], position: () => 0, beats: () => [] }
+const shape = (table, row) => Object.fromEntries(COLS[table].map(c => [c, row[c] ?? (DEFAULTS[c] ? DEFAULTS[c]() : null)]))
 async function upsert(table, rows) {
   if (!rows.length || dry) return
   for (let i = 0; i < rows.length; i += 500) {
     const r = await fetch(`${URL}/rest/v1/${table}`, {
       method: 'POST', headers: { ...headers, Prefer: 'resolution=merge-duplicates' },
-      body: JSON.stringify(rows.slice(i, i + 500)),
+      body: JSON.stringify(rows.slice(i, i + 500).map(row => shape(table, row))),
     })
     if (!r.ok) throw new Error(`POST ${table}: ${r.status} ${(await r.text()).slice(0, 300)}`)
   }
